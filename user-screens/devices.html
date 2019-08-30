@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <table>
+          <thead>
+            <th>Picture</th>
+            <th>Device</th>
+            <th>Status</th>
+            <th>Label</th>
+            <th class="noborder"/>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <img
+                  src="https://brain-images-ssl.cdn.dixons.com/3/5/10143653/u_10143653.jpg"
+                />
+              </td>
+              <td>Fridge</td>
+              <td>Available</td>
+              <td>Food</td>
+              <td class="noborder">
+                <div>
+                  <button>Register</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img
+                  src="http://img.fruugo.com/product/7/78/57214787_max.jpg"
+                />
+              </td>
+              <td>Air sensor</td>
+              <td>Offline</td>
+              <td>Humidity</td>
+              <td class="noborder">
+                <div>
+                  <button disabled>Register</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <img
+                  src="https://d3mxosyd2mxm8w.cloudfront.net/jp8oiD3U-ELM2007"
+                />
+              </td>
+              <td>Lights</td>
+              <td>Unavailable</td>
+              <td>Lights</td>
+              <td class="noborder">
+                <div>
+                  <button disabled>Register</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="button-row">
+          <button onclick="location.href='./new-device.html'">
+            Add device
+          </button>
+          <button onclick="location.href='./my-devices.html'">
+            My devices
+          </button>
+          <button onclick="location.href='./search-device.html'">
+            Search device
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

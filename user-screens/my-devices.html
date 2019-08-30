@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <h2>User information</h2>
+            <div class="button-row">
+                <div>
+                    <strong>First name:</strong> Navn<br/>
+                    <strong>Last name:</strong> Navnesen<br/>
+                    <strong>Number of devices:</strong> 2<br />
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <h2>My devices</h2>
+            <table>
+                <thead>
+                    <th>Picture</th>
+                    <th>Device</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                    <th>Label</th>
+                    <th class="noborder" />
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <img src="https://wpstatic.idium.no/www.houm.no/2017/03/Classic-wind-speed.png" />
+                        </td>
+                        <td>Wind sensor</td>
+                        <td>Available</td>
+                        <td>Me</td>
+                        <td>Wind</td>
+                        <td class="noborder">
+                            <div>
+                                <button>Delete device</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="https://solcelle.dk/wordpress/wp-content/uploads/2018/02/100Wp-12V-solcelle-PV-100-M-36S-polykrystallinsk-500x500.jpg" />
+                        </td>
+                        <td>Solar cell</td>
+                        <td>Available</td>
+                        <td>Other</td>
+                        <td>Sun, Electricity</td>
+                        <td class="noborder">
+                            <div>
+                                <button onclick="location.href='./feedback.html'">Unsubscribe</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="button-row">
+                <button onclick="location.href='./new-device.html'">
+                    Add device
+                </button>
+                <button onclick="location.href='./devices.html'">
+                    Browse devices
+                </button>
+                <button onclick="location.href='./search-device.html'">
+                    Search device
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
