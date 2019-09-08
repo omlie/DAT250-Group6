@@ -12,6 +12,7 @@ import javax.jms.JMSException;
 import javax.naming.NamingException;
 import javax.resource.spi.SecurityException;
 
+import entities.Device;
 import entities.Tweet;
 
 /**
@@ -30,13 +31,13 @@ public class TweetController implements Serializable {
 	
 	// Injected DAO EJB:
 	@EJB
-	private TweetDao tweetDao;
+	private DeviceDao tweetDao;
 
-	private Tweet tweet;
+	private Device tweet;
 
-	public List<Tweet> getTweets() {
-		List<Tweet> reverseTweetList = new ArrayList<Tweet>();
-		reverseTweetList.addAll(this.tweetDao.getAllTweets());
+	public List<Device> getTweets() {
+		List<Device> reverseTweetList = new ArrayList<Device>();
+		reverseTweetList.addAll(this.tweetDao.getAllDevices());
 		Collections.reverse(reverseTweetList);
 		return reverseTweetList;
 
@@ -49,9 +50,9 @@ public class TweetController implements Serializable {
 		return Constants.INDEX;
 	}
 
-	public Tweet getTweet() {
+	public Device getTweet() {
 		if (this.tweet == null) {
-			tweet = new Tweet();
+			tweet = new Device();
 		}
 		return tweet;
 

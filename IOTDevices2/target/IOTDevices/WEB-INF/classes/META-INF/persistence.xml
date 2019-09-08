@@ -7,6 +7,7 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
    	 <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
    	 <jta-data-source>java:app/jdbc/Dat250TweetAdvanced</jta-data-source>
 	 <class>entities.Tweet</class>
+		<class>entities.Device</class>
 	 <properties>
 	 	<property name="javax.persistence.schema-generation.database.action" value="create"/>
 	 </properties>

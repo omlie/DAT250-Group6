@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+<h:head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">	</link>
+    <title>IOT Devices</title>
+</h:head>
+<h:body>
+    <div class="div-container">
+        <div class="div-container-title">
+            <h3 class="container-title">Devices</h3>
+        </div>
+        <f:view>
+            <div class ="div-form">
+                <h:form class="form-tweets">
+                    <div class="div-container-sender">
+                        <h:outputLabel value="Device name: "/>
+                        <h:inputText  value="#{deviceController.device.deviceName}"/>
+                    </div>
+                    <div class="div-container-sender div-container-sender-button">
+                        <h:commandButton action="#{deviceController.saveDevice()}" value="Add device"/>
+                    </div>
+
+                </h:form>
+            </div>
+
+        </f:view>
+
+        <div class="div-container-tweets">
+
+            <h:form>
+                <ui:repeat value="#{deviceController.getDevices()}" var="dev">
+                    <div class="div-container-tweet">
+                        <b><h:outputLabel value="device ID: "/><h:outputText value="#{dev.id}" /></b><br/>
+                        <h:outputLabel value="Device Name: "/><h:outputText value="#{dev.deviceName}" /><br/>
+                        <br/>
+                    </div>
+                </ui:repeat>
+            </h:form>
+        </div>
+    </div>
+</h:body>
+</html>
