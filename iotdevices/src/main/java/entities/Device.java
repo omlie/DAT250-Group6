@@ -1,8 +1,5 @@
 package entities;
 
-
-import models.Status;
-
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
@@ -13,7 +10,6 @@ import javax.persistence.*;
 public class Device implements  Serializable {
     public static final String FIND_ALL = "Device.findAll";
     private static final long serialVersionUID = 1L;
-
     //Create elements ids automatically, incremented 1 by 1
     @TableGenerator(
             name = "yourTableGenerator",
@@ -25,8 +21,16 @@ public class Device implements  Serializable {
 
     private String deviceName;
 
+    private String deviceImg;
+
+    private String apiUrl;
+
+    private int status;
+
     @OneToMany(targetEntity = User.class)
     private List<User> subscribers;
+
+
 
 
     public Device() {
@@ -56,4 +60,27 @@ public class Device implements  Serializable {
         this.subscribers = subscribers;
     }
 
+    public String getDeviceImg() {
+        return deviceImg;
+    }
+
+    public void setDeviceImg(String deviceImg) {
+        this.deviceImg = deviceImg;
+    }
+
+    public String getApiUrl() {
+        return apiUrl;
+    }
+
+    public void setApiUrl(String apiUrl) {
+        this.apiUrl = apiUrl;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }

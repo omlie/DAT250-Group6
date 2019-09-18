@@ -21,7 +21,7 @@ public class UserController implements Serializable {
 
     // Injected DAO EJB:
     @EJB
-    private UserDao userDao;
+    private ejb.UserDao userDao;
 
     private User user;
 
