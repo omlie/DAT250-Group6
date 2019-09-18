@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Table(name="device")
 @NamedQuery(name="Device.findAll", query="SELECT d FROM Device d")
 public class Device implements  Serializable {
+    public static final String FIND_ALL = "Device.findAll";
     private static final long serialVersionUID = 1L;
 
     //Create elements ids automatically, incremented 1 by 1
