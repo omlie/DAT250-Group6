@@ -24,8 +24,8 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
 
-    @OneToMany( targetEntity = Device.class)
-    private List<Device> ownedDevices;
+    //@OneToMany( targetEntity = Device.class)
+    //private List<Device> ownedDevices;
 
     public User() {
     }
@@ -62,12 +62,12 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    public List<Device> getOwnedDevices() {
+    /*public List<Device> getOwnedDevices() {
         return ownedDevices;
-    }
+    }*/
 
-    public void setOwnedDevices(List<Device> ownedDevices) {
+    /*public void setOwnedDevices(List<Device> ownedDevices) {
         this.ownedDevices = ownedDevices;
-    }
+    }*/
 
 }

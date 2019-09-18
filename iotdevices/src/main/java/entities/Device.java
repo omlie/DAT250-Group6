@@ -1,6 +1,8 @@
 package entities;
 
 
+import models.Status;
+
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
@@ -53,4 +55,5 @@ public class Device implements  Serializable {
     public void setSubscribers(List<User> subscribers) {
         this.subscribers = subscribers;
     }
+
 }
