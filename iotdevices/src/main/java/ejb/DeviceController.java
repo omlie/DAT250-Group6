@@ -38,6 +38,11 @@ public class DeviceController implements Serializable {
         return "index";
     }
 
+    public Device getDeviceFromId(int deviceId) {
+        return this.deviceDao.getDeviceFromId(deviceId);
+    }
+
+
     public Device getDevice() {
         if (this.device == null) {
             device = new Device();
@@ -45,5 +50,4 @@ public class DeviceController implements Serializable {
         return device;
 
     }
-
 }

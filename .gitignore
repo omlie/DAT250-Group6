@@ -3,7 +3,7 @@
 *.idea*
 # Log file
 *.log
-
+.idea/
 # BlueJ files
 *.ctxt
 
@@ -38,10 +38,13 @@ hs_err_pid*
 .idea/**/shelf
 */target/*
 */out/*
-
+target/
+out/
 # Generated files
 .idea/**/contentModel.xml
 
+*.project
+.settings/
 # Sensitive or high-churn files
 .idea/**/dataSources/
 .idea/**/dataSources.ids
@@ -110,4 +113,3 @@ fabric.properties
 .idea/sonarlint
 
 # End of https://www.gitignore.io/api/intellij
-

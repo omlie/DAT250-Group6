@@ -32,7 +32,17 @@ public class DeviceDao {
         return devices;
     }
 
-    public List<Device> getOwnedDevices(User user) {
+    public Device getDeviceFromId(int deviceId) {
+        Query query = em.createQuery(
+                "SELECT d FROM Device d WHERE d.id =:deviceId").setParameter("deviceId", deviceId);
+        List<Device> devices = new ArrayList<Device>();
+        devices = query.getResultList();
+
+        for (Device d : devices)
+            if(d.getId() == deviceId)
+                return d;
+
+
         return null;
     }
 }
