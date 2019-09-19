@@ -38,7 +38,8 @@ hs_err_pid*
 .idea/**/shelf
 */target/*
 */out/*
-
+target/
+out/
 # Generated files
 .idea/**/contentModel.xml
 
