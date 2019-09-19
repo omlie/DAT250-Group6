@@ -16,30 +16,26 @@
             <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
-                <th>Status</th>
-                <th>API</th>
-                <th>Image</th>
+                <th>Username</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
             </tr>
             </thead>
             <tbody>
-            <ui:repeat value="#{deviceController.getDevices()}" var="dev">
+            <ui:repeat value="#{userController.getUsers()}" var="user">
 
                 <tr>
                     <td>
-                        <h:outputText value="#{dev.id}" />
+                        <h:outputText value="#{user.id}" />
                     </td>
                     <td>
-                        <h:outputText value="#{dev.deviceName}" />
+                        <h:outputText value="#{user.userName}" />
                     </td>
                     <td>
-                        <h:outputText value="#{dev.status}" />
+                        <h:outputText value="#{user.firstName}" />
                     </td>
                     <td>
-                        <h:outputText value="#{dev.apiUrl}" />
-                    </td>
-                    <td>
-                        <h:outputText value="#{dev.deviceImg}" />
+                        <h:outputText value="#{user.lastName}" />
                     </td>
                 </tr>
 

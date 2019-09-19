@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import entities.Device;
+import entities.User;
 
 @Stateless
 public class DeviceDao {
@@ -29,5 +30,9 @@ public class DeviceDao {
         List<Device> devices = new ArrayList<Device>();
         devices = query.getResultList();
         return devices;
+    }
+
+    public List<Device> getOwnedDevices(User user) {
+        return null;
     }
 }

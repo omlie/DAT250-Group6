@@ -5,7 +5,7 @@ import java.util.List;
 import javax.persistence.*;
 
 @Entity
-@Table(name="device")
+@Table(name="DEVICE")
 @NamedQuery(name="Device.findAll", query="SELECT d FROM Device d")
 public class Device implements  Serializable {
     public static final String FIND_ALL = "Device.findAll";
