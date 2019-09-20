@@ -1,8 +1,8 @@
 package entities;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,6 +29,7 @@ public class User implements Serializable {
     @JoinColumn(name = "user_id")
     private List<Device> ownedDevices;
 
+    @JsonbTransient
     @ManyToMany(mappedBy = "subscribers")
     private List <Device> subscribedDevices;
 
