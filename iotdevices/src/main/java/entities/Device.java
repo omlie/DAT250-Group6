@@ -1,10 +1,9 @@
 package entities;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name="devices")
