@@ -1,6 +1,7 @@
 package rest.api;
 
 import entities.Device;
+import entities.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -46,5 +47,17 @@ public class DeviceService extends Application {
         if (device == null)
             throw new NotFoundException();
         return Response.ok(device.getSubscribers()).build();
+    }
+
+    @POST
+    @Path("{id}")
+    public Response getSubscribers(@HeaderParam("userId") int userId, @PathParam("id") String deviceId) {
+        int idInt = Integer.parseInt(deviceId);
+        Device device = em.find(Device.class, idInt);
+        User user = em.find(User.class, userId);
+        if (device == null || user == null)
+            throw new NotFoundException();
+        device.addSubscriber(user);
+        return Response.ok().build();
     }
 }

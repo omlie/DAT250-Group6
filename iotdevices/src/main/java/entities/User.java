@@ -2,12 +2,14 @@ package entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="IOTUSER")
+@Table(name="users")
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
 public class User implements Serializable {
+    public static final String FIND_ALL = "User.findAll";
     private static final long serialVersionUID = 1L;
 
     //Create elements ids automatically, incremented 1 by 1
@@ -23,8 +25,12 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
 
-    @OneToMany( targetEntity = Device.class)
+    @OneToMany
+    @JoinColumn(name = "user_id")
     private List<Device> ownedDevices;
+
+    @ManyToMany(mappedBy = "subscribers")
+    private List <Device> subscribedDevices;
 
     public User() {
     }
@@ -69,4 +75,11 @@ public class User implements Serializable {
         this.ownedDevices = ownedDevices;
     }
 
+    public List<Device> getSubscribedDevices() {
+        return subscribedDevices;
+    }
+
+    public void setSubscribedDevices(List<Device> subscribedDevices) {
+        this.subscribedDevices = subscribedDevices;
+    }
 }

@@ -1,11 +1,12 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
 @Entity
-@Table(name="DEVICE")
+@Table(name="devices")
 @NamedQuery(name="Device.findAll", query="SELECT d FROM Device d")
 public class Device implements  Serializable {
     public static final String FIND_ALL = "Device.findAll";
@@ -27,11 +28,13 @@ public class Device implements  Serializable {
 
     private int status;
 
-    @OneToMany(targetEntity = User.class)
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "device_subscribers",
+            joinColumns = {@JoinColumn(name = "device_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
     private List<User> subscribers;
-
-
-
 
     public Device() {
     }
@@ -58,6 +61,11 @@ public class Device implements  Serializable {
 
     public void setSubscribers(List<User> subscribers) {
         this.subscribers = subscribers;
+    }
+
+    public void addSubscriber(User user) {
+        subscribers.add(user);
+        user.getSubscribedDevices().add(this);
     }
 
     public String getDeviceImg() {
