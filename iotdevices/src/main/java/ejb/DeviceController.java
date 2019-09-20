@@ -8,6 +8,7 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
+import javax.ws.rs.Path;
 
 import entities.Device;
 
@@ -26,6 +27,11 @@ public class DeviceController implements Serializable {
 
     private Device device;
 
+    public String saveDevice() {
+        this.deviceDao.persist(this.device);
+        return "index";
+    }
+
     public List<Device> getDevices() {
         List<Device> reverseDeviceList = new ArrayList<>();
         reverseDeviceList.addAll(this.deviceDao.getAllDevices());
@@ -33,15 +39,9 @@ public class DeviceController implements Serializable {
         return reverseDeviceList;
     }
 
-    public String saveDevice() {
-        this.deviceDao.persist(this.device);
-        return "index";
-    }
-
     public Device getDeviceFromId(int deviceId) {
         return this.deviceDao.getDeviceFromId(deviceId);
     }
-
 
     public Device getDevice() {
         if (this.device == null) {

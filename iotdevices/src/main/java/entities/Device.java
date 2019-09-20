@@ -31,8 +31,6 @@ public class Device implements  Serializable {
     private List<User> subscribers;
 
 
-
-
     public Device() {
     }
 
