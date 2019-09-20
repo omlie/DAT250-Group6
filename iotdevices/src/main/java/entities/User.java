@@ -83,4 +83,8 @@ public class User implements Serializable {
     public void setSubscribedDevices(List<Device> subscribedDevices) {
         this.subscribedDevices = subscribedDevices;
     }
+
+    public void addSubscribedDevice(Device subscribedDevice) {
+        this.subscribedDevices.add(subscribedDevice);
+    }
 }
