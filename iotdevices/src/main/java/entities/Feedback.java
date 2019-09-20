@@ -32,6 +32,10 @@ public class Feedback implements Serializable {
     @JoinColumn(name= "device_id")
     private Device device;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User writer;
+
     public Feedback() {
     }
 
