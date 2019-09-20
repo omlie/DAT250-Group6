@@ -22,8 +22,19 @@ public class Feedback implements Serializable {
 
     private String feedbackContent;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DEVICE_ID")
+    private Device device;
 
     public Feedback() {
+    }
+
+    public Device getDevice() {
+        return device;
+    }
+
+    public void setDevice(Device device) {
+        this.device = device;
     }
 
     public int getId() {
