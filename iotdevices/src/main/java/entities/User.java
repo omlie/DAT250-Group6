@@ -26,6 +26,9 @@ public class User implements Serializable {
     @OneToMany( targetEntity = Device.class)
     private List<Device> ownedDevices;
 
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<Feedback> feedbacks;
+
     public User() {
     }
 
