@@ -1,5 +1,6 @@
 package entities;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 @Table(name="IOTUSER")
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
 public class User implements Serializable {
+    public static final String FIND_ALL = "User.findAll";
     private static final long serialVersionUID = 1L;
 
     //Create elements ids automatically, incremented 1 by 1
@@ -23,9 +25,11 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
 
+    @JsonbTransient
     @OneToMany( targetEntity = Device.class)
     private List<Device> ownedDevices;
 
+    @JsonbTransient
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Feedback> feedbacks;
 
