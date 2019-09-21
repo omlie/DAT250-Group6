@@ -38,6 +38,15 @@ public class Device implements  Serializable {
     @JsonbTransient
     private List<User> subscribers;
 
+    @JsonbTransient
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "device_labels",
+            joinColumns = @JoinColumn(name = "device_id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id")
+    )
+    private List<Label> labels;
+
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL)
     private List<Feedback> feedbacks;
 
@@ -102,5 +111,9 @@ public class Device implements  Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public void addLabel(Label label){
+        labels.add(label);
     }
 }
