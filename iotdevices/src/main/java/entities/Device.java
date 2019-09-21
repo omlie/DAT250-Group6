@@ -38,7 +38,17 @@ public class Device implements  Serializable {
     @JsonbTransient
     private List<User> subscribers;
 
+    @OneToMany(mappedBy = "device", cascade = CascadeType.ALL)
+    private List<Feedback> feedbacks;
+
     public Device() {
+    }
+    public List<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 
     public int getId() {

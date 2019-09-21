@@ -25,13 +25,18 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
 
+    @JsonbTransient
+    @ManyToMany(mappedBy = "subscribers")
+    private List <Device> subscribedDevices;
+
+    @JsonbTransient
     @OneToMany
     @JoinColumn(name = "user_id")
     private List<Device> ownedDevices;
 
     @JsonbTransient
-    @ManyToMany(mappedBy = "subscribers")
-    private List <Device> subscribedDevices;
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<Feedback> feedbacks;
 
     public User() {
     }
