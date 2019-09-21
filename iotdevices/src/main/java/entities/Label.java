@@ -8,8 +8,10 @@ import java.util.List;
 @Entity
 @Table(name="labels")
 @NamedQuery(name="Label.findAll", query="SELECT l FROM Label l")
+@NamedQuery(name = "Label.findByName", query ="SELECT l.devices FROM Label l WHERE l.labelValue = :name" )
 public class Label implements Serializable {
-    public static final String FIND_ALL = "User.findAll";
+    public static final String FIND_ALL = "Label.findAll";
+    public static final String FIND_BY_NAME = "Label.findByName";
     private static final long serialVersionUID = 1L;
 
     //Create elements ids automatically, incremented 1 by 1
