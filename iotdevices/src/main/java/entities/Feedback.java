@@ -22,8 +22,31 @@ public class Feedback implements Serializable {
 
     private String feedbackContent;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DEVICE_ID")
+    private Device device;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User writer;
 
     public Feedback() {
+    }
+
+    public Device getDevice() {
+        return device;
+    }
+
+    public User getWriter() {
+        return writer;
+    }
+
+    public void setWriter(User writer) {
+        this.writer = writer;
+    }
+
+    public void setDevice(Device device) {
+        this.device = device;
     }
 
     public int getId() {
