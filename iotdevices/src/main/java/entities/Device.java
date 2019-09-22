@@ -3,6 +3,7 @@ package entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 
 @Entity
@@ -34,6 +35,7 @@ public class Device implements  Serializable {
             joinColumns = {@JoinColumn(name = "device_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
+    @JsonbTransient
     private List<User> subscribers;
 
     public Device() {

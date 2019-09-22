@@ -50,6 +50,7 @@ public class DeviceService extends Application {
     }
 
     @POST
+    @Transactional
     @Path("{id}")
     public Response getSubscribers(@HeaderParam("userId") int userId, @PathParam("id") String deviceId) {
         int idInt = Integer.parseInt(deviceId);
@@ -58,6 +59,7 @@ public class DeviceService extends Application {
         if (device == null || user == null)
             throw new NotFoundException();
         device.addSubscriber(user);
+        em.persist(device);
         return Response.ok().build();
     }
 }
