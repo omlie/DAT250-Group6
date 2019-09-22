@@ -46,7 +46,24 @@ public class Device implements  Serializable {
     @JoinColumn(name="device_id")
     private List<Feedback> feedback;
 
+    @JsonbTransient
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "device_labels",
+            joinColumns = @JoinColumn(name = "device_id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id")
+    )
+    private List<Label> labels;
+
     public Device() {
+    }
+
+    public List<Label> getLabels() {
+        return labels;
+    }
+
+    public void addLabel(Label label){
+        labels.add(label);
     }
 
     public int getId() {
