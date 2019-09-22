@@ -29,14 +29,19 @@ public class Device implements  Serializable {
 
     private int status;
 
+    @JsonbTransient
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
             name = "device_subscribers",
             joinColumns = {@JoinColumn(name = "device_id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
-    @JsonbTransient
     private List<User> subscribers;
+
+    @JsonbTransient
+    @OneToMany
+    @JoinColumn(name="device_id")
+    private List<Feedback> feedback;
 
     public Device() {
     }
@@ -92,5 +97,13 @@ public class Device implements  Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public List<Feedback> getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(List<Feedback> feedback) {
+        this.feedback = feedback;
     }
 }

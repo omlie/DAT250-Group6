@@ -49,6 +49,17 @@ public class DeviceService extends Application {
         return Response.ok(device.getSubscribers()).build();
     }
 
+    @GET
+    @Path("{id}/feedback")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFeedBack(@PathParam("id") String id) {
+        int idInt = Integer.parseInt(id);
+        Device device = em.find(Device.class, idInt);
+        if (device == null)
+            throw new NotFoundException();
+        return Response.ok(device.getFeedback()).build();
+    }
+
     @POST
     @Transactional
     @Path("{id}")

@@ -26,12 +26,19 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
 
+    @JsonbTransient
     @OneToMany
     @JoinColumn(name = "user_id")
     private List<Device> ownedDevices;
 
+    @JsonbTransient
     @ManyToMany(mappedBy = "subscribers")
     private List <Device> subscribedDevices;
+
+    @JsonbTransient
+    @OneToMany
+    @JoinColumn(name="user_id")
+    private List<Feedback> feedback;
 
     public User() {
     }
@@ -82,5 +89,13 @@ public class User implements Serializable {
 
     public void setSubscribedDevices(List<Device> subscribedDevices) {
         this.subscribedDevices = subscribedDevices;
+    }
+
+    public List<Feedback> getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(List<Feedback> feedback) {
+        this.feedback = feedback;
     }
 }

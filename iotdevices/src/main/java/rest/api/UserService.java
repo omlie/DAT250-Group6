@@ -44,4 +44,14 @@ public class UserService extends Application {
             throw new NotFoundException();
         return Response.ok(user.getOwnedDevices()).build();
     }
+
+    @GET
+    @Path("{id}/subscribedDevices")
+    public Response getSubscribedDevices(@PathParam("id") String id) {
+        int idInt = Integer.parseInt(id);
+        User user = em.find(User.class, idInt);
+        if (user == null)
+            throw new NotFoundException();
+        return Response.ok(user.getSubscribedDevices()).build();
+    }
 }

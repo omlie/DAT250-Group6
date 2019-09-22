@@ -1,5 +1,6 @@
 package entities;
 import java.io.Serializable;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 
 @Entity
@@ -22,6 +23,14 @@ public class Feedback implements Serializable {
 
     private String feedbackContent;
 
+    @ManyToOne
+    @JoinColumn(name= "user_id")
+    private User author;
+
+    @JsonbTransient
+    @ManyToOne
+    @JoinColumn(name= "device_id")
+    private Device device;
 
     public Feedback() {
     }
@@ -48,5 +57,21 @@ public class Feedback implements Serializable {
 
     public void setFeedbackContent(String feedbackContent) {
         this.feedbackContent = feedbackContent;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public Device getDevice() {
+        return device;
+    }
+
+    public void setDevice(Device device) {
+        this.device = device;
     }
 }
