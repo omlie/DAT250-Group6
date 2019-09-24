@@ -1,5 +1,7 @@
 package entities;
 
+import helpers.Status;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,8 @@ public class Device implements  Serializable {
 
     private String apiUrl;
 
-    private int status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @JsonbTransient
     @ManyToMany(cascade = { CascadeType.ALL })
@@ -91,11 +94,11 @@ public class Device implements  Serializable {
         this.apiUrl = apiUrl;
     }
 
-    public int getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
