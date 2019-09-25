@@ -82,6 +82,8 @@ public class DeviceService extends Application {
         TypedQuery<Device> query = em.createNamedQuery(Label.FIND_BY_NAME, Device.class);
         query.setParameter("name", label);
         List<Device> devices = query.getResultList();
+        if (devices == null)
+            throw new NotFoundException();
         return Response.ok(devices).build();
     }
 
