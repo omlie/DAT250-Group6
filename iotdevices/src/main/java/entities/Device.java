@@ -3,7 +3,6 @@ package entities;
 import helpers.Status;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
@@ -125,5 +124,9 @@ public class Device implements  Serializable {
 
     public void setFeedback(List<Feedback> feedback) {
         this.feedback = feedback;
+    }
+
+    public void setLabels(List<Label> labels) {
+        this.labels = labels;
     }
 }
