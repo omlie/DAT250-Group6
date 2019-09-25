@@ -33,6 +33,12 @@ public class UserController implements Serializable {
     }
 
     public String saveUser() {
+        List<User> users = this.userDao.getAllUsers();
+        for(User u : users){
+            if(u.getUserName().equals(this.user.getUserName())){
+                return "users";
+            }
+        }
         this.userDao.persist(this.user);
         return "index";
     }
