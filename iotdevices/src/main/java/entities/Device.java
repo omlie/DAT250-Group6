@@ -3,7 +3,6 @@ package entities;
 import helpers.Status;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
@@ -46,7 +45,24 @@ public class Device implements  Serializable {
     @JoinColumn(name="device_id")
     private List<Feedback> feedback;
 
+    @JsonbTransient
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "device_labels",
+            joinColumns = @JoinColumn(name = "device_id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id")
+    )
+    private List<Label> labels;
+
     public Device() {
+    }
+
+    public List<Label> getLabels() {
+        return labels;
+    }
+
+    public void addLabel(Label label){
+        labels.add(label);
     }
 
     public int getId() {
@@ -108,5 +124,9 @@ public class Device implements  Serializable {
 
     public void setFeedback(List<Feedback> feedback) {
         this.feedback = feedback;
+    }
+
+    public void setLabels(List<Label> labels) {
+        this.labels = labels;
     }
 }

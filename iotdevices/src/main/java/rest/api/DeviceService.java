@@ -2,6 +2,7 @@ package rest.api;
 
 import entities.Device;
 import entities.User;
+import entities.Label;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -72,5 +73,29 @@ public class DeviceService extends Application {
         device.addSubscriber(user);
         em.persist(device);
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("search/{label}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDevicesByLabel(@PathParam("label") String label){
+        TypedQuery<Device> query = em.createNamedQuery(Label.FIND_BY_NAME, Device.class);
+        query.setParameter("name", label);
+        List<Device> devices = query.getResultList();
+        if (devices == null)
+            throw new NotFoundException();
+        return Response.ok(devices).build();
+    }
+
+    @GET
+    @Path("search/id/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDevices(@PathParam("id") String label){
+        int idInt = Integer.parseInt(label);
+        Label foundLabel = em.find(Label.class, idInt);
+        List<Device> devices = foundLabel.getDevices();
+        if(devices == null)
+            throw new NotFoundException();
+        return Response.ok(devices).build();
     }
 }
