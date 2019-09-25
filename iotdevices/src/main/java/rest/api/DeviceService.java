@@ -1,9 +1,11 @@
 package rest.api;
 
+import ejb.DeviceDao;
 import entities.Device;
 import entities.User;
 import entities.Label;
 
+import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -20,12 +22,13 @@ public class DeviceService extends Application {
     @PersistenceContext(unitName = "IOTDevices")
     private EntityManager em;
 
+    @EJB
+    private DeviceDao deviceDao;
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDevices() {
-        TypedQuery<Device> query = em.createNamedQuery(Device.FIND_ALL, Device.class);
-        List<Device> devices = query.getResultList();
-        return Response.ok(devices).build();
+        return Response.ok(deviceDao.getAllDevices()).build();
     }
 
     @GET
@@ -33,10 +36,7 @@ public class DeviceService extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDevice(@PathParam("id") String id) {
         int idInt = Integer.parseInt(id);
-        Device device = em.find(Device.class, idInt);
-        if (device == null)
-            throw new NotFoundException();
-        return Response.ok(device).build();
+        return Response.ok(deviceDao.getDeviceById(idInt)).build();
     }
 
     @GET
@@ -44,10 +44,7 @@ public class DeviceService extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSubscribers(@PathParam("id") String id) {
         int idInt = Integer.parseInt(id);
-        Device device = em.find(Device.class, idInt);
-        if (device == null)
-            throw new NotFoundException();
-        return Response.ok(device.getSubscribers()).build();
+        return Response.ok(deviceDao.getSubscribers(idInt)).build();
     }
 
     @GET
@@ -55,23 +52,15 @@ public class DeviceService extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFeedBack(@PathParam("id") String id) {
         int idInt = Integer.parseInt(id);
-        Device device = em.find(Device.class, idInt);
-        if (device == null)
-            throw new NotFoundException();
-        return Response.ok(device.getFeedback()).build();
+        return Response.ok(deviceDao.getFeedback(idInt)).build();
     }
 
     @POST
     @Transactional
     @Path("{id}")
-    public Response getSubscribers(@HeaderParam("userId") int userId, @PathParam("id") String deviceId) {
+    public Response addSubscriber(@HeaderParam("userId") int userId, @PathParam("id") String deviceId) {
         int idInt = Integer.parseInt(deviceId);
-        Device device = em.find(Device.class, idInt);
-        User user = em.find(User.class, userId);
-        if (device == null || user == null)
-            throw new NotFoundException();
-        device.addSubscriber(user);
-        em.persist(device);
+        deviceDao.addSubscriber(idInt, userId);
         return Response.ok().build();
     }
 
@@ -79,12 +68,7 @@ public class DeviceService extends Application {
     @Path("search/{label}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDevicesByLabel(@PathParam("label") String label){
-        TypedQuery<Device> query = em.createNamedQuery(Label.FIND_BY_NAME, Device.class);
-        query.setParameter("name", label);
-        List<Device> devices = query.getResultList();
-        if (devices == null)
-            throw new NotFoundException();
-        return Response.ok(devices).build();
+        return Response.ok(deviceDao.filterDevicesByLabel(label)).build();
     }
 
     @GET
@@ -92,10 +76,6 @@ public class DeviceService extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDevices(@PathParam("id") String label){
         int idInt = Integer.parseInt(label);
-        Label foundLabel = em.find(Label.class, idInt);
-        List<Device> devices = foundLabel.getDevices();
-        if(devices == null)
-            throw new NotFoundException();
-        return Response.ok(devices).build();
+        return Response.ok(deviceDao.filterDevicesByLabelId(idInt)).build();
     }
 }
