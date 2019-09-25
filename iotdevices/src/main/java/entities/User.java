@@ -21,9 +21,10 @@ public class User implements Serializable {
             allocationSize = 1,
             initialValue = 1)
     @Id
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="yourTableGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "yourTableGenerator")
     private int id;
 
+    @Column(unique = true)
     private String userName;
     private String firstName;
     private String lastName;
