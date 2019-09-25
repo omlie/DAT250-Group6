@@ -1,5 +1,7 @@
 package entities;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,12 +21,16 @@ public class User implements Serializable {
             allocationSize = 1,
             initialValue = 1)
     @Id
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="yourTableGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "yourTableGenerator")
     private int id;
 
+    @Column(unique = true)
     private String userName;
     private String firstName;
     private String lastName;
+
+    //@JsonbTransient
+    private String password;
 
     @JsonbTransient
     @OneToMany
@@ -98,4 +104,18 @@ public class User implements Serializable {
     public void setFeedback(List<Feedback> feedback) {
         this.feedback = feedback;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean checkPassword(String password){
+        return BCrypt.checkpw(password, this.password);
+    }
+
+    public void setPassword(String password) {
+        password = BCrypt.hashpw(password, BCrypt.gensalt());
+        this.password = password;
+    }
+
 }
