@@ -4,7 +4,8 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
 http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
     <persistence-unit name="IOTDevices" transaction-type="JTA">
-        <jta-data-source>java:app/jdbc/IOTDevices</jta-data-source>
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>java:app/db2019_g06</jta-data-source>
         <class>entities.User</class>
         <class>entities.Feedback</class>
         <class>entities.Device</class>
