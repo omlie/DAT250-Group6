@@ -52,10 +52,10 @@ public class DeviceDao {
     public Subscription getSubscriptionInfo(int deviceId, int subscriptionId) {
         Device device = getDeviceById(deviceId);
         Set<Subscription> subscribers = device.getSubscriptions();
-        for (Iterator<Subscription> it = subscribers.iterator(); it.hasNext(); ) {
-            Subscription s = it.next();
-            if (s.getId() == subscriptionId)
-                return s;
+
+        for(Subscription aSubscription : subscribers) {
+            if (aSubscription.getId() == subscriptionId)
+                return aSubscription;
         }
         throw new NotFoundException();
     }
