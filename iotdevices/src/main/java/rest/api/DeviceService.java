@@ -13,9 +13,6 @@ import javax.ws.rs.core.Response;
 @Path("/devices")
 public class DeviceService extends Application {
 
-    @PersistenceContext(unitName = "IOTDevices")
-    private EntityManager em;
-
     @EJB
     private DeviceDao deviceDao;
 
