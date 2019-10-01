@@ -5,12 +5,14 @@ import org.mindrot.jbcrypt.BCrypt;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
-@Table(name="users")
-@NamedQuery(name="User.findAll", query="SELECT u FROM User u")
+@Table(name = "users")
+@NamedQuery(name = "User.findAll", query = "SELECT u FROM User u")
 public class User implements Serializable {
     public static final String FIND_ALL = "User.findAll";
     private static final long serialVersionUID = 1L;
@@ -29,7 +31,7 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
 
-    //@JsonbTransient
+    @JsonbTransient
     private String password;
 
     @JsonbTransient
@@ -38,13 +40,13 @@ public class User implements Serializable {
     private List<Device> ownedDevices;
 
     @JsonbTransient
-    @ManyToMany(mappedBy = "subscribers")
-    private List <Device> subscribedDevices;
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private List<Feedback> feedback;
 
     @JsonbTransient
-    @OneToMany
-    @JoinColumn(name="user_id")
-    private List<Feedback> feedback;
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
+    private Set<Subscription> subscriptions = new HashSet<>();
 
     public User() {
     }
@@ -89,14 +91,6 @@ public class User implements Serializable {
         this.ownedDevices = ownedDevices;
     }
 
-    public List<Device> getSubscribedDevices() {
-        return subscribedDevices;
-    }
-
-    public void setSubscribedDevices(List<Device> subscribedDevices) {
-        this.subscribedDevices = subscribedDevices;
-    }
-
     public List<Feedback> getFeedback() {
         return feedback;
     }
@@ -109,13 +103,32 @@ public class User implements Serializable {
         return password;
     }
 
-    public boolean checkPassword(String password){
-        return BCrypt.checkpw(password, this.password);
-    }
-
     public void setPassword(String password) {
         password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.password = password;
     }
 
+    public boolean checkPassword(String password) {
+        return BCrypt.checkpw(password, this.password);
+    }
+
+    public Set<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(Set<Subscription> subscriptions) {
+        this.subscriptions = subscriptions;
+    }
+
+    public void addSubscriber(Device device) {
+        Subscription newSubscription = new Subscription(device, this);
+        this.subscriptions.add(newSubscription);
+    }
+
+    public List<Device> getSubscribedDevices() {
+        return subscriptions
+                .stream()
+                .map(Subscription::getDevice)
+                .collect(Collectors.toList());
+    }
 }

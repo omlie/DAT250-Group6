@@ -1,7 +1,8 @@
 package ejb;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -10,14 +11,11 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
-import entities.Device;
-import entities.Feedback;
-import entities.Label;
-import entities.User;
+import entities.*;
 
 @Stateless
 public class DeviceDao {
-    @PersistenceContext(unitName="IOTDevices")
+    @PersistenceContext(unitName = "IOTDevices")
     private EntityManager em;
 
     public void persist(Device device) {
@@ -41,7 +39,13 @@ public class DeviceDao {
         Device device = em.find(Device.class, deviceId);
         if (device == null)
             throw new NotFoundException();
-        return device.getSubscribers();
+
+        Set<Subscription> subscriptions = device.getSubscriptions();
+
+        return subscriptions
+                .stream()
+                .map(Subscription::getUser)
+                .collect(Collectors.toList());
     }
 
     public List<Feedback> getFeedback(int deviceId) {
@@ -51,13 +55,20 @@ public class DeviceDao {
         return device.getFeedback();
     }
 
-    public void addSubscriber(int deviceId, int userId){
+
+    public void addSubscriber(int deviceId, int userId) {
         Device device = em.find(Device.class, deviceId);
         User user = em.find(User.class, userId);
         if (device == null || user == null)
             throw new NotFoundException();
+
+        // Create subscription
+        Subscription subscription = new Subscription();
+        subscription.setDevice(device);
+        subscription.setUser(user);
+
         device.addSubscriber(user);
-        em.persist(device);
+        persist(device);
     }
 
     public List<Device> filterDevicesByLabel(String label) {
@@ -72,7 +83,7 @@ public class DeviceDao {
     public List<Device> filterDevicesByLabelId(int labelId) {
         Label foundLabel = em.find(Label.class, labelId);
         List<Device> devices = foundLabel.getDevices();
-        if(devices == null)
+        if (devices == null)
             throw new NotFoundException();
         return devices;
     }
