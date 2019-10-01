@@ -30,7 +30,7 @@ public class Subscription {
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
-    private boolean isApprovedSubscription;
+    private boolean isApprovedSubscription = false;
 
     public Subscription() {
     }
@@ -38,7 +38,6 @@ public class Subscription {
     public Subscription(Device device, User user) {
         this.device = device;
         this.user = user;
-        this.isApprovedSubscription = false;
     }
 
     public Device getDevice() {
@@ -63,5 +62,9 @@ public class Subscription {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isApprovedSubscription() {
+        return isApprovedSubscription;
     }
 }

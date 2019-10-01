@@ -43,7 +43,8 @@ public class User implements Serializable {
     @JoinColumn(name = "user_id")
     private List<Feedback> feedback;
 
-    @OneToMany(mappedBy = "user")
+    @JsonbTransient
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
     private Set<Subscription> subscriptions = new HashSet<>();
 
     public User() {

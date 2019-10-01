@@ -47,7 +47,8 @@ public class Device implements Serializable {
     )
     private List<Label> labels;
 
-    @OneToMany(mappedBy = "device")
+    @JsonbTransient
+    @OneToMany(mappedBy = "device", cascade = {CascadeType.ALL})
     private Set<Subscription> subscriptions = new HashSet<>();
 
 
@@ -85,7 +86,8 @@ public class Device implements Serializable {
     public void addSubscriber(User user) {
         Subscription newSubscription = new Subscription(this, user);
         // user.getSubscriptions().add(newSubscription);
-        this.subscriptions.add(newSubscription);
+        subscriptions.add(newSubscription);
+        user.getSubscriptions().add(newSubscription);
     }
 
     public String getDeviceImg() {
