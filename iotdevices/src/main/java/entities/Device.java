@@ -3,14 +3,16 @@ package entities;
 import helpers.Status;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 
 @Entity
-@Table(name="devices")
-@NamedQuery(name="Device.findAll", query="SELECT d FROM Device d")
-public class Device implements  Serializable {
+@Table(name = "devices")
+@NamedQuery(name = "Device.findAll", query = "SELECT d FROM Device d")
+public class Device implements Serializable {
     public static final String FIND_ALL = "Device.findAll";
     private static final long serialVersionUID = 1L;
     //Create elements ids automatically, incremented 1 by 1
@@ -19,7 +21,7 @@ public class Device implements  Serializable {
             allocationSize = 1,
             initialValue = 1)
     @Id
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="yourTableGenerator")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "yourTableGenerator")
     private int id;
 
     private String deviceName;
@@ -32,17 +34,8 @@ public class Device implements  Serializable {
     private Status status;
 
     @JsonbTransient
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "device_subscribers",
-            joinColumns = {@JoinColumn(name = "device_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")}
-    )
-    private List<User> subscribers;
-
-    @JsonbTransient
     @OneToMany
-    @JoinColumn(name="device_id")
+    @JoinColumn(name = "device_id")
     private List<Feedback> feedback;
 
     @JsonbTransient
@@ -54,6 +47,10 @@ public class Device implements  Serializable {
     )
     private List<Label> labels;
 
+    @OneToMany(mappedBy = "device")
+    private Set<Subscription> subscriptions = new HashSet<>();
+
+
     public Device() {
     }
 
@@ -61,7 +58,11 @@ public class Device implements  Serializable {
         return labels;
     }
 
-    public void addLabel(Label label){
+    public void setLabels(List<Label> labels) {
+        this.labels = labels;
+    }
+
+    public void addLabel(Label label) {
         labels.add(label);
     }
 
@@ -81,17 +82,10 @@ public class Device implements  Serializable {
         this.deviceName = name;
     }
 
-    public List<User> getSubscribers() {
-        return subscribers;
-    }
-
-    public void setSubscribers(List<User> subscribers) {
-        this.subscribers = subscribers;
-    }
-
     public void addSubscriber(User user) {
-        subscribers.add(user);
-        user.getSubscribedDevices().add(this);
+        Subscription newSubscription = new Subscription(this, user);
+        // user.getSubscriptions().add(newSubscription);
+        this.subscriptions.add(newSubscription);
     }
 
     public String getDeviceImg() {
@@ -126,7 +120,11 @@ public class Device implements  Serializable {
         this.feedback = feedback;
     }
 
-    public void setLabels(List<Label> labels) {
-        this.labels = labels;
+    public Set<Subscription> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(Set<Subscription> subscriptions) {
+        this.subscriptions = subscriptions;
     }
 }

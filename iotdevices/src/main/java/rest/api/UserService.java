@@ -52,6 +52,6 @@ public class UserService extends Application {
         User user = em.find(User.class, idInt);
         if (user == null)
             throw new NotFoundException();
-        return Response.ok(user.getSubscribedDevices()).build();
+        return Response.ok(user).build();
     }
 }
