@@ -1,5 +1,6 @@
 package ejb;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,6 +47,17 @@ public class DeviceDao {
                 .stream()
                 .map(Subscription::getUser)
                 .collect(Collectors.toList());
+    }
+
+    public Subscription getSubscriptionInfo(int deviceId, int subscriptionId) {
+        Device device = getDeviceById(deviceId);
+        Set<Subscription> subscribers = device.getSubscriptions();
+        for (Iterator<Subscription> it = subscribers.iterator(); it.hasNext(); ) {
+            Subscription s = it.next();
+            if (s.getId() == subscriptionId)
+                return s;
+        }
+        throw new NotFoundException();
     }
 
     public List<Feedback> getFeedback(int deviceId) {

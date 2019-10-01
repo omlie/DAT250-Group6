@@ -22,7 +22,7 @@ public class UserService extends Application {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers() {
-        return Response.ok(userDao.getUsers()).build();
+        return Response.ok(userDao.getAllUsers()).build();
     }
 
     @GET

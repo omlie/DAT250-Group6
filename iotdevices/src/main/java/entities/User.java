@@ -124,11 +124,4 @@ public class User implements Serializable {
         Subscription newSubscription = new Subscription(device, this);
         this.subscriptions.add(newSubscription);
     }
-
-    public List<Device> getSubscribedDevices() {
-        return subscriptions
-                .stream()
-                .map(Subscription::getDevice)
-                .collect(Collectors.toList());
-    }
 }
