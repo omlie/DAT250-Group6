@@ -12,7 +12,6 @@ public class Subscription {
 
 
     // @EmbeddedId
-    // private DeviceSubscriberID deviceSubscriberID;
 
     @TableGenerator(
             name = "yourTableGenerator",

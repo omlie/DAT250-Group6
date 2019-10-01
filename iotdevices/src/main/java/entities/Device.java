@@ -85,7 +85,6 @@ public class Device implements Serializable {
 
     public void addSubscriber(User user) {
         Subscription newSubscription = new Subscription(this, user);
-        // user.getSubscriptions().add(newSubscription);
         subscriptions.add(newSubscription);
         user.getSubscriptions().add(newSubscription);
     }

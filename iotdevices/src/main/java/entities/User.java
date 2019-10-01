@@ -30,7 +30,7 @@ public class User implements Serializable {
     private String firstName;
     private String lastName;
 
-    //@JsonbTransient
+    @JsonbTransient
     private String password;
 
     @JsonbTransient
@@ -121,7 +121,6 @@ public class User implements Serializable {
 
     public void addSubscriber(Device device) {
         Subscription newSubscription = new Subscription(device, this);
-        // user.getSubscriptions().add(newSubscription);
         this.subscriptions.add(newSubscription);
     }
 }

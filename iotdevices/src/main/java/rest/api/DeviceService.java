@@ -1,20 +1,14 @@
 package rest.api;
 
 import ejb.DeviceDao;
-import entities.Device;
-import entities.User;
-import entities.Label;
-
 import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Path("/devices")
 public class DeviceService extends Application {

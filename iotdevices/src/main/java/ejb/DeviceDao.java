@@ -55,14 +55,6 @@ public class DeviceDao {
         return device.getFeedback();
     }
 
-//    public void addSubscriber(int deviceId, int userId) {
-//        Device device = em.find(Device.class, deviceId);
-//        User user = em.find(User.class, userId);
-//        if (device == null || user == null)
-//            throw new NotFoundException();
-//        device.addSubscriber(user);
-//        em.persist(device);
-//    }
 
     public void addSubscriber(int deviceId, int userId) {
         Device device = em.find(Device.class, deviceId);
