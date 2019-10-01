@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -122,5 +123,12 @@ public class User implements Serializable {
     public void addSubscriber(Device device) {
         Subscription newSubscription = new Subscription(device, this);
         this.subscriptions.add(newSubscription);
+    }
+
+    public List<Device> getSubscribedDevices() {
+        return subscriptions
+                .stream()
+                .map(Subscription::getDevice)
+                .collect(Collectors.toList());
     }
 }

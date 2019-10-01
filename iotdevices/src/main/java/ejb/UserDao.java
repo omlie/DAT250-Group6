@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
 import entities.Device;
@@ -46,5 +47,24 @@ public class UserDao {
         return subscriptions.stream()
                 .map(Subscription::getDevice)
                 .collect(Collectors.toList());
+    }
+
+    public List<User> getUsers() {
+        TypedQuery<User> query = em.createNamedQuery(User.FIND_ALL, User.class);
+        return query.getResultList();
+    }
+
+    public User getUser(int idInt) {
+        User user = em.find(User.class, idInt);
+        if (user == null)
+            throw new NotFoundException();
+        return user;
+    }
+
+    public List<Device> getOwnedDevices(int idInt) {
+        User user = em.find(User.class, idInt);
+        if (user == null)
+            throw new NotFoundException();
+        return user.getOwnedDevices();
     }
 }

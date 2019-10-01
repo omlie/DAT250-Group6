@@ -1,7 +1,9 @@
 package rest.api;
 
+import ejb.UserDao;
 import entities.User;
 
+import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -14,44 +16,35 @@ import java.util.List;
 @Path("/users")
 public class UserService extends Application {
 
-    @PersistenceContext(unitName = "IOTDevices")
-    private EntityManager em;
+    @EJB
+    private UserDao userDao;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers() {
-        TypedQuery<User> query = em.createNamedQuery(User.FIND_ALL, User.class);
-        List<User> users = query.getResultList();
-        return Response.ok(users).build();
+        return Response.ok(userDao.getUsers()).build();
     }
 
     @GET
     @Path("{id}")
     public Response getUser(@PathParam("id") String id) {
         int idInt = Integer.parseInt(id);
-        User user = em.find(User.class, idInt);
-        if (user == null)
-            throw new NotFoundException();
-        return Response.ok(user).build();
+
+        return Response.ok(userDao.getUser(idInt)).build();
     }
 
     @GET
     @Path("{id}/devices")
     public Response getOwnedDevices(@PathParam("id") String id) {
         int idInt = Integer.parseInt(id);
-        User user = em.find(User.class, idInt);
-        if (user == null)
-            throw new NotFoundException();
-        return Response.ok(user.getOwnedDevices()).build();
+
+        return Response.ok(userDao.getOwnedDevices(idInt)).build();
     }
 
     @GET
     @Path("{id}/subscribedDevices")
     public Response getSubscribedDevices(@PathParam("id") String id) {
         int idInt = Integer.parseInt(id);
-        User user = em.find(User.class, idInt);
-        if (user == null)
-            throw new NotFoundException();
-        return Response.ok(user).build();
+        return Response.ok(userDao.getSubscribedDevices(idInt)).build();
     }
 }
