@@ -22,11 +22,11 @@ public class Subscription {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name = "device_id", insertable = false, updatable = false)
+    @JoinColumn(name = "device_id")
     private Device device;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     private boolean isApprovedSubscription = false;
@@ -65,5 +65,9 @@ public class Subscription {
 
     public boolean isApprovedSubscription() {
         return isApprovedSubscription;
+    }
+
+    public void setApprovedSubscription(boolean approvedSubscription) {
+        isApprovedSubscription = approvedSubscription;
     }
 }

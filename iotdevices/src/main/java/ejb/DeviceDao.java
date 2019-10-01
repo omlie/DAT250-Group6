@@ -62,6 +62,11 @@ public class DeviceDao {
         if (device == null || user == null)
             throw new NotFoundException();
 
+        // Create subscription
+        Subscription subscription = new Subscription();
+        subscription.setDevice(device);
+        subscription.setUser(user);
+
         device.addSubscriber(user);
         persist(device);
     }
