@@ -15,6 +15,7 @@ import javax.ws.rs.NotFoundException;
 import entities.Device;
 import entities.Subscription;
 import entities.User;
+import org.mindrot.jbcrypt.BCrypt;
 
 @Stateless
 public class UserDao {
@@ -24,13 +25,13 @@ public class UserDao {
 
     // Stores a new tweet:
     public void persist(User user) {
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         em.persist(user);
     }
 
     // Retrieves all the tweets:
     @SuppressWarnings("unchecked")
     public List<User> getAllUsers() {
-
         Query query = em.createQuery("SELECT u FROM User u");
         List<User> users = new ArrayList<User>();
         users = query.getResultList();

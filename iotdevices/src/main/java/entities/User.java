@@ -1,14 +1,11 @@
 package entities;
 
-import org.mindrot.jbcrypt.BCrypt;
-
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -104,12 +101,7 @@ public class User implements Serializable {
     }
 
     public void setPassword(String password) {
-        password = BCrypt.hashpw(password, BCrypt.gensalt());
         this.password = password;
-    }
-
-    public boolean checkPassword(String password) {
-        return BCrypt.checkpw(password, this.password);
     }
 
     public Set<Subscription> getSubscriptions() {
