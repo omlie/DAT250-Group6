@@ -2,25 +2,18 @@ package ejb;
 
 import entities.User;
 
-import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import javax.ws.rs.NotFoundException;
-import javax.xml.ws.RequestWrapper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Named(value = "userController")
-@RequestScoped
+@SessionScoped
 public class UserController implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     // Injected DAO EJB:
