@@ -36,6 +36,13 @@ public class UserController implements Serializable {
         return reverseDeviceList;
     }
 
+    public String userLogin(){
+        if(userDao.checkPassword(user.getUserName(), user.getPassword()))
+            //TODO: Redirect to userpage
+            return "users";
+        return "index";
+    }
+
     public String saveUser() {
         List<User> users = this.userDao.getAllUsers();
         for(User u : users){

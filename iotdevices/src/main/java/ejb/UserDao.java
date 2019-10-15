@@ -62,6 +62,16 @@ public class UserDao {
         return user;
     }
 
+
+    public boolean checkPassword(String username, String password) {
+        TypedQuery<User> q = em.createQuery("SELECT user from User user WHERE user.userName=?1", User.class);
+        q.setParameter(1, username);
+        List<User> users = q.getResultList();
+        if(users.isEmpty())
+            return false;
+        return BCrypt.checkpw(password, users.get(0).getPassword());
+    }
+
     public List<Device> getOwnedDevices(int idInt) {
         User user = em.find(User.class, idInt);
         if (user == null)
