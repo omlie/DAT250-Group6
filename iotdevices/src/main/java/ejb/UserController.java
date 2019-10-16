@@ -3,7 +3,7 @@ package ejb;
 import entities.User;
 
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,17 +11,14 @@ import java.util.Collections;
 import java.util.List;
 
 @Named(value = "userController")
-@RequestScoped
+@SessionScoped
 public class UserController implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     // Injected DAO EJB:
     @EJB
-    private ejb.UserDao userDao;
+    private UserDao userDao;
 
     private User user;
 
@@ -32,6 +29,12 @@ public class UserController implements Serializable {
         return reverseDeviceList;
     }
 
+    public String userLogin(){
+        if(userDao.checkPassword(user.getUserName(), user.getPassword()))
+            return "mypage";
+        return "index";
+    }
+
     public String saveUser() {
         List<User> users = this.userDao.getAllUsers();
         for(User u : users){
@@ -40,7 +43,7 @@ public class UserController implements Serializable {
             }
         }
         this.userDao.persist(this.user);
-        return "index";
+        return "login";
     }
 
     public User getUser() {

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xml:lang="en" lang="en"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>My info</title>
+</h:head>
+
+<h:body>
+<div class="div-container-tweets">
+    <div id="left">
+        <h1>User information</h1>
+        <div id="details">
+            <h2>Details</h2>
+            <b>First name: </b> <h:outputText value="#{userController.getUser().firstName}"/> <br/>
+            <b>Last name: </b> <h:outputText value="#{userController.getUser().lastName}"/> <br/>
+            <b> Number of devices: </b> <h:outputText value="#{userController.getUser().ownedDevices.size()}"/>
+        </div>
+    </div>
+    <div id="right">
+        <h2>Owned devices</h2>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>API</th>
+                <th>Image</th>
+            </tr>
+            </thead>
+            <ui:repeat value="#{userController.getUser().getOwnedDevices()}" var="dev">
+                <tr>
+                    <td>
+                        <h:outputText value="#{dev.id}" />
+                    </td>
+                    <td>
+                        <h:outputText value="#{dev.deviceName}" />
+                    </td>
+                    <td>
+                        <h:outputText value="#{dev.status}" />
+                    </td>
+                    <td>
+                        <h:outputText value="#{dev.apiUrl}" />
+                    </td>
+                    <td>
+                        <h:outputText value="#{dev.deviceImg}" />
+                    </td>
+                </tr>
+            </ui:repeat>
+        </table>
+    </div>
+</div>
+</h:body>
+
+</html>

@@ -15,6 +15,7 @@ import javax.ws.rs.NotFoundException;
 import entities.Device;
 import entities.Subscription;
 import entities.User;
+import org.mindrot.jbcrypt.BCrypt;
 
 @Stateless
 public class UserDao {
@@ -24,13 +25,13 @@ public class UserDao {
 
     // Stores a new tweet:
     public void persist(User user) {
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         em.persist(user);
     }
 
     // Retrieves all the tweets:
     @SuppressWarnings("unchecked")
     public List<User> getAllUsers() {
-
         Query query = em.createQuery("SELECT u FROM User u");
         List<User> users = new ArrayList<User>();
         users = query.getResultList();
@@ -59,6 +60,16 @@ public class UserDao {
         if (user == null)
             throw new NotFoundException();
         return user;
+    }
+
+
+    public boolean checkPassword(String username, String password) {
+        TypedQuery<User> q = em.createQuery("SELECT user from User user WHERE user.userName=?1", User.class);
+        q.setParameter(1, username);
+        List<User> users = q.getResultList();
+        if(users.isEmpty())
+            return false;
+        return BCrypt.checkpw(password, users.get(0).getPassword());
     }
 
     public List<Device> getOwnedDevices(int idInt) {
