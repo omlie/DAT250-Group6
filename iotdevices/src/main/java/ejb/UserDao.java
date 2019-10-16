@@ -50,11 +50,6 @@ public class UserDao {
                 .collect(Collectors.toList());
     }
 
-    public List<User> getUsers() {
-        TypedQuery<User> query = em.createNamedQuery(User.FIND_ALL, User.class);
-        return query.getResultList();
-    }
-
     public User getUser(int idInt) {
         User user = em.find(User.class, idInt);
         if (user == null)
