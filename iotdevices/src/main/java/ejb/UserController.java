@@ -31,8 +31,7 @@ public class UserController implements Serializable {
 
     public String userLogin(){
         if(userDao.checkPassword(user.getUserName(), user.getPassword()))
-            //TODO: Redirect to userpage
-            return "users";
+            return "mypage";
         return "index";
     }
 
@@ -44,7 +43,7 @@ public class UserController implements Serializable {
             }
         }
         this.userDao.persist(this.user);
-        return "index";
+        return "login";
     }
 
     public User getUser() {
