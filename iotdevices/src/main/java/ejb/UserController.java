@@ -33,20 +33,27 @@ public class UserController implements Serializable {
 
 
     public String userLogin() {
-        if (userDao.checkPassword(user.getUserName(), user.getPassword()))
+        if (userDao.checkPassword(user.getUserName(), user.getPassword())) {
+            user = userDao.getUser(user.getUserName());
             return "mypage";
+        }
         return "index";
     }
 
     public String deleteOwned(int deviceId){
+        Device remove = null;
         for(Device d : user.getOwnedDevices()){
             if(d.getId() == deviceId){
-                user.getOwnedDevices().remove(d);
+                remove = d;
+                break;
             }
         }
+        // Concurrent modification exception if I do it inside the if.
+        if(remove != null)
+            user.getOwnedDevices().remove(remove);
+
         userDao.persist(user);
-        //TODO: Change to mypage when mypage pr merged
-        return "devices";
+        return "mypage";
     }
 
     public String saveUser() {

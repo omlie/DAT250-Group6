@@ -69,6 +69,7 @@ public class DeviceDao {
     public void addOwner(User user, Device device){
         user.addOwnedDevice(device);
         persist(device);
+        em.merge(user);
     }
 
 

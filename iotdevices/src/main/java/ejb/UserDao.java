@@ -57,6 +57,16 @@ public class UserDao {
         return user;
     }
 
+    public User getUser(String username) {
+        TypedQuery<User> q = em.createQuery("select user from User user where user.userName=?1", User.class);
+        q.setParameter(1, username);
+        List<User> users = q.getResultList();
+        if (users.isEmpty())
+            throw new NotFoundException();
+        return users.get(0);
+    }
+
+
 
     public boolean checkPassword(String username, String password) {
         TypedQuery<User> q = em.createQuery("SELECT user from User user WHERE user.userName=?1", User.class);
