@@ -29,6 +29,10 @@ public class UserDao {
         em.persist(user);
     }
 
+    public void merge(User user) {
+        em.merge(user);
+    }
+
     // Retrieves all the tweets:
     @SuppressWarnings("unchecked")
     public List<User> getAllUsers() {
@@ -48,6 +52,15 @@ public class UserDao {
         return subscriptions.stream()
                 .map(Subscription::getDevice)
                 .collect(Collectors.toList());
+    }
+
+    public void deleteOwned(int userid, int deviceId) {
+        User user = em.find(User.class, userid);
+        Device d = em.find(Device.class, deviceId);
+        user.getOwnedDevices().remove(d);
+        em.createQuery("DELETE FROM Device d WHERE d.id=?1")
+                .setParameter(1, deviceId).executeUpdate();
+        merge(user);
     }
 
     public User getUser(int idInt) {

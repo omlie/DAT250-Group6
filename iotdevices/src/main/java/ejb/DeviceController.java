@@ -46,11 +46,11 @@ public class DeviceController implements Serializable {
         return device;
     }
 
-    public String addOwnedDevice(User user){
-        if(device == null || user == null){
+    public String addOwnedDevice(int userid){
+        if(device == null){
             return "index";
         }
-        deviceDao.addOwner(user, device);
+        deviceDao.addOwner(userid, device);
         return "mypage";
     }
 }

@@ -72,7 +72,7 @@
                     <h:inputText value="#{deviceController.getDevice().deviceName}"/>
                 </div>
                 <div>
-                    <h:commandButton action="#{deviceController.addOwnedDevice(userController.getUser())}" value="Add device"/>
+                    <h:commandButton action="#{deviceController.addOwnedDevice(userController.getUser().getId())}" value="Add device"/>
                 </div>
             </h:form>
         </div>

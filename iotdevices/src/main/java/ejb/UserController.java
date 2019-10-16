@@ -41,18 +41,7 @@ public class UserController implements Serializable {
     }
 
     public String deleteOwned(int deviceId){
-        Device remove = null;
-        for(Device d : user.getOwnedDevices()){
-            if(d.getId() == deviceId){
-                remove = d;
-                break;
-            }
-        }
-        // Concurrent modification exception if I do it inside the if.
-        if(remove != null)
-            user.getOwnedDevices().remove(remove);
-
-        userDao.persist(user);
+        userDao.deleteOwned(user.getId(), deviceId);
         return "mypage";
     }
 

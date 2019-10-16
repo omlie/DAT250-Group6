@@ -66,7 +66,8 @@ public class DeviceDao {
         return device.getFeedback();
     }
 
-    public void addOwner(User user, Device device){
+    public void addOwner(int userid, Device device){
+        User user = em.find(User.class, userid);
         user.addOwnedDevice(device);
         persist(device);
         em.merge(user);
