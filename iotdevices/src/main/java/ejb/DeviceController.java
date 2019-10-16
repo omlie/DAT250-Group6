@@ -10,6 +10,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 import entities.Device;
+import entities.User;
 
 @Named(value = "deviceController")
 @RequestScoped
@@ -43,7 +44,13 @@ public class DeviceController implements Serializable {
             device = new Device();
         }
         return device;
-
     }
 
+    public String addOwnedDevice(User user){
+        if(device == null || user == null){
+            return "index";
+        }
+        deviceDao.addOwner(user, device);
+        return "mypage";
+    }
 }

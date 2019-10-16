@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
 @Entity
 @Table(name = "devices")

@@ -66,6 +66,11 @@ public class DeviceDao {
         return device.getFeedback();
     }
 
+    public void addOwner(User user, Device device){
+        user.addOwnedDevice(device);
+        persist(device);
+    }
+
 
     public void addSubscriber(int deviceId, int userId) {
         Device device = em.find(Device.class, deviceId);

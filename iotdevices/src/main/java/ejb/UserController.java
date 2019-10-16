@@ -1,5 +1,7 @@
 package ejb;
 
+import entities.Device;
+import entities.Subscription;
 import entities.User;
 
 import javax.ejb.EJB;
@@ -29,10 +31,22 @@ public class UserController implements Serializable {
         return reverseDeviceList;
     }
 
-    public String userLogin(){
-        if(userDao.checkPassword(user.getUserName(), user.getPassword()))
+
+    public String userLogin() {
+        if (userDao.checkPassword(user.getUserName(), user.getPassword()))
             return "mypage";
         return "index";
+    }
+
+    public String deleteOwned(int deviceId){
+        for(Device d : user.getOwnedDevices()){
+            if(d.getId() == deviceId){
+                user.getOwnedDevices().remove(d);
+            }
+        }
+        userDao.persist(user);
+        //TODO: Change to mypage when mypage pr merged
+        return "devices";
     }
 
     public String saveUser() {
@@ -43,7 +57,7 @@ public class UserController implements Serializable {
             }
         }
         this.userDao.persist(this.user);
-        return "login";
+        return "mypage";
     }
 
     public User getUser() {
@@ -51,7 +65,6 @@ public class UserController implements Serializable {
             user = new User();
         }
         return user;
-
     }
 
 }
