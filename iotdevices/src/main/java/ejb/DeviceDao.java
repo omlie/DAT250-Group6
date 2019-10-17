@@ -1,5 +1,6 @@
 package ejb;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
 import entities.*;
+import helpers.Status;
 
 @Stateless
 public class DeviceDao {
@@ -93,9 +95,23 @@ public class DeviceDao {
         TypedQuery<Device> query = em.createNamedQuery(Label.FIND_BY_NAME, Device.class);
         query.setParameter("name", label);
         List<Device> devices = query.getResultList();
+
         if (devices == null)
             throw new NotFoundException();
-        return devices;
+
+        // Only display online devices
+        return getOnlineDevices(devices);
+    }
+
+    private List<Device> getOnlineDevices(List<Device> devices){
+        List<Device> online = new ArrayList<>();
+        for(Device d : devices){
+            if(d == null || d.getStatus() == null)
+                continue;
+            if(d.getStatus() == Status.ONLINE)
+                online.add(d);
+        };
+        return online;
     }
 
     public List<Device> filterDevicesByLabelId(int labelId) {
@@ -103,6 +119,6 @@ public class DeviceDao {
         List<Device> devices = foundLabel.getDevices();
         if (devices == null)
             throw new NotFoundException();
-        return devices;
+        return getOnlineDevices(devices);
     }
 }
