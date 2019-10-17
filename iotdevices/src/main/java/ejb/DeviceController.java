@@ -54,12 +54,17 @@ public class DeviceController implements Serializable {
         if(device == null){
             return "index";
         }
+
+        // Add and reset labels
         if(l1 != null)
             device.addLabel(l1);
         if(l2 != null)
             device.addLabel(l2);
         if(l3 != null)
             device.addLabel(l3);
+        l1 = null;
+        l2 = null;
+        l3 = null;
 
         deviceDao.addOwner(userid, device);
         return "mypage";
