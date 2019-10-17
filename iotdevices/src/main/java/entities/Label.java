@@ -36,11 +36,11 @@ public class Label implements Serializable {
         this.id = id;
     }
 
-    public String getValue() {
+    public String getLabelValue() {
         return labelValue;
     }
 
-    public void setValue(String value) {
+    public void setLabelValue(String value) {
         this.labelValue = value;
     }
 

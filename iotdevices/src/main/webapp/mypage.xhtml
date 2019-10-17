@@ -70,6 +70,25 @@
                 <div>
                     <h:outputLabel value="Device name: "/>
                     <h:inputText value="#{deviceController.getDevice().deviceName}"/>
+                    <br/>
+                    <h:outputLabel value="Device status: "/>
+                    <h:selectOneMenu value="#{deviceController.getDevice().status}">
+                        <f:selectItems value="#{deviceController.getDevice().getStatuses()}"/>
+                    </h:selectOneMenu>
+                    <br/>
+                    <h:outputLabel value="Device image: "/>
+                    <h:inputText value="#{deviceController.getDevice().deviceImg}"/>
+                    <br/>
+                    <h:outputLabel value="Api URL: "/>
+                    <h:inputText value="#{deviceController.getDevice().apiUrl}"/>
+                    <br/>
+                    <h:outputLabel value="Labels (add up to three): "/>
+                    <br/>
+                    <h:inputText value="#{deviceController.getL1().labelValue}"/>
+                    <br/>
+                    <h:inputText value="#{deviceController.getL2().labelValue}"/>
+                    <br/>
+                    <h:inputText value="#{deviceController.getL3().labelValue}"/>
                 </div>
                 <div>
                     <h:commandButton action="#{deviceController.addOwnedDevice(userController.getUser().getId())}" value="Add device"/>
