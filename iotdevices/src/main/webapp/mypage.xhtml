@@ -10,135 +10,91 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <h:head>
-    <title>My info</title>
+    <title>Home</title>
 </h:head>
 
 <h:body>
-    <div class="div-container-tweets">
-        <div id="left">
-            <h1>User information</h1>
-            <div id="details">
-                <h2>Details</h2>
-                <b>First name: </b> <h:outputText value="#{userController.getUser().firstName}"/> <br/>
-                <b>Last name: </b> <h:outputText value="#{userController.getUser().lastName}"/> <br/>
-                <b> Number of devices: </b> <h:outputText value="#{userController.getUser().ownedDevices.size()}"/>
-            </div>
-        </div>
-        <div id="right">
-            <h2>Owned devices</h2>
-            <h:form>
-                <table border="1">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                        <th>API</th>
-                        <th>Image</th>
-                        <th>Delete</th>
-                    </tr>
-                    </thead>
-                    <ui:repeat value="#{userController.getUser().getOwnedDevices()}" var="dev">
+    <ui:composition template="templates/common.xhtml">
+        <ui:define name="content">
+            <div class="container">
+                <div>
+                    <h1>User information</h1>
+                    <div id="details">
+                        <b>First name: </b> <h:outputText value="#{userController.getUser().firstName}"/> <br/>
+                        <b>Last name: </b> <h:outputText value="#{userController.getUser().lastName}"/> <br/>
+                        <b> Number of devices: </b> <h:outputText
+                            value="#{userController.getUser().ownedDevices.size()}"/>
+                    </div>
+                </div>
+                <div class="devices">
+                    <h2>Owned devices</h2>
+                    <table border="1">
+                        <thead>
                         <tr>
-                            <td>
-                                <h:outputText value="#{dev.id}"/>
-                            </td>
-                            <td>
-                                <h:outputText value="#{dev.deviceName}"/>
-                            </td>
-                            <td>
-                                <h:outputText value="#{dev.status}"/>
-                            </td>
-                            <td>
-                                <h:outputText value="#{dev.apiUrl}"/>
-                            </td>
-                            <td>
-                                <h:outputText value="#{dev.deviceImg}"/>
-                            </td>
-                            <td>
-                                <h:commandButton value="delete"
-                                                 action="#{userController.deleteOwned(dev.id)}"/>
-                            </td>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>API</th>
+                            <th>Image</th>
                         </tr>
-                    </ui:repeat>
-                </table>
-            </h:form>
-        </div>
-
-        <h2>Subscribed to devices</h2>
-        <h:form>
-            <table border="1">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Status</th>
-                    <th>API</th>
-                    <th>Image</th>
-                    <th>Delete</th>
-                </tr>
-                </thead>
-
-                <ui:repeat value="#{userController.getUser().getSubscriptions().toArray()}" var="sub">
-                    <tr>
-                        <td>
-                            <h:outputText value="#{sub.device.id}"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{sub.device.deviceName}"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{sub.device.status}"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{sub.device.apiUrl}"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{sub.device.deviceImg}"/>
-                        </td>
-                        <td>
-                            <h:commandButton value="unsubscribe"
-                                             action="#{userController.unsubscribe(sub.device.id)}"/>
-                        </td>
-                    </tr>
-                </ui:repeat>
-            </table>
-        </h:form>
-
-
-        <br/>
-        <div>
-            <h:form>
-                <div>
-                    <h:outputLabel value="Device name: "/>
-                    <h:inputText value="#{userController.getDevice().deviceName}"/>
-                    <br/>
-                    <h:outputLabel value="Device status: "/>
-                    <h:selectOneMenu value="#{userController.getDevice().status}">
-                        <f:selectItems value="#{userController.getDevice().getStatuses()}"/>
-                    </h:selectOneMenu>
-                    <br/>
-                    <h:outputLabel value="Device image: "/>
-                    <h:inputText value="#{userController.getDevice().deviceImg}"/>
-                    <br/>
-                    <h:outputLabel value="Api URL: "/>
-                    <h:inputText value="#{userController.getDevice().apiUrl}"/>
-                    <br/>
-                    <h:outputLabel value="Labels (add up to three): "/>
-                    <br/>
-                    <h:inputText value="#{userController.getL1().labelValue}"/>
-                    <br/>
-                    <h:inputText value="#{userController.getL2().labelValue}"/>
-                    <br/>
-                    <h:inputText value="#{userController.getL3().labelValue}"/>
+                        </thead>
+                        <ui:repeat value="#{userController.getUser().getOwnedDevices()}" var="dev">
+                            <tr>
+                                <td>
+                                    <h:outputText value="#{dev.id}"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{dev.deviceName}"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{dev.status}"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{dev.apiUrl}"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{dev.deviceImg}"/>
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                    </table>
                 </div>
-                <div>
-                    <h:commandButton action="#{userController.addDevice(userController.getDevice())}"
-                                     value="Add device"/>
+                <div class="devices">
+                    <h2>Subscribed devices</h2>
+                    <table border="1">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>API</th>
+                            <th>Image</th>
+                        </tr>
+                        </thead>
+                        <ui:repeat value="#{userController.getUser().getSubscriptions()}" var="dev">
+                            <tr>
+                                <td>
+                                    <h:outputText value="#{dev.id}"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{dev.deviceName}"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{dev.status}"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{dev.apiUrl}"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{dev.deviceImg}"/>
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                    </table>
                 </div>
-            </h:form>
-        </div>
-    </div>
+            </div>
+        </ui:define>
+    </ui:composition>
 </h:body>
 
 </html>

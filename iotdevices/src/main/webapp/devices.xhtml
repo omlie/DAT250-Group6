@@ -15,45 +15,50 @@
 
 <body>
 
-<div class="div-container-tweets">
+<ui:composition template="templates/common.xhtml">
+    <ui:define name="content">
 
-    <div>
-        <table border="1">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Status</th>
-                <th>API</th>
-                <th>Image</th>
-            </tr>
-            </thead>
-            <tbody>
-            <ui:repeat value="#{deviceController.getDevices()}" var="dev">
+        <div class="container">
+            <div>
+                <table border="1">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>API</th>
+                        <th>Image</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <ui:repeat value="#{deviceController.getDevices()}" var="dev">
 
-                <tr>
-                    <td>
-                        <h:outputText value="#{dev.id}" />
-                    </td>
-                    <td>
-                        <h:outputText value="#{dev.deviceName}" />
-                    </td>
-                    <td>
-                        <h:outputText value="#{dev.status}" />
-                    </td>
-                    <td>
-                        <h:outputText value="#{dev.apiUrl}" />
-                    </td>
-                    <td>
-                        <h:outputText value="#{dev.deviceImg}" />
-                    </td>
-                </tr>
+                        <tr>
+                            <td>
+                                <h:outputText value="#{dev.id}"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{dev.deviceName}"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{dev.status}"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{dev.apiUrl}"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{dev.deviceImg}"/>
+                            </td>
+                        </tr>
 
-            </ui:repeat>
-            </tbody>
-        </table>
-    </div>
-</div>
+                    </ui:repeat>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>
 </body>
 
 </html>
