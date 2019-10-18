@@ -43,7 +43,8 @@ public class UserController implements Serializable {
     }
 
     public String addSubscription(int deviceid, int userid){
-        this.user = userDao.addSubscriber(deviceid, userid);
+        userDao.addSubscriber(deviceid, userid);
+        this.user = userDao.getUser(userid);
         return "mypage";
     }
 
@@ -57,7 +58,8 @@ public class UserController implements Serializable {
     }
 
     public String deleteOwned(int deviceId){
-        this.user = userDao.deleteOwned(user.getId(), deviceId);
+        userDao.deleteOwned(user.getId(), deviceId);
+        this.user = userDao.getUser(user.getId());
         return "mypage";
     }
 
