@@ -54,13 +54,14 @@ public class UserDao {
                 .collect(Collectors.toList());
     }
 
-    public void deleteOwned(int userid, int deviceId) {
+    public User deleteOwned(int userid, int deviceId) {
         User user = em.find(User.class, userid);
         Device d = em.find(Device.class, deviceId);
         user.getOwnedDevices().remove(d);
         em.createQuery("DELETE FROM Device d WHERE d.id=?1")
                 .setParameter(1, deviceId).executeUpdate();
         merge(user);
+        return user;
     }
 
     public User getUser(int idInt) {
@@ -95,5 +96,25 @@ public class UserDao {
         if (user == null)
             throw new NotFoundException();
         return user.getOwnedDevices();
+    }
+
+
+    public User unsubscribe(String username, int deviceId) {
+        List<Subscription> q =
+                em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.userName=?2", Subscription.class)
+                .setParameter(1, deviceId)
+                .setParameter(2, username)
+                .getResultList();
+
+        // Id result is empty or more than one, there is something wrong
+        if(q.size() != 1)
+            throw new NotFoundException();
+
+        Subscription s = q.get(0);
+        User u = s.getUser();
+        u.getSubscriptions().remove(s);
+        em.createQuery("DELETE FROM Subscription s WHERE s.id=?1")
+                .setParameter(1, s.getId()).executeUpdate();
+        return u;
     }
 }

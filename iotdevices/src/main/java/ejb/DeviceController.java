@@ -50,6 +50,12 @@ public class DeviceController implements Serializable {
         return device;
     }
 
+    public String addSubscription(int deviceid, int userid){
+        deviceDao.addSubscriber(deviceid, userid);
+        return "mypage";
+    }
+
+
     public String addOwnedDevice(int userid){
         if(device == null){
             return "index";

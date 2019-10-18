@@ -77,10 +77,10 @@ public class DeviceDao {
 
 
     public void addSubscriber(int deviceId, int userId) {
-        Device device = em.find(Device.class, deviceId);
-        User user = em.find(User.class, userId);
+        Device device = em.find(Device.class, 11111);
+        User user = em.find(User.class, 1);
         if (device == null || user == null)
-            throw new NotFoundException();
+            throw new NotFoundException(deviceId + ", " + userId);
 
         // Create subscription
         Subscription subscription = new Subscription();

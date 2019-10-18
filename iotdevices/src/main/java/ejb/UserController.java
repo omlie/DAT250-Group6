@@ -31,6 +31,11 @@ public class UserController implements Serializable {
         return reverseDeviceList;
     }
 
+    public String unsubscribe(int deviceid){
+        this.user = userDao.unsubscribe(user.getUserName(), deviceid);
+        return "mypage";
+    }
+
 
     public String userLogin() {
         if (userDao.checkPassword(user.getUserName(), user.getPassword())) {
@@ -41,7 +46,7 @@ public class UserController implements Serializable {
     }
 
     public String deleteOwned(int deviceId){
-        userDao.deleteOwned(user.getId(), deviceId);
+        this.user = userDao.deleteOwned(user.getId(), deviceId);
         return "mypage";
     }
 
