@@ -117,6 +117,10 @@ public class UserDao {
         subscription.setDevice(device);
         subscription.setUser(user);
 
+        // Already a subscription-relation
+        if(user.getSubscriptions().contains(subscription))
+            return user;
+
         device.addSubscriber(user);
         user.addSubscriber(device);
         em.persist(device);
