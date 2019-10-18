@@ -27,10 +27,6 @@ public class DeviceController implements Serializable {
 
     private Device device;
 
-    private Label l1;
-    private Label l2;
-    private Label l3;
-
     public List<Device> getDevices() {
         List<Device> reverseDeviceList = new ArrayList<>();
         reverseDeviceList.addAll(this.deviceDao.getAllDevices());
@@ -50,44 +46,5 @@ public class DeviceController implements Serializable {
         return device;
     }
 
-    public String addSubscription(int deviceid, int userid){
-        deviceDao.addSubscriber(deviceid, userid);
-        return "mypage";
-    }
 
-
-    public String addOwnedDevice(int userid){
-        if(device == null){
-            return "index";
-        }
-
-        // Add and reset labels
-        if(l1 != null)
-            device.addLabel(l1);
-        if(l2 != null)
-            device.addLabel(l2);
-        if(l3 != null)
-            device.addLabel(l3);
-        l1 = null;
-        l2 = null;
-        l3 = null;
-
-        deviceDao.addOwner(userid, device);
-        return "mypage";
-    }
-
-    public Label getL1() {
-        l1 = new Label();
-        return l1;
-    }
-
-    public Label getL2() {
-        l2 = new Label();
-        return l2;
-    }
-
-    public Label getL3() {
-        l3 = new Label();
-        return l3;
-    }
 }

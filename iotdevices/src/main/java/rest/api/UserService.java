@@ -7,6 +7,7 @@ import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
@@ -46,5 +47,14 @@ public class UserService extends Application {
     public Response getSubscribedDevices(@PathParam("id") String id) {
         int idInt = Integer.parseInt(id);
         return Response.ok(userDao.getSubscribedDevices(idInt)).build();
+    }
+
+    @POST
+    @Transactional
+    @Path("{id}")
+    public Response addSubscriber(@HeaderParam("userId") int userId, @PathParam("id") String deviceId) {
+        int idInt = Integer.parseInt(deviceId);
+        userDao.addSubscriber(idInt, userId);
+        return Response.ok().build();
     }
 }

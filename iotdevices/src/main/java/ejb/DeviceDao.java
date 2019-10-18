@@ -68,29 +68,6 @@ public class DeviceDao {
         return device.getFeedback();
     }
 
-    public void addOwner(int userid, Device device){
-        User user = em.find(User.class, userid);
-        user.addOwnedDevice(device);
-        persist(device);
-        em.merge(user);
-    }
-
-
-    public void addSubscriber(int deviceId, int userId) {
-        Device device = em.find(Device.class, 11111);
-        User user = em.find(User.class, 1);
-        if (device == null || user == null)
-            throw new NotFoundException(deviceId + ", " + userId);
-
-        // Create subscription
-        Subscription subscription = new Subscription();
-        subscription.setDevice(device);
-        subscription.setUser(user);
-
-        device.addSubscriber(user);
-        persist(device);
-    }
-
     public List<Device> filterDevicesByLabel(String label) {
         TypedQuery<Device> query = em.createNamedQuery(Label.FIND_BY_NAME, Device.class);
         query.setParameter("name", label);

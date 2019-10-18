@@ -64,34 +64,77 @@
                 </table>
             </h:form>
         </div>
+
+        <h2>Subscribed to devices</h2>
+        <h:form>
+            <table border="1">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>API</th>
+                    <th>Image</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+
+                <ui:repeat value="#{userController.getUser().getSubscriptions().toArray()}" var="sub">
+                    <tr>
+                        <td>
+                            <h:outputText value="#{sub.device.id}"/>
+                        </td>
+                        <td>
+                            <h:outputText value="#{sub.device.deviceName}"/>
+                        </td>
+                        <td>
+                            <h:outputText value="#{sub.device.status}"/>
+                        </td>
+                        <td>
+                            <h:outputText value="#{sub.device.apiUrl}"/>
+                        </td>
+                        <td>
+                            <h:outputText value="#{sub.device.deviceImg}"/>
+                        </td>
+                        <td>
+                            <h:commandButton value="unsubscribe"
+                                             action="#{userController.unsubscribe(sub.device.id)}"/>
+                        </td>
+                    </tr>
+                </ui:repeat>
+            </table>
+        </h:form>
+
+
         <br/>
         <div>
             <h:form>
                 <div>
                     <h:outputLabel value="Device name: "/>
-                    <h:inputText value="#{deviceController.getDevice().deviceName}"/>
+                    <h:inputText value="#{userController.getDevice().deviceName}"/>
                     <br/>
                     <h:outputLabel value="Device status: "/>
-                    <h:selectOneMenu value="#{deviceController.getDevice().status}">
-                        <f:selectItems value="#{deviceController.getDevice().getStatuses()}"/>
+                    <h:selectOneMenu value="#{userController.getDevice().status}">
+                        <f:selectItems value="#{userController.getDevice().getStatuses()}"/>
                     </h:selectOneMenu>
                     <br/>
                     <h:outputLabel value="Device image: "/>
-                    <h:inputText value="#{deviceController.getDevice().deviceImg}"/>
+                    <h:inputText value="#{userController.getDevice().deviceImg}"/>
                     <br/>
                     <h:outputLabel value="Api URL: "/>
-                    <h:inputText value="#{deviceController.getDevice().apiUrl}"/>
+                    <h:inputText value="#{userController.getDevice().apiUrl}"/>
                     <br/>
                     <h:outputLabel value="Labels (add up to three): "/>
                     <br/>
-                    <h:inputText value="#{deviceController.getL1().labelValue}"/>
+                    <h:inputText value="#{userController.getL1().labelValue}"/>
                     <br/>
-                    <h:inputText value="#{deviceController.getL2().labelValue}"/>
+                    <h:inputText value="#{userController.getL2().labelValue}"/>
                     <br/>
-                    <h:inputText value="#{deviceController.getL3().labelValue}"/>
+                    <h:inputText value="#{userController.getL3().labelValue}"/>
                 </div>
                 <div>
-                    <h:commandButton action="#{deviceController.addOwnedDevice(userController.getUser().getId())}" value="Add device"/>
+                    <h:commandButton action="#{userController.addDevice(userController.getDevice())}"
+                                     value="Add device"/>
                 </div>
             </h:form>
         </div>

@@ -55,15 +55,6 @@ public class DeviceService extends Application {
         return Response.ok(deviceDao.getFeedback(idInt)).build();
     }
 
-    @POST
-    @Transactional
-    @Path("{id}")
-    public Response addSubscriber(@HeaderParam("userId") int userId, @PathParam("id") String deviceId) {
-        int idInt = Integer.parseInt(deviceId);
-        deviceDao.addSubscriber(idInt, userId);
-        return Response.ok().build();
-    }
-
     @GET
     @Path("search/{label}")
     @Produces(MediaType.APPLICATION_JSON)

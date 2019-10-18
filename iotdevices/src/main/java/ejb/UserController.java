@@ -1,6 +1,7 @@
 package ejb;
 
 import entities.Device;
+import entities.Label;
 import entities.Subscription;
 import entities.User;
 
@@ -23,6 +24,11 @@ public class UserController implements Serializable {
     private UserDao userDao;
 
     private User user;
+    private Device device;
+
+    private Label l1;
+    private Label l2;
+    private Label l3;
 
     public List<User> getUsers() {
         List<User> reverseDeviceList = new ArrayList<User>();
@@ -32,7 +38,12 @@ public class UserController implements Serializable {
     }
 
     public String unsubscribe(int deviceid){
-        this.user = userDao.unsubscribe(user.getUserName(), deviceid);
+        this.user = userDao.unsubscribe(user.getId(), deviceid);
+        return "mypage";
+    }
+
+    public String addSubscription(int deviceid, int userid){
+        this.user = userDao.addSubscriber(deviceid, userid);
         return "mypage";
     }
 
@@ -47,6 +58,23 @@ public class UserController implements Serializable {
 
     public String deleteOwned(int deviceId){
         this.user = userDao.deleteOwned(user.getId(), deviceId);
+        return "mypage";
+    }
+
+    public String addDevice(Device device){
+        if(device != null) {
+            // Add and reset labels
+            if(l1 != null)
+                device.addLabel(l1);
+            if(l2 != null)
+                device.addLabel(l2);
+            if(l3 != null)
+                device.addLabel(l3);
+            l1 = null;
+            l2 = null;
+            l3 = null;
+            this.user = userDao.addDevice(user.getId(), device);
+        }
         return "mypage";
     }
 
@@ -68,4 +96,25 @@ public class UserController implements Serializable {
         return user;
     }
 
+    public Device getDevice() {
+        if (this.device == null) {
+            device = new Device();
+        }
+        return device;
+    }
+
+    public Label getL1() {
+        l1 = new Label();
+        return l1;
+    }
+
+    public Label getL2() {
+        l2 = new Label();
+        return l2;
+    }
+
+    public Label getL3() {
+        l3 = new Label();
+        return l3;
+    }
 }

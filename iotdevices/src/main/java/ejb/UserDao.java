@@ -98,23 +98,47 @@ public class UserDao {
         return user.getOwnedDevices();
     }
 
+    public User addDevice(int userid, Device device){
+        User user = em.find(User.class, userid);
+        user.addOwnedDevice(device);
+        em.persist(device);
+        em.merge(user);
+        return user;
+    }
 
-    public User unsubscribe(String username, int deviceId) {
+    public User addSubscriber(int deviceId, int userId) {
+        Device device = em.find(Device.class, deviceId);
+        User user = em.find(User.class, userId);
+        if (device == null || user == null)
+            throw new NotFoundException(deviceId + ", " + userId);
+
+        // Create subscription
+        Subscription subscription = new Subscription();
+        subscription.setDevice(device);
+        subscription.setUser(user);
+
+        device.addSubscriber(user);
+        user.addSubscriber(device);
+        em.persist(device);
+        return user;
+    }
+
+    public User unsubscribe(int userid, int deviceId) {
         List<Subscription> q =
-                em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.userName=?2", Subscription.class)
+                em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.id=?2", Subscription.class)
                 .setParameter(1, deviceId)
-                .setParameter(2, username)
+                .setParameter(2, userid)
                 .getResultList();
 
-        // Id result is empty or more than one, there is something wrong
-        if(q.size() != 1)
+        // If result is empty. If there are more than one subscription to the same device, just remove one
+        if(q.size() == 0)
             throw new NotFoundException();
 
         Subscription s = q.get(0);
-        User u = s.getUser();
-        u.getSubscriptions().remove(s);
+        s.getUser().getSubscriptions().remove(s);
         em.createQuery("DELETE FROM Subscription s WHERE s.id=?1")
                 .setParameter(1, s.getId()).executeUpdate();
-        return u;
+
+        return em.find(User.class, userid);
     }
 }
