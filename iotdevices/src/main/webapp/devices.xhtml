@@ -19,11 +19,10 @@
     <ui:define name="content">
 
         <div class="container">
-            <div>
+            <div class="devices">
                 <table border="1">
                     <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Name</th>
                         <th>Status</th>
                         <th>API</th>
@@ -34,9 +33,6 @@
                     <ui:repeat value="#{deviceController.getDevices()}" var="dev">
 
                         <tr>
-                            <td>
-                                <h:outputText value="#{dev.id}"/>
-                            </td>
                             <td>
                                 <h:outputText value="#{dev.deviceName}"/>
                             </td>
@@ -54,6 +50,7 @@
                     </ui:repeat>
                     </tbody>
                 </table>
+                <h:button outcome="newdevice" value="Add new device"/>
             </div>
         </div>
 
