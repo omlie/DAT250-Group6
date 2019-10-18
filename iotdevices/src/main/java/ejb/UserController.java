@@ -61,6 +61,13 @@ public class UserController implements Serializable {
         return "mypage";
     }
 
+    public void editOwned(Device device){
+        if(device != null) {
+            userDao.editOwned(device);
+            user.setOwnedDevices(userDao.getOwnedDevices(user.getId()));
+        }
+    }
+
     public String addDevice(Device device){
         if(device != null) {
             // Add and reset labels
@@ -74,6 +81,7 @@ public class UserController implements Serializable {
             l2 = null;
             l3 = null;
             this.user = userDao.addDevice(user.getId(), device);
+            this.device = null;
         }
         return "mypage";
     }

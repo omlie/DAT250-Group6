@@ -42,6 +42,17 @@ public class UserDao {
         return users;
     }
 
+    public void editOwned(Device device){
+        Device d = em.find(Device.class, device.getId());
+        if(d == null)
+            throw new NotFoundException();
+
+        d.setApiUrl(device.getApiUrl());
+        d.setDeviceImg(device.getDeviceImg());
+        d.setDeviceName(device.getDeviceName());
+        em.merge(d);
+    }
+
     public List<Device> getSubscribedDevices(int userId) {
         User user = em.find(User.class, userId);
         if (user == null)
