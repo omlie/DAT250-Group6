@@ -13,6 +13,7 @@ import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
 
 import entities.Device;
+import entities.Label;
 import entities.Subscription;
 import entities.User;
 import org.mindrot.jbcrypt.BCrypt;
@@ -155,6 +156,22 @@ public class UserDao {
      */
     public User addDevice(int userid, Device device){
         User user = em.find(User.class, userid);
+        List<Label> deviceLabels = new ArrayList<>();
+
+        for(Label l : device.getLabels()){
+            List<Label> labels =
+                    em.createQuery("select l from Label l where l.labelValue=?1", Label.class)
+                    .setParameter(1, l.getLabelValue()).getResultList();
+            // The label does not exist
+            if(labels.isEmpty() && l.getLabelValue() != null)
+                deviceLabels.add(l);
+            // The label already exists, add the existing
+            else if(!labels.isEmpty()){
+                deviceLabels.add(labels.get(0));
+            }
+        }
+
+        device.setLabels(deviceLabels);
         user.addOwnedDevice(device);
         em.persist(device);
         em.merge(user);
