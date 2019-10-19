@@ -19,11 +19,15 @@ public class SearchController implements Serializable{
     DeviceDao dao;
 
     public void search(String searchWord){
-        if(searchWord == null) {
-            searchResult = new ArrayList<>();
-            return;
+        try {
+            if(searchWord == null) {
+                searchResult = new ArrayList<>();
+                return;
+            }
+            searchResult = dao.filterDevicesByLabel(searchWord);
+        } catch (Exception e) {
+            // redirect
         }
-        searchResult = dao.filterDevicesByLabel(searchWord);
     }
 
     public String getSearchWord() {

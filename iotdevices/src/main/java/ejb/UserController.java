@@ -2,7 +2,6 @@ package ejb;
 
 import entities.Device;
 import entities.Label;
-import entities.Subscription;
 import entities.User;
 
 import javax.ejb.EJB;
@@ -38,78 +37,122 @@ public class UserController implements Serializable {
     }
 
     public String unsubscribe(int deviceid){
-        this.user = userDao.unsubscribe(user.getId(), deviceid);
+        try {
+            this.user = userDao.unsubscribe(user.getId(), deviceid);
+        } catch (Exception e) {
+            // redirect
+        }
         return "mypage";
     }
 
     public String addSubscription(int deviceid, int userid){
-        userDao.addSubscriber(deviceid, userid);
-        this.user = userDao.getUser(userid);
+        try {
+            userDao.addSubscriber(deviceid, userid);
+            this.user = userDao.getUser(userid);
+        } catch (Exception e) {
+            // redirect
+        }
         return "mypage";
     }
 
 
     public String userLogin() {
-        if (userDao.checkPassword(user.getUserName(), user.getPassword())) {
-            user = userDao.getUser(user.getUserName());
-            return "mypage";
+        try {
+            if (userDao.checkPassword(user.getUserName(), user.getPassword())) {
+                user = userDao.getUser(user.getUserName());
+                return "mypage";
+            }
+        } catch (Exception e) {
+            //redirect
         }
         return "index";
     }
 
     public String deleteOwned(int deviceId){
-        userDao.deleteOwned(user.getId(), deviceId);
-        this.user = userDao.getUser(user.getId());
+        try {
+            userDao.deleteOwned(user.getId(), deviceId);
+            this.user = userDao.getUser(user.getId());
+            return "mypage";
+        } catch (Exception e) {
+            //redirect
+        }
         return "mypage";
     }
 
-    public void addLabels(int deviceid, List<Label> labels){
-        userDao.addLabels(deviceid, labels);
+    public String addLabels(int deviceid, List<Label> labels){
+        try {
+            userDao.addLabels(deviceid, labels);
+        } catch (Exception e) {
+            // redirect
+        }
+        return "index";
     }
 
     public String updateUser(){
-        this.user = userDao.updateUser(user);
+        try {
+            this.user = userDao.updateUser(user);
+        } catch (Exception e) {
+            // redirect
+        }
         return "mypage";
     }
 
-    public void editOwned(Device device){
-        if(device != null) {
-            userDao.editOwned(device);
-            user.setOwnedDevices(userDao.getOwnedDevices(user.getId()));
+    public String editOwned(Device device){
+        try {
+            if(device != null) {
+                userDao.editOwned(device);
+                user.setOwnedDevices(userDao.getOwnedDevices(user.getId()));
+            }
+        } catch (Exception e) {
+            // redirect
         }
+        return "index";
     }
 
-    public void publishDevice(int deviceid){
-        if(userDao.publishDevice(deviceid))
-            this.user = userDao.getUser(user.getId());
+    public String publishDevice(int deviceid){
+        try {
+            if(userDao.publishDevice(deviceid))
+                this.user = userDao.getUser(user.getId());
+        } catch (Exception e) {
+            // redirect
+        }
+        return "index";
     }
 
     public String addDevice(Device device){
-        if(device != null) {
-            // Add and reset labels
-            if(l1 != null)
-                device.addLabel(l1);
-            if(l2 != null)
-                device.addLabel(l2);
-            if(l3 != null)
-                device.addLabel(l3);
-            l1 = null;
-            l2 = null;
-            l3 = null;
-            this.user = userDao.addDevice(user.getId(), device);
-            this.device = null;
+        try {
+            if(device != null) {
+                // Add and reset labels
+                if(l1 != null)
+                    device.addLabel(l1);
+                if(l2 != null)
+                    device.addLabel(l2);
+                if(l3 != null)
+                    device.addLabel(l3);
+                l1 = null;
+                l2 = null;
+                l3 = null;
+                this.user = userDao.addDevice(user.getId(), device);
+                this.device = null;
+            }
+        } catch (Exception e) {
+            // redirect
         }
         return "mypage";
     }
 
     public String saveUser() {
-        List<User> users = this.userDao.getAllUsers();
-        for(User u : users){
-            if(u.getUserName().equals(this.user.getUserName())){
-                return "users";
+        try {
+            List<User> users = this.userDao.getAllUsers();
+            for(User u : users){
+                if(u.getUserName().equals(this.user.getUserName())){
+                    return "users";
+                }
             }
+            this.userDao.persist(this.user);
+        } catch (Exception e) {
+            // redirect
         }
-        this.userDao.persist(this.user);
         return "mypage";
     }
 
