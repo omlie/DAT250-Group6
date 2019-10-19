@@ -245,6 +245,16 @@ public class UserDao {
         em.persist(device);
     }
 
+    public User updateUser(User user){
+        User stored = em.find(User.class, user.getId());
+        if(stored == null)
+            throw new NotFoundException();
+        stored.setFirstName(user.getFirstName());
+        stored.setLastName(user.getLastName());
+        merge(stored);
+        return stored;
+    }
+
     /**
      * Unsubscribe a given user from a given device
      * @param userid
