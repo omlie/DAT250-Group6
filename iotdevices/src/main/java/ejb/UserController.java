@@ -2,6 +2,7 @@ package ejb;
 
 import entities.Device;
 import entities.Label;
+import entities.Subscription;
 import entities.User;
 
 import javax.ejb.EJB;
@@ -34,6 +35,14 @@ public class UserController implements Serializable {
         reverseDeviceList.addAll(this.userDao.getAllUsers());
         Collections.reverse(reverseDeviceList);
         return reverseDeviceList;
+    }
+
+    public List<Device> subscribedTo(){
+        List<Device> subscribedTo = new ArrayList<>();
+        for(Subscription s : user.getSubscriptions()){
+            subscribedTo.add(s.getDevice());
+        }
+        return subscribedTo;
     }
 
     public String unsubscribe(int deviceid){
