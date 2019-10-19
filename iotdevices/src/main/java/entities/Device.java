@@ -3,11 +3,13 @@ package entities;
 import helpers.Status;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
+import javax.transaction.Transactional;
 
 @Entity
 @Table(name = "devices")
@@ -45,7 +47,7 @@ public class Device implements Serializable {
             joinColumns = @JoinColumn(name = "device_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id")
     )
-    private List<Label> labels;
+    private List<Label> labels = new ArrayList<>();
 
     @JsonbTransient
     @OneToMany(mappedBy = "device", cascade = {CascadeType.ALL})
@@ -53,6 +55,10 @@ public class Device implements Serializable {
 
 
     public Device() {
+    }
+
+    public Status[] getStatuses() {
+        return Status.values();
     }
 
     public List<Label> getLabels() {

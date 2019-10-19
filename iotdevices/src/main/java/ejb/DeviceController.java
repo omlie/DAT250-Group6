@@ -10,6 +10,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 import entities.Device;
+import entities.Label;
 
 @Named(value = "deviceController")
 @RequestScoped
@@ -43,7 +44,7 @@ public class DeviceController implements Serializable {
             device = new Device();
         }
         return device;
-
     }
+
 
 }

@@ -3,6 +3,7 @@ package entities;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,12 +35,12 @@ public class User implements Serializable {
     @JsonbTransient
     @OneToMany
     @JoinColumn(name = "user_id")
-    private List<Device> ownedDevices;
+    private List<Device> ownedDevices = new ArrayList<>();
 
     @JsonbTransient
     @OneToMany
     @JoinColumn(name = "user_id")
-    private List<Feedback> feedback;
+    private List<Feedback> feedback = new ArrayList<>();
 
     @JsonbTransient
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
@@ -102,6 +103,10 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public void addOwnedDevice(Device d){
+        ownedDevices.add(d);
     }
 
     public Set<Subscription> getSubscriptions() {

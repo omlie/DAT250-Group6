@@ -3,6 +3,7 @@ package entities;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name="labels")
@@ -36,11 +37,11 @@ public class Label implements Serializable {
         this.id = id;
     }
 
-    public String getValue() {
+    public String getLabelValue() {
         return labelValue;
     }
 
-    public void setValue(String value) {
+    public void setLabelValue(String value) {
         this.labelValue = value;
     }
 
@@ -58,4 +59,18 @@ public class Label implements Serializable {
 
     public Label() {
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Label label = (Label) o;
+        return Objects.equals(labelValue, label.labelValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(labelValue);
+    }
+
 }
