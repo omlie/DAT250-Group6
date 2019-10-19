@@ -162,6 +162,42 @@ public class UserDao {
     }
 
     /**
+     * Add new labels to a device
+     * @param deviceid
+     * @param labels, labels to be added
+     */
+    public void addLabels(int deviceid, List<Label> labels){
+        Device d = em.find(Device.class, deviceid);
+        List<Label> devicelabels = new ArrayList<>();
+        for(Label l : labels){
+            if(l != null && l.getLabelValue() != null){
+                devicelabels.add(addLabel(l.getLabelValue()));
+            }
+        }
+        d.setLabels(devicelabels);
+        em.merge(d);
+    }
+
+
+    private Label addLabel(String labelvalue){
+        Label l;
+        List<Label> labels =
+                em.createQuery("select l from Label l where l.labelValue=?1", Label.class)
+                        .setParameter(1, labelvalue).getResultList();
+
+        // This is a new label
+        if(labels.isEmpty()) {
+            l = new Label();
+            l.setLabelValue(labelvalue);
+        }
+        // This label exist, use the existing
+        else {
+            l = labels.get(0);
+        }
+        return l;
+    }
+
+    /**
      * Add a device from a specific user. The device will
      * be a owned device for the user
      * @param userid
@@ -173,16 +209,8 @@ public class UserDao {
         List<Label> deviceLabels = new ArrayList<>();
 
         for(Label l : device.getLabels()){
-            List<Label> labels =
-                    em.createQuery("select l from Label l where l.labelValue=?1", Label.class)
-                    .setParameter(1, l.getLabelValue()).getResultList();
-            // The label does not exist
-            if(labels.isEmpty() && l.getLabelValue() != null)
-                deviceLabels.add(l);
-            // The label already exists, add the existing
-            else if(!labels.isEmpty()){
-                deviceLabels.add(labels.get(0));
-            }
+            if(l != null && l.getLabelValue() != null)
+                deviceLabels.add(addLabel(l.getLabelValue()));
         }
 
         device.setLabels(deviceLabels);

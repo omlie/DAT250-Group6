@@ -63,6 +63,10 @@ public class UserController implements Serializable {
         return "mypage";
     }
 
+    public void addLabels(int deviceid, List<Label> labels){
+        userDao.addLabels(deviceid, labels);
+    }
+
     public void editOwned(Device device){
         if(device != null) {
             userDao.editOwned(device);
