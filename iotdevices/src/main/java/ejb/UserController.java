@@ -70,6 +70,11 @@ public class UserController implements Serializable {
         }
     }
 
+    public void publishDevice(int deviceid){
+        if(userDao.publishDevice(deviceid))
+            this.user = userDao.getUser(user.getId());
+    }
+
     public String addDevice(Device device){
         if(device != null) {
             // Add and reset labels

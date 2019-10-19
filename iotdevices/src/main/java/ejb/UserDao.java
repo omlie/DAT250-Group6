@@ -16,6 +16,7 @@ import entities.Device;
 import entities.Label;
 import entities.Subscription;
 import entities.User;
+import helpers.Status;
 import org.mindrot.jbcrypt.BCrypt;
 
 @Stateless
@@ -103,6 +104,19 @@ public class UserDao {
         if (user == null)
             throw new NotFoundException();
         return user;
+    }
+
+    /**
+     * Change status of a device from offline to online
+     * @param deviceid
+     * @return true if success false else
+     */
+    public boolean publishDevice(int deviceid){
+        Device d = em.find(Device.class, deviceid);
+        if(d == null)
+            return false;
+        d.setStatus(Status.ONLINE);
+        return true;
     }
 
     /**
