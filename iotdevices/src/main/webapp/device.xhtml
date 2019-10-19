@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<head>
+    <title>Device</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+
+<h:body>
+    <f:view>
+        <ui:composition template="templates/common.xhtml">
+            <ui:define name="content">
+                <h:form>
+                    <div class="container">
+                        <h:graphicImage class="deviceimage" url="#{deviceController.device.deviceImg}"/>
+                        <h2 class="deviceHeading">
+                            <h:outputText value="#{deviceController.device.deviceName}"/>
+                            <h:outputText
+                                    class="${deviceController.device.status}"
+                                    value="#{deviceController.mapStatusToCharacter(deviceController.device.status)}"/>
+
+                        </h2>
+
+                        <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
+                        <h:outputText value="Label: " />
+
+                        <ui:repeat value="${deviceController.device.labels}" var="label">
+                            <h:outputText value="${label.labelValue}"/>
+                        </ui:repeat>
+                        <ui:fragment rendered="${userController.isOwner(deviceController.device.id)}">
+                            <h:commandButton action="${userController.deleteOwned(deviceController.device.id)}"
+                                             value="Delete"/>
+                        </ui:fragment>
+                        <ui:fragment rendered="${userController.isSubscribedTo(deviceController.device.id)}">
+                            <h:commandButton action="${userController.unsubscribe(deviceController.device.id)}"
+                                             value="Unsubscribe"/>
+                        </ui:fragment>
+                        <ui:fragment
+                                rendered="${!userController.hasConnectionTo(deviceController.device.id)}">
+                            <h:commandButton
+                                    action="${userController.addSubscription(deviceController.device.id, userController.user.id)}"
+                                    value="Subscribe"/>
+                        </ui:fragment>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </f:view>
+</h:body>
+</html>

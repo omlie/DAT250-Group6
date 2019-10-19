@@ -19,10 +19,16 @@
     <ui:define name="content">
         <h:form>
             <div class="container">
-                <h:inputText a:placeholder="Name"/>
-                <h:inputText a:placeholder="API Endpoint"/>
-                <h:inputText a:placeholder="Image URL"/>
-                <h:commandButton action="${deviceController.saveDevice()}" value="Add device"/>
+                <h:inputText a:placeholder="Name" value="${userController.device.deviceName}" />
+                <h:inputText a:placeholder="API Endpoint" value="${userController.device.apiUrl}"/>
+                <h:inputText a:placeholder="Image URL"  value="${userController.device.deviceImg}"/>
+                <h:selectOneMenu a:placeholder="Status" value="#{userController.device.status}" label="Status" >
+                    <f:selectItems value="#{userController.device.getStatuses()}"/>
+                </h:selectOneMenu>
+                <h:inputText a:placeholder="Label 1" value="#{userController.l1.labelValue}"/>
+                <h:inputText a:placeholder="Label 2" value="#{userController.l2.labelValue}"/>
+                <h:inputText a:placeholder="Label 3" value="#{userController.l3.labelValue}"/>
+                <h:commandButton action="${userController.addDevice(userController.device)}" value="Add device"/>
             </div>
         </h:form>
     </ui:define>

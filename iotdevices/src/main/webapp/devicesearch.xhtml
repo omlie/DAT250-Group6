@@ -10,7 +10,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core">
 
 <head>
-    <title>Devices</title>
+    <title>Search device</title>
     <link rel="stylesheet" href="styles.css"/>
 </head>
 
@@ -20,17 +20,12 @@
     <ui:define name="content">
         <div class="container">
             <div class="deviceTableHeader">
-                <h2>All registered devices</h2>
-                <h:form>
-                    <h:inputText value="${searchController.searchWord}"/>
-                    <h:button outcome="devicesearch" value="Search"/>
-                </h:form>
-                <h:button outcome="newdevice" value="Add new device"/>
+                <h2>Search device</h2>
             </div>
             <div class="devices">
                 <table>
                     <tbody>
-                    <ui:repeat value="#{deviceController.getOnlineDevices()}" var="dev">
+                    <ui:repeat value="#{searchController.search(searchController.searchWord)}" var="dev">
                         <h:form>
                             <tr>
                                 <td>
