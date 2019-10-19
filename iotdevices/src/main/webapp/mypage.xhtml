@@ -27,64 +27,60 @@
                     </div>
                 </div>
                 <div class="devices">
-                    <h2>Owned devices</h2>
-                    <table border="1">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>API</th>
-                            <th>Image</th>
-                        </tr>
-                        </thead>
+                    <div class="deviceTableHeader">
+                        <h2>Owned devices</h2>
+                        <h:button outcome="newdevice" value="Add new device"/>
+                    </div>
+                    <table>
                         <ui:repeat value="#{userController.getUser().getOwnedDevices()}" var="dev">
-                            <tr>
-                                <td>
-                                    <h:outputText value="#{dev.deviceName}"/>
-                                </td>
-                                <td>
-                                    <h:outputText value="#{dev.status}"/>
-                                </td>
-                                <td>
-                                    <h:outputText value="#{dev.apiUrl}"/>
-                                </td>
-                                <td>
-                                    <h:outputText value="#{dev.deviceImg}"/>
-                                </td>
-                            </tr>
+                            <h:form>
+                                <tr>
+                                    <td>
+                                        <h:graphicImage url="${dev.deviceImg}"/>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{dev.deviceName}"/>
+                                    </td>
+                                    <td>
+                                        <h:outputText class="${dev.status}"
+                                                      value="#{deviceController.mapStatusToCharacter(dev.status)}"/>
+                                    </td>
+                                    <td>
+                                        <h:commandButton action="${deviceController.viewDevice(dev.id)}"
+                                                         value="View device"/>
+                                    </td>
+                                </tr>
+                            </h:form>
                         </ui:repeat>
                     </table>
-                    <h:button outcome="newdevice" value="Add new device"/>
                 </div>
                 <div class="devices">
-                    <h2>Subscribed devices</h2>
-                    <table border="1">
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>API</th>
-                            <th>Image</th>
-                        </tr>
-                        </thead>
-                        <ui:repeat value="#{userController.getUser().getSubscriptions()}" var="dev">
-                            <tr>
-                                <td>
-                                    <h:outputText value="#{dev.deviceName}"/>
-                                </td>
-                                <td>
-                                    <h:outputText value="#{dev.status}"/>
-                                </td>
-                                <td>
-                                    <h:outputText value="#{dev.apiUrl}"/>
-                                </td>
-                                <td>
-                                    <h:outputText value="#{dev.deviceImg}"/>
-                                </td>
-                            </tr>
+                    <div class="deviceTableHeader">
+                        <h2>Subscribed devices</h2>
+                        <h:button outcome="devices" value="View all devices"/>
+                    </div>
+                    <table>
+                        <ui:repeat value="#{userController.subscribedTo()}" var="dev">
+                            <h:form>
+                                <tr>
+                                    <td>
+                                        <h:graphicImage url="${dev.deviceImg}"/>
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{dev.deviceName}"/>
+                                    </td>
+                                    <td>
+                                        <h:outputText class="${dev.status}"
+                                                      value="#{deviceController.mapStatusToCharacter(dev.status)}"/>
+                                    </td>
+                                    <td>
+                                        <h:commandButton action="${deviceController.viewDevice(dev.id)}"
+                                                         value="Manage device"/>
+                                    </td>
+                                </tr>
+                            </h:form>
                         </ui:repeat>
                     </table>
-                    <h:button outcome="devices" value="View all devices"/>
                 </div>
             </div>
         </ui:define>

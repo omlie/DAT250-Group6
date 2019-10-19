@@ -47,12 +47,12 @@ div.button-row > * {
 }
 
 div.devices {
-    width: 50vw;
     display: flex;
     flex-direction: column;
     padding: 12px;
     justify-content: space-between;
 }
+
 
 div.label {
     padding: 0;
@@ -63,9 +63,15 @@ table {
     border-collapse: collapse;
 }
 
+tr {
+    border-bottom: 1px solid slategrey;
+}
+
 th,
 td {
-    border: 1px solid black;
+    width: 256px;
+    height: 64px;
+    text-align: center;
 }
 
 th.noborder,
@@ -73,7 +79,7 @@ td.noborder {
     border: 0;
 }
 
-img {
+td > img {
     height: 100px;
     width: auto;
 }
@@ -81,4 +87,35 @@ img {
 input.feedback {
     height: 100px;
     width: 200px;
+}
+
+span.ONLINE,
+span.AVAILABLE {
+    font-size: 32px;
+    color: green;
+}
+
+span.OFFLINE,
+span.UNAVAILABLE {
+    font-size: 32px;
+    color: red;
+}
+
+div.deviceTableHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid slategrey;
+}
+
+img.deviceimage {
+    height: 500px;
+    width: auto;
+}
+
+h2.deviceHeading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: auto;
 }
