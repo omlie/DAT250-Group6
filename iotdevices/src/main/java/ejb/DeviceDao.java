@@ -114,7 +114,7 @@ public class DeviceDao {
      * @param devices
      * @return all devices that are online
      */
-    private List<Device> getOnlineDevices(List<Device> devices){
+    public List<Device> getOnlineDevices(List<Device> devices){
         List<Device> online = new ArrayList<>();
         for(Device d : devices){
             if(d == null || d.getStatus() == null)
