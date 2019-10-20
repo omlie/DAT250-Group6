@@ -23,14 +23,15 @@
                 <h2>All registered devices</h2>
                 <h:form>
                     <h:inputText value="${searchController.searchWord}"/>
-                    <h:button outcome="devicesearch" value="Search"/>
+                    <h:commandButton action="#{searchController.search(searchController.searchWord)}" value="Search"/>
+
                 </h:form>
                 <h:button outcome="newdevice" value="Add new device"/>
             </div>
             <div class="devices">
                 <table>
                     <tbody>
-                    <ui:repeat value="#{deviceController.getOnlineDevices()}" var="dev">
+                    <ui:repeat value="#{searchController.getSearchResult()}" var="dev">
                         <h:form>
                             <tr>
                                 <td>
