@@ -1,0 +1,11 @@
+package ejb;
+
+public class Constants {
+    public static final String USERNAME = "username";
+
+    public static final String USERID = "userid";
+
+    public static final String LOGIN = "index";
+
+    public static final String MYPAGE = "mypage";
+}

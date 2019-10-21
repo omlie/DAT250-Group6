@@ -6,6 +6,7 @@ import entities.Subscription;
 import entities.User;
 
 import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import javax.ws.rs.NotFoundException;
@@ -15,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Named(value = "userController")
-@SessionScoped
+@RequestScoped
 public class UserController implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -40,7 +41,7 @@ public class UserController implements Serializable {
 
     public List<Device> subscribedTo(){
         List<Device> subscribedTo = new ArrayList<>();
-        for(Subscription s : user.getSubscriptions()){
+        for(Subscription s : userDao.getUser(getUsername()).getSubscriptions()){
             subscribedTo.add(s.getDevice());
         }
         return subscribedTo;
@@ -48,7 +49,7 @@ public class UserController implements Serializable {
 
     public String unsubscribe(int deviceid){
         try {
-            this.user = userDao.unsubscribe(user.getId(), deviceid);
+            userDao.unsubscribe(getUsername(), deviceid);
         } catch (Exception e) {
             // redirect
             return "404";
@@ -56,10 +57,9 @@ public class UserController implements Serializable {
         return "feedback";
     }
 
-    public String addSubscription(int deviceid, int userid){
+    public String addSubscription(int deviceid, String username){
         try {
-            userDao.addSubscriber(deviceid, userid);
-            this.user = userDao.getUser(userid);
+            userDao.addSubscriber(deviceid, username);
         } catch (Exception e) {
             // redirect
             return "404";
@@ -67,25 +67,9 @@ public class UserController implements Serializable {
         return "mypage";
     }
 
-
-    public String userLogin() {
-        try {
-            if (userDao.checkPassword(user.getUserName(), user.getPassword())) {
-                user = userDao.getUser(user.getUserName());
-                return "mypage";
-            }
-        } catch (Exception e) {
-            //redirect
-            return "404";
-        }
-
-        return "index";
-    }
-
     public String deleteOwned(int deviceId){
         try {
-            userDao.deleteOwned(user.getId(), deviceId);
-            this.user = userDao.getUser(user.getId());
+            userDao.deleteOwned(getUsername(), deviceId);
         } catch (Exception e) {
             //redirect
             return "404";
@@ -104,7 +88,7 @@ public class UserController implements Serializable {
 
     public String updateUser(){
         try {
-            this.user = userDao.updateUser(user);
+            userDao.updateUser(user);
         } catch (Exception e) {
             // redirect
         }
@@ -115,7 +99,6 @@ public class UserController implements Serializable {
         try {
             if(device != null) {
                 userDao.editOwned(device);
-                user.setOwnedDevices(userDao.getOwnedDevices(user.getId()));
             }
         } catch (Exception e) {
             // redirect
@@ -125,8 +108,7 @@ public class UserController implements Serializable {
 
     public String publishDevice(int deviceid){
         try {
-            if(userDao.publishDevice(deviceid))
-                this.user = userDao.getUser(user.getId());
+            userDao.publishDevice(deviceid);
         } catch (Exception e) {
             // redirect
         }
@@ -144,7 +126,7 @@ public class UserController implements Serializable {
                 if(l3 != null)
                     device.addLabel(l3);
 
-                this.user = userDao.addDevice(user.getId(), device);
+                userDao.addDevice(getUsername(), device);
                 this.device = null;
                 l1 = null;
                 l2 = null;
@@ -202,8 +184,12 @@ public class UserController implements Serializable {
         return l3;
     }
 
+    public String getUsername(){
+        return (String)SessionUtil.getSession().getAttribute(Constants.USERNAME);
+    }
+
     public boolean isOwner(int deviceId) {
-        for (Device dev : this.user.getOwnedDevices())
+        for (Device dev : userDao.getUser(getUsername()).getOwnedDevices())
             if (dev.getId() == deviceId)
                 return true;
 
