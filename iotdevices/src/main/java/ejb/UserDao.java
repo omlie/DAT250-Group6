@@ -47,12 +47,13 @@ public class UserDao {
     /**
      * Applies the changes to apiurl, deviceimage and devicename to the
      * given device
+     *
      * @param device
      * @return the edited device
      */
-    public void editOwned(Device device){
+    public void editOwned(Device device) {
         Device d = em.find(Device.class, device.getId());
-        if(d == null)
+        if (d == null)
             throw new NotFoundException();
 
         d.setApiUrl(device.getApiUrl());
@@ -63,6 +64,7 @@ public class UserDao {
 
     /**
      * Get all devices that a user is subscribed to
+     *
      * @param userId
      * @return the list of devices the user is subscribed to
      */
@@ -80,6 +82,7 @@ public class UserDao {
 
     /**
      * Delete one of a users owned devices
+     *
      * @param userid
      * @param deviceId
      * @return
@@ -88,13 +91,18 @@ public class UserDao {
         User user = em.find(User.class, userid);
         Device d = em.find(Device.class, deviceId);
         user.getOwnedDevices().remove(d);
+        em.createQuery("DELETE FROM Subscription s WHERE s.device.id =?1")
+                .setParameter(1, deviceId)
+                .executeUpdate();
         em.createQuery("DELETE FROM Device d WHERE d.id=?1")
-                .setParameter(1, deviceId).executeUpdate();
+                .setParameter(1, deviceId)
+                .executeUpdate();
         merge(user);
     }
 
     /**
      * Get a user with the given id
+     *
      * @param idInt
      * @return user
      * @throws NotFoundException
@@ -108,12 +116,13 @@ public class UserDao {
 
     /**
      * Change status of a device from offline to online
+     *
      * @param deviceid
      * @return true if success false else
      */
-    public boolean publishDevice(int deviceid){
+    public boolean publishDevice(int deviceid) {
         Device d = em.find(Device.class, deviceid);
-        if(d == null)
+        if (d == null)
             return false;
         d.setStatus(Status.ONLINE);
         return true;
@@ -121,6 +130,7 @@ public class UserDao {
 
     /**
      * Get a user with the given username
+     *
      * @param username
      * @return a user
      * @throws NotFoundException
@@ -136,6 +146,7 @@ public class UserDao {
 
     /**
      * Check that the password for a given user is OK
+     *
      * @param username
      * @param password
      * @return
@@ -144,13 +155,14 @@ public class UserDao {
         TypedQuery<User> q = em.createQuery("SELECT user from User user WHERE user.userName=?1", User.class);
         q.setParameter(1, username);
         List<User> users = q.getResultList();
-        if(users.isEmpty())
+        if (users.isEmpty())
             return false;
         return BCrypt.checkpw(password, users.get(0).getPassword());
     }
 
     /**
      * Get all devices that the given user owns
+     *
      * @param idInt
      * @return The list of all devices
      */
@@ -163,14 +175,15 @@ public class UserDao {
 
     /**
      * Add new labels to a device
+     *
      * @param deviceid
-     * @param labels, labels to be added
+     * @param labels,  labels to be added
      */
-    public void addLabels(int deviceid, List<Label> labels){
+    public void addLabels(int deviceid, List<Label> labels) {
         Device d = em.find(Device.class, deviceid);
         List<Label> devicelabels = new ArrayList<>();
-        for(Label l : labels){
-            if(l != null && l.getLabelValue() != null){
+        for (Label l : labels) {
+            if (l != null && l.getLabelValue() != null) {
                 devicelabels.add(addLabel(l.getLabelValue()));
             }
         }
@@ -179,14 +192,14 @@ public class UserDao {
     }
 
 
-    private Label addLabel(String labelvalue){
+    private Label addLabel(String labelvalue) {
         Label l;
         List<Label> labels =
                 em.createQuery("select l from Label l where l.labelValue=?1", Label.class)
                         .setParameter(1, labelvalue).getResultList();
 
         // This is a new label
-        if(labels.isEmpty()) {
+        if (labels.isEmpty()) {
             l = new Label();
             l.setLabelValue(labelvalue);
         }
@@ -200,16 +213,17 @@ public class UserDao {
     /**
      * Add a device from a specific user. The device will
      * be a owned device for the user
+     *
      * @param userid
      * @param device
      * @return
      */
-    public User addDevice(int userid, Device device){
+    public User addDevice(int userid, Device device) {
         User user = em.find(User.class, userid);
         List<Label> deviceLabels = new ArrayList<>();
 
-        for(Label l : device.getLabels()){
-            if(l != null && !l.getLabelValue().equals(""))
+        for (Label l : device.getLabels()) {
+            if (l != null && !l.getLabelValue().equals(""))
                 deviceLabels.add(addLabel(l.getLabelValue()));
         }
 
@@ -222,6 +236,7 @@ public class UserDao {
 
     /**
      * Add the given user as a subscriber to a device
+     *
      * @param deviceId
      * @param userId
      */
@@ -235,15 +250,15 @@ public class UserDao {
 
         // Already a subscription-relation
         device.addSubscriber(subscription);
-        if(user.getSubscriptions().contains(subscription))
+        if (user.getSubscriptions().contains(subscription))
             return;
 
         em.persist(device);
     }
 
-    public User updateUser(User user){
+    public User updateUser(User user) {
         User stored = em.find(User.class, user.getId());
-        if(stored == null)
+        if (stored == null)
             throw new NotFoundException();
         stored.setFirstName(user.getFirstName());
         stored.setLastName(user.getLastName());
@@ -253,6 +268,7 @@ public class UserDao {
 
     /**
      * Unsubscribe a given user from a given device
+     *
      * @param userid
      * @param deviceId
      * @return
@@ -260,12 +276,12 @@ public class UserDao {
     public User unsubscribe(int userid, int deviceId) {
         List<Subscription> q =
                 em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.id=?2", Subscription.class)
-                .setParameter(1, deviceId)
-                .setParameter(2, userid)
-                .getResultList();
+                        .setParameter(1, deviceId)
+                        .setParameter(2, userid)
+                        .getResultList();
 
         // If result is empty. If there are more than one subscription to the same device, just remove one
-        if(q.size() == 0)
+        if (q.size() == 0)
             throw new NotFoundException();
 
         Subscription s = q.get(0);
