@@ -66,14 +66,14 @@ public class FeedbackController {
     private Device device;
     private User author;
 
-    public String submitFeedback(int deviceId, int userId) {
+    public String submitFeedback(int deviceId, String username) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date date = new Date();
         String formattedDate = dateFormat.format(date);
 
         try {
             this.device = deviceDao.getDeviceById(deviceId);
-            this.author = userDao.getUser(userId);
+            this.author = userDao.getUser(username);
         } catch (Exception e) {
             // redirect
             return "404";
