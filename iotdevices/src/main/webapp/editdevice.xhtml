@@ -41,9 +41,9 @@
                             <ui:repeat value="${deviceController.device.labels}" var="label">
                                 <h:inputText value="${label.labelValue}"/>
                             </ui:repeat>
-                            <h:inputText value="#{deviceController.newLabel.labelValue}"/>
+                            <h:inputText value="New label"/>
                         </div>
-                        <h:commandButton action="New label" value="Save device"/>
+                        <h:commandButton action="#{deviceController.saveEditedDevice}" value="Save device"/>
                     </h:form>
                 </div>
             </ui:define>
