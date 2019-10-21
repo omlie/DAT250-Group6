@@ -4,6 +4,7 @@ import entities.Device;
 import entities.Label;
 import entities.Subscription;
 import entities.User;
+import org.omg.CORBA.CODESET_INCOMPATIBLE;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -62,9 +63,9 @@ public class UserController implements Serializable {
             userDao.addSubscriber(deviceid, username);
         } catch (Exception e) {
             // redirect
-            return "404";
+            return Constants.ERROR;
         }
-        return "mypage";
+        return Constants.MYPAGE;
     }
 
     public String deleteOwned(int deviceId){
@@ -72,27 +73,26 @@ public class UserController implements Serializable {
             userDao.deleteOwned(getUsername(), deviceId);
         } catch (Exception e) {
             //redirect
-            return "404";
+            return Constants.ERROR;
         }
-        return "mypage";
+        return Constants.MYPAGE;
     }
 
     public String addLabels(int deviceid, List<Label> labels){
         try {
             userDao.addLabels(deviceid, labels);
         } catch (Exception e) {
-            // redirect
+            return Constants.ERROR;
         }
-        return "index";
+        return Constants.DEVICE;
     }
 
     public String updateUser(){
         try {
             userDao.updateUser(user);
-        } catch (Exception e) {
-            // redirect
+        } catch (Exception ignored) {
         }
-        return "mypage";
+        return Constants.MYPAGE;
     }
 
     public String editOwned(Device device){
@@ -101,18 +101,18 @@ public class UserController implements Serializable {
                 userDao.editOwned(device);
             }
         } catch (Exception e) {
-            // redirect
+            return Constants.ERROR;
         }
-        return "index";
+        return Constants.DEVICE;
     }
 
     public String publishDevice(int deviceid){
         try {
             userDao.publishDevice(deviceid);
         } catch (Exception e) {
-            // redirect
+            return Constants.ERROR;
         }
-        return "index";
+        return Constants.DEVICE;
     }
 
     public String addDevice(Device device){
@@ -134,7 +134,7 @@ public class UserController implements Serializable {
             }
         } catch (Exception e) {
             // redirect
-            return "404";
+            return Constants.ERROR;
         }
         return "mypage";
     }
@@ -144,15 +144,15 @@ public class UserController implements Serializable {
             List<User> users = this.userDao.getAllUsers();
             for(User u : users){
                 if(u.getUserName().equals(this.user.getUserName())){
-                    return "index";
+                    return Constants.LOGIN;
                 }
             }
             this.userDao.persist(this.user);
         } catch (Exception e) {
             // redirect
-            return "404";
+            return Constants.ERROR;
         }
-        return "mypage";
+        return Constants.LOGIN;
     }
 
     public User getUser() {

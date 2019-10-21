@@ -251,6 +251,7 @@ public class UserDao {
     }
 
     public void addSubscriber(int deviceId, String username) {
+        System.out.println("USER NOT FOUND:" + username + "!");
         addSubscriber(deviceId, getUser(username));
     }
 

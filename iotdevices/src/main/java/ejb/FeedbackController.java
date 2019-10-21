@@ -76,14 +76,14 @@ public class FeedbackController {
             this.author = userDao.getUser(username);
         } catch (Exception e) {
             // redirect
-            return "404";
+            return Constants.ERROR;
         }
 
         Feedback feedback = new Feedback(author, device, inputtedFeedback, formattedDate);
 
         deviceDao.addFeedback(device, feedback);
 
-        return "devices";
+        return Constants.DEVICES;
     }
 
     public String getFeedback() {
