@@ -29,6 +29,8 @@ public class DeviceController implements Serializable {
 
     private Device device;
 
+    private Label newLabel;
+
 
 
     public List<Device> getDevices() {
@@ -59,6 +61,21 @@ public class DeviceController implements Serializable {
         return "device";
     }
 
+    public String editDevice() {
+        if(device == null) {
+            return "devices";
+        }
+
+        return "editdevice";
+    }
+
+    public String saveEditedDevice() {
+        deviceDao.saveEditedDevice(device);
+
+
+        return "device";
+    }
+
     public List<Device> getOnlineDevices() {
         List<Device> devices = getDevices();
         for (Device d : devices)
@@ -72,5 +89,13 @@ public class DeviceController implements Serializable {
             return "●";
 
         return "✕";
+    }
+
+    public Label getNewLabel() {
+        return newLabel;
+    }
+
+    public void setNewLabel(Label newLabel) {
+        this.newLabel = newLabel;
     }
 }

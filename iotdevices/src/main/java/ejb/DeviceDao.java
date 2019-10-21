@@ -142,4 +142,8 @@ public class DeviceDao {
         device.addFeedback(feedback);
         em.merge(device);
     }
+
+    public void saveEditedDevice(Device device) {
+        em.merge(device);
+    }
 }
