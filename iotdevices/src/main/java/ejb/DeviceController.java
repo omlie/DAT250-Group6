@@ -73,4 +73,5 @@ public class DeviceController implements Serializable {
 
         return "✕";
     }
+
 }
