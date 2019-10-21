@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import entities.Label;
+
 @Named(value = "deviceController")
 @SessionScoped
 public class DeviceController implements Serializable {
@@ -26,6 +28,8 @@ public class DeviceController implements Serializable {
     private DeviceDao deviceDao;
 
     private Device device;
+
+    private Label newLabel;
 
 
 
@@ -57,6 +61,21 @@ public class DeviceController implements Serializable {
         return Constants.DEVICE;
     }
 
+    public String editDevice() {
+        if(device == null) {
+            return "devices";
+        }
+
+        return "editdevice";
+    }
+
+    public String saveEditedDevice() {
+        deviceDao.saveEditedDevice(device);
+
+
+        return "device";
+    }
+
     public List<Device> getOnlineDevices() {
         List<Device> devices = getDevices();
         for (Device d : devices)
@@ -72,4 +91,11 @@ public class DeviceController implements Serializable {
         return "✕";
     }
 
+    public Label getNewLabel() {
+        return newLabel;
+    }
+
+    public void setNewLabel(Label newLabel) {
+        this.newLabel = newLabel;
+    }
 }

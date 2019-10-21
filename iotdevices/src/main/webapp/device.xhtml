@@ -33,6 +33,14 @@
 
 
                         </h2>
+                        <div>
+                            <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
+                        </div>
+                        <div>
+                            <h:outputText value="Label: "/>
+                            <ui:repeat value="${deviceController.device.labels}" var="label">
+                                <h:outputText value="${label.labelValue}"/>
+                            </ui:repeat>
 
                         <ui:fragment rendered="${userController.hasConnectionTo(deviceController.device.id)}">
                             <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
@@ -72,6 +80,12 @@
                                     </tbody>
                                 </table>
                             </ui:fragment>
+                        </div>
+                        <ui:fragment rendered="${userController.isOwner(deviceController.device.id)}">
+                            <h:commandButton action="${userController.deleteOwned(deviceController.device.id)}"
+                                             value="Delete"/>
+                            <h:commandButton action="${deviceController.editDevice()}"
+                                             value="Edit"/>
                         </ui:fragment>
                         <ui:fragment rendered="${userController.isSubscribedTo(deviceController.device.id)}">
                             <h:commandButton action="${userController.unsubscribe(deviceController.device.id)}"
