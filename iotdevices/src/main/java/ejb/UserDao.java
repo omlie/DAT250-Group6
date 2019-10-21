@@ -209,7 +209,7 @@ public class UserDao {
         List<Label> deviceLabels = new ArrayList<>();
 
         for(Label l : device.getLabels()){
-            if(l != null && l.getLabelValue() != null)
+            if(l != null && !l.getLabelValue().equals(""))
                 deviceLabels.add(addLabel(l.getLabelValue()));
         }
 
@@ -231,17 +231,13 @@ public class UserDao {
         if (device == null || user == null)
             throw new NotFoundException(deviceId + ", " + userId);
 
-        // Create subscription
-        Subscription subscription = new Subscription();
-        subscription.setDevice(device);
-        subscription.setUser(user);
+        Subscription subscription = new Subscription(device, user);
 
         // Already a subscription-relation
+        device.addSubscriber(subscription);
         if(user.getSubscriptions().contains(subscription))
             return;
 
-        device.addSubscriber(user);
-        user.addSubscriber(device);
         em.persist(device);
     }
 

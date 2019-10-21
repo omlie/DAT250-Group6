@@ -143,11 +143,12 @@ public class UserController implements Serializable {
                     device.addLabel(l2);
                 if(l3 != null)
                     device.addLabel(l3);
+
+                this.user = userDao.addDevice(user.getId(), device);
+                this.device = null;
                 l1 = null;
                 l2 = null;
                 l3 = null;
-                this.user = userDao.addDevice(user.getId(), device);
-                this.device = null;
             }
         } catch (Exception e) {
             // redirect
