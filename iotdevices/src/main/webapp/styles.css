@@ -1,0 +1,121 @@
+div,
+input,
+table,
+thead,
+tr,
+td,
+th {
+    margin: 6px;
+    padding: 6px;
+}
+
+div.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+a.headerButton {
+    margin: 12px;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: black;
+}
+
+div.container {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    justify-content: space-between;
+}
+
+div.button-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+div.button-row > * {
+    width: 75px;
+    height: 40px;
+}
+
+div.devices {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    justify-content: space-between;
+}
+
+
+div.label {
+    padding: 0;
+    margin: 0;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+tr {
+    border-bottom: 1px solid slategrey;
+}
+
+th,
+td {
+    width: 256px;
+    height: 64px;
+    text-align: center;
+}
+
+th.noborder,
+td.noborder {
+    border: 0;
+}
+
+td > img {
+    height: 100px;
+    width: auto;
+}
+
+input.feedback {
+    height: 100px;
+    width: 200px;
+}
+
+span.ONLINE,
+span.AVAILABLE {
+    font-size: 32px;
+    color: green;
+}
+
+span.OFFLINE,
+span.UNAVAILABLE {
+    font-size: 32px;
+    color: red;
+}
+
+div.deviceTableHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid slategrey;
+}
+
+img.deviceimage {
+    height: 500px;
+    width: auto;
+}
+
+h2.deviceHeading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: auto;
+}

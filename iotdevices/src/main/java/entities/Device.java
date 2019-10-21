@@ -36,8 +36,7 @@ public class Device implements Serializable {
     private Status status;
 
     @JsonbTransient
-    @OneToMany
-    @JoinColumn(name = "device_id")
+    @OneToMany(mappedBy = "device", cascade = {CascadeType.ALL})
     private List<Feedback> feedback;
 
     @JsonbTransient
@@ -89,10 +88,13 @@ public class Device implements Serializable {
         this.deviceName = name;
     }
 
-    public void addSubscriber(User user) {
-        Subscription newSubscription = new Subscription(this, user);
-        subscriptions.add(newSubscription);
-        user.getSubscriptions().add(newSubscription);
+    public void addSubscriber(Subscription subscription) {
+        subscriptions.add(subscription);
+        subscription.getUser().getSubscriptions().add(subscription);
+    }
+
+    public void addFeedback(Feedback newFeedback) {
+        feedback.add(newFeedback);
     }
 
     public String getDeviceImg() {

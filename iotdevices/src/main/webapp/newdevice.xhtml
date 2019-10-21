@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+        xml:lang="en" lang="en"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<head>
+    <title>Devices</title>
+</head>
+
+<body>
+
+<ui:composition template="templates/common.xhtml">
+    <ui:define name="content">
+        <h:form>
+            <div class="container">
+                <h:inputText a:placeholder="Name" value="${userController.device.deviceName}" />
+                <h:inputText a:placeholder="API Endpoint" value="${userController.device.apiUrl}"/>
+                <h:inputText a:placeholder="Image URL"  value="${userController.device.deviceImg}"/>
+                <h:selectOneMenu a:placeholder="Status" value="#{userController.device.status}" label="Status" >
+                    <f:selectItems value="#{userController.device.getStatuses()}"/>
+                </h:selectOneMenu>
+                <h:inputText a:placeholder="Label 1" value="#{userController.l1.labelValue}"/>
+                <h:inputText a:placeholder="Label 2" value="#{userController.l2.labelValue}"/>
+                <h:inputText a:placeholder="Label 3" value="#{userController.l3.labelValue}"/>
+                <h:commandButton action="${userController.addDevice(userController.device)}" value="Add device"/>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
+</body>
+
+</html>

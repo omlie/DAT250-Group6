@@ -8,6 +8,7 @@ import entities.User;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
+import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,8 +51,9 @@ public class UserController implements Serializable {
             this.user = userDao.unsubscribe(user.getId(), deviceid);
         } catch (Exception e) {
             // redirect
+            return "404";
         }
-        return "mypage";
+        return "feedback";
     }
 
     public String addSubscription(int deviceid, int userid){
@@ -60,6 +62,7 @@ public class UserController implements Serializable {
             this.user = userDao.getUser(userid);
         } catch (Exception e) {
             // redirect
+            return "404";
         }
         return "mypage";
     }
@@ -73,7 +76,9 @@ public class UserController implements Serializable {
             }
         } catch (Exception e) {
             //redirect
+            return "404";
         }
+
         return "index";
     }
 
@@ -81,9 +86,9 @@ public class UserController implements Serializable {
         try {
             userDao.deleteOwned(user.getId(), deviceId);
             this.user = userDao.getUser(user.getId());
-            return "mypage";
         } catch (Exception e) {
             //redirect
+            return "404";
         }
         return "mypage";
     }
@@ -138,14 +143,16 @@ public class UserController implements Serializable {
                     device.addLabel(l2);
                 if(l3 != null)
                     device.addLabel(l3);
+
+                this.user = userDao.addDevice(user.getId(), device);
+                this.device = null;
                 l1 = null;
                 l2 = null;
                 l3 = null;
-                this.user = userDao.addDevice(user.getId(), device);
-                this.device = null;
             }
         } catch (Exception e) {
             // redirect
+            return "404";
         }
         return "mypage";
     }
@@ -155,12 +162,13 @@ public class UserController implements Serializable {
             List<User> users = this.userDao.getAllUsers();
             for(User u : users){
                 if(u.getUserName().equals(this.user.getUserName())){
-                    return "users";
+                    return "index";
                 }
             }
             this.userDao.persist(this.user);
         } catch (Exception e) {
             // redirect
+            return "404";
         }
         return "mypage";
     }
@@ -192,5 +200,26 @@ public class UserController implements Serializable {
     public Label getL3() {
         l3 = new Label();
         return l3;
+    }
+
+    public boolean isOwner(int deviceId) {
+        for (Device dev : this.user.getOwnedDevices())
+            if (dev.getId() == deviceId)
+                return true;
+
+        return false;
+    }
+
+    public boolean isSubscribedTo(int deviceId) {
+        if(isOwner(deviceId)) return false;
+        for (Device dev : this.subscribedTo())
+            if (dev.getId() == deviceId)
+                return true;
+
+        return false;
+    }
+
+    public boolean hasConnectionTo(int deviceId) {
+        return (isOwner(deviceId) || isSubscribedTo(deviceId));
     }
 }

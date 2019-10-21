@@ -1,6 +1,7 @@
 package ejb;
 
 import entities.Device;
+import entities.Label;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -12,19 +13,21 @@ import java.util.List;
 @Named(value = "searchController")
 @RequestScoped
 public class SearchController implements Serializable{
-    private String searchWord;
-    private List<Device> searchResult;
 
     @EJB
-    DeviceDao dao;
+    DeviceDao deviceDao;
+
+    private List<Device> searchResult;
+    private String searchWord;
+
 
     public void search(String searchWord){
         try {
-            if(searchWord == null) {
-                searchResult = new ArrayList<>();
+            if(searchWord == null || searchWord.equals("")) {
+                searchResult = deviceDao.getOnlineDevices(deviceDao.getAllDevices());
                 return;
             }
-            searchResult = dao.filterDevicesByLabel(searchWord);
+            searchResult = deviceDao.filterDevicesByLabel(searchWord);
         } catch (Exception e) {
             // redirect
         }
@@ -39,10 +42,13 @@ public class SearchController implements Serializable{
     }
 
     public List<Device> getSearchResult() {
+        if(searchResult == null)
+            searchResult = deviceDao.getOnlineDevices(deviceDao.getAllDevices());
         return searchResult;
     }
 
     public void setSearchResult(List<Device> searchResult) {
         this.searchResult = searchResult;
     }
+
 }

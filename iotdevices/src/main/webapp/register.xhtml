@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+
+<h:body>
+    <f:view>
+        <ui:composition template="templates/common.xhtml">
+            <ui:define name="header">
+                <h1>IOT Devices</h1>
+            </ui:define>
+
+            <ui:define name="content">
+                <h:form>
+                    <div class="container">
+
+                        <h:inputText a:placeholder="Username" value="#{userController.user.userName}"/>
+                        <h:inputText a:placeholder="First name" value="#{userController.user.firstName}"/>
+                        <h:inputText a:placeholder="Last name" value="#{userController.user.lastName}"/>
+                        <h:inputSecret a:placeholder="Password" value="#{userController.user.password}"/>
+                        <div class="button-row">
+                            <h:commandButton action="#{userController.saveUser()}" value="Register"/>
+                            <h:button outcome="index" value="Back"/>
+                        </div>
+                    </div>
+
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </f:view>
+</h:body>
+</html>
