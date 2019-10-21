@@ -38,15 +38,18 @@ public class User implements Serializable {
     private List<Device> ownedDevices = new ArrayList<>();
 
     @JsonbTransient
-    @OneToMany
-    @JoinColumn(name = "user_id")
-    private List<Feedback> feedback = new ArrayList<>();
+    @OneToMany(mappedBy = "author", cascade = {CascadeType.ALL})
+    private Set<Feedback> feedback = new HashSet<>();
 
     @JsonbTransient
     @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL})
     private Set<Subscription> subscriptions = new HashSet<>();
 
     public User() {
+    }
+
+    public void addFeedback() {
+
     }
 
     public int getId() {
@@ -89,14 +92,6 @@ public class User implements Serializable {
         this.ownedDevices = ownedDevices;
     }
 
-    public List<Feedback> getFeedback() {
-        return feedback;
-    }
-
-    public void setFeedback(List<Feedback> feedback) {
-        this.feedback = feedback;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -120,5 +115,17 @@ public class User implements Serializable {
     public void addSubscriber(Device device) {
         Subscription newSubscription = new Subscription(device, this);
         this.subscriptions.add(newSubscription);
+    }
+
+    public void addFeedback(Feedback newFeedback) {
+        feedback.add(newFeedback);
+    }
+
+    public Set<Feedback> getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(Set<Feedback> feedback) {
+        this.feedback = feedback;
     }
 }

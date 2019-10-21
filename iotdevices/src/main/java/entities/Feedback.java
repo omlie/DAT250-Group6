@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="Feedback")
-@NamedQuery(name="Feedback.findAll", query="SELECT d FROM Feedback d")
+// @NamedQuery(name="Feedback.findAll", query="SELECT d FROM Feedback d")
 public class Feedback implements Serializable {
     public static final String FIND_ALL = "Feedback.findAll";
     private static final long serialVersionUID = 1L;
@@ -27,12 +27,18 @@ public class Feedback implements Serializable {
     @JoinColumn(name= "user_id")
     private User author;
 
-    @JsonbTransient
     @ManyToOne
     @JoinColumn(name= "device_id")
     private Device device;
 
     public Feedback() {
+    }
+
+    public Feedback(User author, Device device, String feedbackContent, String publishedDate) {
+        this.author = author;
+        this.device = device;
+        this.feedbackContent = feedbackContent;
+        this.publishedDate = publishedDate;
     }
 
     public int getId() {

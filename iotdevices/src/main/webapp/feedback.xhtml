@@ -10,8 +10,9 @@
         <ui:define name="content">
             <div class="container">
             <h:form>
-            <h:inputTextarea value="Feedback"/>
-                <h:commandButton value="Submit feedback"/>
+            <h:inputTextarea value="#{feedbackController.inputtedFeedback}"/>
+                <h:commandButton action="${feedbackController.submitFeedback(deviceController.device.id, userController.user.id)}"
+                        value="Submit feedback"/>
             </h:form>
             </div>
         </ui:define>

@@ -26,7 +26,7 @@
                         </h2>
 
                         <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
-                        <h:outputText value="Label: " />
+                        <h:outputText value="Label: "/>
 
                         <ui:repeat value="${deviceController.device.labels}" var="label">
                             <h:outputText value="${label.labelValue}"/>
@@ -45,6 +45,27 @@
                                     action="${userController.addSubscription(deviceController.device.id, userController.user.id)}"
                                     value="Subscribe"/>
                         </ui:fragment>
+                        <h3>
+                            Feedback
+                        </h3>
+                        <table>
+                            <tbody>
+                            <ui:repeat value="#{deviceController.device.getFeedback()}" var="feedback">
+                                <h:form>
+                                    <tr>
+                                        <td>
+                                            <h:outputText value="#{feedback.getPublishedDate()}"/>
+                                            <h:outputText value="    "/>
+                                            <h:outputText value="#{feedback.getAuthor().getUserName()}"/>
+                                        </td>
+                                        <td>
+                                            <h:outputText value="#{feedback.getFeedbackContent()}"/>
+                                        </td>
+                                    </tr>
+                                </h:form>
+                            </ui:repeat>
+                            </tbody>
+                        </table>
                     </div>
                 </h:form>
             </ui:define>

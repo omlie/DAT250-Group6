@@ -137,4 +137,9 @@ public class DeviceDao {
             throw new NotFoundException();
         return getOnlineDevices(devices);
     }
+
+    public void addFeedback(Device device, Feedback feedback) {
+        device.addFeedback(feedback);
+        em.merge(device);
+    }
 }
