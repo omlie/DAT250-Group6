@@ -12,6 +12,7 @@ import javax.inject.Named;
 
 import entities.Device;
 import entities.Label;
+import helpers.Status;
 
 @Named(value = "deviceController")
 @SessionScoped
@@ -27,6 +28,8 @@ public class DeviceController implements Serializable {
     private DeviceDao deviceDao;
 
     private Device device;
+
+
 
     public List<Device> getDevices() {
         List<Device> reverseDeviceList = new ArrayList<>(this.deviceDao.getAllDevices());
@@ -54,6 +57,14 @@ public class DeviceController implements Serializable {
         }
 
         return "device";
+    }
+
+    public List<Device> getOnlineDevices() {
+        List<Device> devices = getDevices();
+        for (Device d : devices)
+            if (d.getStatus() == Status.OFFLINE)
+                devices.remove(d);
+        return devices;
     }
 
     public String mapStatusToCharacter(String status) {

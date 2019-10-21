@@ -28,6 +28,7 @@
                         <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
                         <h:outputText value="Label: "/>
 
+
                         <ui:repeat value="${deviceController.device.labels}" var="label">
                             <h:outputText value="${label.labelValue}"/>
                         </ui:repeat>

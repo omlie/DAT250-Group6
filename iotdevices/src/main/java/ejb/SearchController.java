@@ -13,16 +13,18 @@ import java.util.List;
 @Named(value = "searchController")
 @RequestScoped
 public class SearchController implements Serializable{
-    private String searchWord;
-    private List<Device> searchResult;
 
     @EJB
     DeviceDao deviceDao;
 
+    private List<Device> searchResult;
+    private String searchWord;
+
+
     public void search(String searchWord){
         try {
-            if(searchWord == null) {
-                searchResult = new ArrayList<>();
+            if(searchWord == null || searchWord.equals("")) {
+                searchResult = dao.getOnlineDevices(dao.getAllDevices());
                 return;
             }
             searchResult = deviceDao.filterDevicesByLabel(searchWord);
@@ -40,6 +42,8 @@ public class SearchController implements Serializable{
     }
 
     public List<Device> getSearchResult() {
+        if(searchResult == null)
+            searchResult = dao.getOnlineDevices(dao.getAllDevices());
         return searchResult;
     }
 
