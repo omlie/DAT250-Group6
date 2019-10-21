@@ -232,9 +232,8 @@ public class UserDao {
      *
      * @param username
      * @param device
-     * @return
      */
-    public User addDevice(String username, Device device) {
+    public void addDevice(String username, Device device) {
         User user = getUser(username);
         if (user == null)
             throw new NotFoundException();
@@ -249,7 +248,6 @@ public class UserDao {
         user.addOwnedDevice(device);
         em.persist(device);
         em.merge(user);
-        return user;
     }
 
     public void addSubscriber(int deviceId, String username) {
@@ -282,14 +280,13 @@ public class UserDao {
         em.persist(device);
     }
 
-    public User updateUser(User user) {
+    public void updateUser(User user) {
         User stored = em.find(User.class, user.getId());
         if (stored == null)
             throw new NotFoundException();
         stored.setFirstName(user.getFirstName());
         stored.setLastName(user.getLastName());
         merge(stored);
-        return stored;
     }
 
     /**
@@ -297,9 +294,8 @@ public class UserDao {
      *
      * @param username
      * @param deviceId
-     * @return
      */
-    public User unsubscribe(String username, int deviceId) {
+    public void unsubscribe(String username, int deviceId) {
         List<Subscription> q =
                 em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.userName=?2", Subscription.class)
                         .setParameter(1, deviceId)
@@ -315,6 +311,5 @@ public class UserDao {
         em.createQuery("DELETE FROM Subscription s WHERE s.id=?1")
                 .setParameter(1, s.getId()).executeUpdate();
 
-        return getUser(username);
     }
 }
