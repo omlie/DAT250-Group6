@@ -24,7 +24,7 @@ public class SearchController implements Serializable{
     public void search(String searchWord){
         try {
             if(searchWord == null || searchWord.equals("")) {
-                searchResult = dao.getOnlineDevices(dao.getAllDevices());
+                searchResult = deviceDao.getOnlineDevices(deviceDao.getAllDevices());
                 return;
             }
             searchResult = deviceDao.filterDevicesByLabel(searchWord);
@@ -43,7 +43,7 @@ public class SearchController implements Serializable{
 
     public List<Device> getSearchResult() {
         if(searchResult == null)
-            searchResult = dao.getOnlineDevices(dao.getAllDevices());
+            searchResult = deviceDao.getOnlineDevices(deviceDao.getAllDevices());
         return searchResult;
     }
 
