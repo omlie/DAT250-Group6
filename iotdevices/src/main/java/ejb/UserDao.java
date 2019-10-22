@@ -66,7 +66,6 @@ public class UserDao {
         d.setApiUrl(device.getApiUrl());
         d.setDeviceImg(device.getDeviceImg());
         d.setDeviceName(device.getDeviceName());
-        addLabels(device.getId(), device.getLabels());
         em.merge(d);
     }
 
@@ -202,8 +201,10 @@ public class UserDao {
                 devicelabels.add(addLabel(l.getLabelValue()));
             }
         }
-        for (Label l : devicelabels){
-            d.addLabel(l);
+        if(!devicelabels.isEmpty()) {
+            for (Label l : devicelabels) {
+                d.addLabel(l);
+            }
         }
         em.merge(d);
     }
