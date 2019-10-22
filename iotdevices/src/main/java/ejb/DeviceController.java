@@ -6,13 +6,11 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import entities.Device;
-import entities.Label;
+import helpers.Constants;
 import helpers.Status;
 
 @Named(value = "deviceController")

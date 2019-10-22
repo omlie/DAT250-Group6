@@ -1,5 +1,7 @@
 package ejb;
 
+import helpers.Constants;
+
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

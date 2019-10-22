@@ -4,13 +4,11 @@ import entities.Device;
 import entities.Label;
 import entities.Subscription;
 import entities.User;
-import org.omg.CORBA.CODESET_INCOMPATIBLE;
+import helpers.Constants;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import javax.ws.rs.NotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;

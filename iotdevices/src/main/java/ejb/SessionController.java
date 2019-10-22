@@ -1,7 +1,7 @@
 package ejb;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import entities.User;
+import helpers.Constants;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;

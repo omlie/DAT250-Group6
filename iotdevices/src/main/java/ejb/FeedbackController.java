@@ -3,6 +3,7 @@ package ejb;
 import entities.Device;
 import entities.Feedback;
 import entities.User;
+import helpers.Constants;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
