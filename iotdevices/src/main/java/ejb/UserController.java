@@ -48,7 +48,7 @@ public class UserController implements Serializable {
     }
 
     public Set<Subscription> subscriptions() {
-        return user.getSubscriptions();
+        return userDao.getUser(getUsername()).getSubscriptions();
     }
 
     public String unsubscribe(int deviceid){
