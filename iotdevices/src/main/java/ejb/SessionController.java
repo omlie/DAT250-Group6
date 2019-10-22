@@ -38,6 +38,8 @@ public class SessionController implements Serializable {
     public String logout(){
         HttpSession session = SessionUtil.getSession();
         session.invalidate();
+        this.username = null;
+        this.password = null;
         return Constants.LOGIN;
     }
 
@@ -50,7 +52,7 @@ public class SessionController implements Serializable {
     }
 
     public User getUser(){
-        return userDao.getUser(username);
+        return userDao.getUser((String)SessionUtil.getSession().getAttribute(Constants.USERNAME));
     }
 
     public String getPassword() {
