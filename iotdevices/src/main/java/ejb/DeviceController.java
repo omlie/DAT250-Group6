@@ -61,19 +61,21 @@ public class DeviceController implements Serializable {
         return Constants.DEVICE;
     }
 
+    public Device getDevice(int deviceid){
+        this.device = deviceDao.getDeviceById(deviceid);
+        return this.device;
+    }
+
     public String editDevice() {
         if(device == null) {
             return "devices";
         }
-
         return "editdevice";
     }
 
-    public String saveEditedDevice() {
-        deviceDao.saveEditedDevice(device);
-
-
-        return "device";
+    public void deleteLabel(Device d, Label l) {
+        d.getLabels().remove(l);
+        deviceDao.saveEditedDevice(d);
     }
 
     public List<Device> getOnlineDevices() {
