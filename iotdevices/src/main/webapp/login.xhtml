@@ -20,10 +20,10 @@
         <h:form class="form-login">
             <div class="container">
 
-                <h:inputText a:placeholder="Username" value="#{userController.user.userName}"/>
-                <h:inputSecret a:placeholder="Password" value="#{userController.user.password}"/>
+                <h:inputText a:placeholder="Username" value="#{sessionController.username}"/>
+                <h:inputSecret a:placeholder="Password" value="#{sessionController.password}"/>
                 <div class="button-row">
-                    <h:commandButton action="#{userController.userLogin()}" value="Login"/>
+                    <h:commandButton action="#{(sessionController.login())}" value="Login"/>
                     <h:button outcome="register" value="Register"/>
                 </div>
             </div>

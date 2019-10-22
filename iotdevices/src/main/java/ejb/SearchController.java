@@ -28,8 +28,7 @@ public class SearchController implements Serializable{
                 return;
             }
             searchResult = deviceDao.filterDevicesByLabel(searchWord);
-        } catch (Exception e) {
-            // redirect
+        } catch (Exception ignored) {
         }
     }
 

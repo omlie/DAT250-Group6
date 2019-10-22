@@ -20,10 +20,10 @@
                 <div>
                     <h1>User information</h1>
                     <div id="details">
-                        <b>First name: </b> <h:outputText value="#{userController.getUser().firstName}"/> <br/>
-                        <b>Last name: </b> <h:outputText value="#{userController.getUser().lastName}"/> <br/>
+                        <b>First name: </b> <h:outputText value="#{sessionController.getUser().firstName}"/> <br/>
+                        <b>Last name: </b> <h:outputText value="#{sessionController.getUser().lastName}"/> <br/>
                         <b> Number of devices: </b> <h:outputText
-                            value="#{userController.getUser().ownedDevices.size()}"/>
+                            value="#{sessionController.getUser().ownedDevices.size()}"/>
                     </div>
                 </div>
                 <div class="devices">
@@ -32,7 +32,7 @@
                         <h:button outcome="newdevice" value="Add new device"/>
                     </div>
                     <table>
-                        <ui:repeat value="#{userController.getUser().getOwnedDevices()}" var="dev">
+                        <ui:repeat value="#{sessionController.getUser().getOwnedDevices()}" var="dev">
                             <h:form>
                                 <tr>
                                     <td>

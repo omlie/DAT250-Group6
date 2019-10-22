@@ -65,11 +65,24 @@ public class UserDao {
     /**
      * Get all devices that a user is subscribed to
      *
-     * @param userId
+     * @param userid
      * @return the list of devices the user is subscribed to
      */
-    public List<Device> getSubscribedDevices(int userId) {
-        User user = em.find(User.class, userId);
+    public List<Device> getSubscribedDevices(int userid) {
+        return getSubscribedDevices(em.find(User.class, userid));
+    }
+
+    /**
+     * Get all devices that a user is subscribed to
+     *
+     * @param username
+     * @return the list of devices the user is subscribed to
+     */
+    public List<Device> getSubscribedDevices(String username) {
+        return getSubscribedDevices(getUser(username));
+    }
+
+    private List<Device> getSubscribedDevices(User user) {
         if (user == null)
             throw new NotFoundException();
 
@@ -83,13 +96,16 @@ public class UserDao {
     /**
      * Delete one of a users owned devices
      *
-     * @param userid
+     * @param username
      * @param deviceId
      * @return
      */
-    public void deleteOwned(int userid, int deviceId) {
-        User user = em.find(User.class, userid);
+    public void deleteOwned(String username, int deviceId) {
+        User user = getUser(username);
         Device d = em.find(Device.class, deviceId);
+        if (d == null || user == null)
+            throw new NotFoundException();
+
         user.getOwnedDevices().remove(d);
         em.createQuery("DELETE FROM Subscription s WHERE s.device.id =?1")
                 .setParameter(1, deviceId)
@@ -214,14 +230,15 @@ public class UserDao {
      * Add a device from a specific user. The device will
      * be a owned device for the user
      *
-     * @param userid
+     * @param username
      * @param device
-     * @return
      */
-    public User addDevice(int userid, Device device) {
-        User user = em.find(User.class, userid);
-        List<Label> deviceLabels = new ArrayList<>();
+    public void addDevice(String username, Device device) {
+        User user = getUser(username);
+        if (user == null)
+            throw new NotFoundException();
 
+        List<Label> deviceLabels = new ArrayList<>();
         for (Label l : device.getLabels()) {
             if (l != null && !l.getLabelValue().equals(""))
                 deviceLabels.add(addLabel(l.getLabelValue()));
@@ -231,20 +248,28 @@ public class UserDao {
         user.addOwnedDevice(device);
         em.persist(device);
         em.merge(user);
-        return user;
+    }
+
+    public void addSubscriber(int deviceId, String username) {
+        System.out.println("USER NOT FOUND:" + username + "!");
+        addSubscriber(deviceId, getUser(username));
+    }
+
+
+    public void addSubscriber(int deviceId, int userid) {
+        addSubscriber(deviceId, em.find(User.class, userid));
     }
 
     /**
      * Add the given user as a subscriber to a device
      *
      * @param deviceId
-     * @param userId
+     * @param user
      */
-    public void addSubscriber(int deviceId, int userId) {
+    public void addSubscriber(int deviceId, User user) {
         Device device = em.find(Device.class, deviceId);
-        User user = em.find(User.class, userId);
         if (device == null || user == null)
-            throw new NotFoundException(deviceId + ", " + userId);
+            throw new NotFoundException();
 
         Subscription subscription = new Subscription(device, user);
 
@@ -256,28 +281,26 @@ public class UserDao {
         em.persist(device);
     }
 
-    public User updateUser(User user) {
+    public void updateUser(User user) {
         User stored = em.find(User.class, user.getId());
         if (stored == null)
             throw new NotFoundException();
         stored.setFirstName(user.getFirstName());
         stored.setLastName(user.getLastName());
         merge(stored);
-        return stored;
     }
 
     /**
      * Unsubscribe a given user from a given device
      *
-     * @param userid
+     * @param username
      * @param deviceId
-     * @return
      */
-    public User unsubscribe(int userid, int deviceId) {
+    public void unsubscribe(String username, int deviceId) {
         List<Subscription> q =
-                em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.id=?2", Subscription.class)
+                em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.userName=?2", Subscription.class)
                         .setParameter(1, deviceId)
-                        .setParameter(2, userid)
+                        .setParameter(2, username)
                         .getResultList();
 
         // If result is empty. If there are more than one subscription to the same device, just remove one
@@ -289,6 +312,5 @@ public class UserDao {
         em.createQuery("DELETE FROM Subscription s WHERE s.id=?1")
                 .setParameter(1, s.getId()).executeUpdate();
 
-        return em.find(User.class, userid);
     }
 }

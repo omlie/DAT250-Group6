@@ -6,12 +6,11 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import entities.Device;
-import entities.Label;
+import helpers.Constants;
 import helpers.Status;
 
 @Named(value = "deviceController")
@@ -53,10 +52,10 @@ public class DeviceController implements Serializable {
         try {
             this.device = this.deviceDao.getDeviceById(deviceId);
         } catch (Exception e) {
-            return "devices";
+            return Constants.DEVICES;
         }
 
-        return "device";
+        return Constants.DEVICE;
     }
 
     public List<Device> getOnlineDevices() {

@@ -80,7 +80,7 @@
                         <ui:fragment
                                 rendered="${!userController.hasConnectionTo(deviceController.device.id) and !userController.subscriptionIsPending(deviceController.device.id)}">
                             <h:commandButton
-                                    action="${userController.addSubscription(deviceController.device.id, userController.user.id)}"
+                                    action="${userController.addSubscription(deviceController.device.id, sessionController.username)}"
                                     value="Subscribe"/>
                         </ui:fragment>
                         <h3>
