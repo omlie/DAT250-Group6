@@ -41,9 +41,14 @@
                                     <td>
                                         <h:outputText value="#{dev.deviceName}"/>
                                     </td>
+
                                     <td>
                                         <h:outputText class="${dev.status}"
                                                       value="#{deviceController.mapStatusToCharacter(dev.status)}"/>
+                                    </td>
+                                    <td>
+                                        <h:outputText
+                                                value="${subscriptionController.pendingSubscriberStatus(dev.id)}"/>
                                     </td>
                                     <td>
                                         <h:commandButton action="${deviceController.viewDevice(dev.id)}"
@@ -70,8 +75,16 @@
                                         <h:outputText value="#{dev.deviceName}"/>
                                     </td>
                                     <td>
-                                        <h:outputText class="${dev.status}"
-                                                      value="#{deviceController.mapStatusToCharacter(dev.status)}"/>
+                                        <ui:fragment
+                                                rendered="${userController.subscriptionIsPending(dev.id)}">
+                                            <h:outputLabel value="Awaiting approval from owner"/>
+                                        </ui:fragment>
+                                        <ui:fragment
+                                                rendered="${!userController.subscriptionIsPending(dev.id)}">
+                                            <h:outputText
+                                                    class="${deviceController.device.status}"
+                                                    value="#{deviceController.mapStatusToCharacter(deviceController.device.status)}"/>
+                                        </ui:fragment>
                                     </td>
                                     <td>
                                         <h:commandButton action="${deviceController.viewDevice(dev.id)}"

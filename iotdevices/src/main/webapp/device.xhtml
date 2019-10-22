@@ -19,13 +19,24 @@
                         <h:graphicImage class="deviceimage" url="#{deviceController.device.deviceImg}"/>
                         <h2 class="deviceHeading">
                             <h:outputText value="#{deviceController.device.deviceName}"/>
-                            <h:outputText
-                                    class="${deviceController.device.status}"
-                                    value="#{deviceController.mapStatusToCharacter(deviceController.device.status)}"/>
+
+                            <ui:fragment
+                                    rendered="${userController.subscriptionIsPending(deviceController.device.id)}">
+                                <h:outputLabel value="Awaiting approval from owner"/>
+                            </ui:fragment>
+                            <ui:fragment
+                                    rendered="${!userController.subscriptionIsPending(deviceController.device.id)}">
+                                <h:outputText
+                                        class="${deviceController.device.status}"
+                                        value="#{deviceController.mapStatusToCharacter(deviceController.device.status)}"/>
+                            </ui:fragment>
+
 
                         </h2>
 
-                        <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
+                        <ui:fragment rendered="${userController.hasConnectionTo(deviceController.device.id)}">
+                            <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
+                        </ui:fragment>
                         <h:outputText value="Label: "/>
 
 
@@ -35,13 +46,39 @@
                         <ui:fragment rendered="${userController.isOwner(deviceController.device.id)}">
                             <h:commandButton action="${userController.deleteOwned(deviceController.device.id)}"
                                              value="Delete"/>
+                            <ui:fragment
+                                    rendered="${subscriptionController.hasPendingSubscribers(deviceController.device.id)}">
+                                <h3>
+                                    Pending subscribers
+                                </h3>
+                                <table>
+                                    <tbody>
+                                    <ui:repeat
+                                            value="#{subscriptionController.pendingSubscribers(deviceController.device.id)}"
+                                            var="pending">
+                                        <h:form>
+                                            <tr>
+                                                <td>
+                                                    <h:outputText value="#{pending.getUserName()}"/>
+                                                </td>
+                                                <td>
+                                                    <h:commandButton
+                                                            action="${subscriptionController.approveSubscriber(deviceController.device.id, pending.getId())}"
+                                                            value="Approve"/>
+                                                </td>
+                                            </tr>
+                                        </h:form>
+                                    </ui:repeat>
+                                    </tbody>
+                                </table>
+                            </ui:fragment>
                         </ui:fragment>
                         <ui:fragment rendered="${userController.isSubscribedTo(deviceController.device.id)}">
                             <h:commandButton action="${userController.unsubscribe(deviceController.device.id)}"
                                              value="Unsubscribe"/>
                         </ui:fragment>
                         <ui:fragment
-                                rendered="${!userController.hasConnectionTo(deviceController.device.id)}">
+                                rendered="${!userController.hasConnectionTo(deviceController.device.id) and !userController.subscriptionIsPending(deviceController.device.id)}">
                             <h:commandButton
                                     action="${userController.addSubscription(deviceController.device.id, userController.user.id)}"
                                     value="Subscribe"/>

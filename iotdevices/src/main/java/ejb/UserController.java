@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Named(value = "userController")
 @SessionScoped
@@ -44,6 +45,10 @@ public class UserController implements Serializable {
             subscribedTo.add(s.getDevice());
         }
         return subscribedTo;
+    }
+
+    public Set<Subscription> subscriptions() {
+        return user.getSubscriptions();
     }
 
     public String unsubscribe(int deviceid){
@@ -212,8 +217,16 @@ public class UserController implements Serializable {
 
     public boolean isSubscribedTo(int deviceId) {
         if(isOwner(deviceId)) return false;
-        for (Device dev : this.subscribedTo())
-            if (dev.getId() == deviceId)
+        for (Subscription sub : subscriptions())
+            if(sub.getDevice().getId() == deviceId && sub.isApprovedSubscription())
+                return true;
+
+        return false;
+    }
+
+    public boolean subscriptionIsPending(int deviceId) {
+        for (Subscription sub : subscriptions())
+            if(sub.getDevice().getId() == deviceId && !sub.isApprovedSubscription())
                 return true;
 
         return false;
