@@ -2,13 +2,18 @@ package ejb;
 
 import entities.User;
 import helpers.Constants;
+import helpers.SessionUtil;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
+import java.security.Principal;
+import java.util.Map;
 
 @Named(value = "sessionController")
 @SessionScoped
@@ -18,41 +23,48 @@ public class SessionController implements Serializable {
 
     private String password;
     private String username;
+    private User user;
 
     @EJB
     private UserDao userDao;
 
-    public String login(){
+    public String login() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         try {
-            if(userDao.checkPassword(username, password)) {
-                HttpSession session = SessionUtil.getSession();
-                session.setAttribute(Constants.USERNAME, this.username);
-                return Constants.MYPAGE;
-            }
-        } catch (Exception ignored){
+            request.login(username, password);
+        } catch (ServletException e) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login failed!", null));
             return Constants.LOGIN;
         }
-        return Constants.MYPAGE;
+
+        Principal principal = request.getUserPrincipal();
+        this.user = userDao.getUser(principal.getName());
+        Map<String, Object> sessionMap = SessionUtil.getSessionMap();
+        sessionMap.put(Constants.USER, user);
+        SessionUtil.getSession().setAttribute(Constants.USERNAME, this.username);
+        if (request.isUserInRole("securityusers")) {
+            return Constants.MYPAGE;
+        } else {
+            return Constants.LOGIN;
+        }
     }
 
-    public String logout(){
-        HttpSession session = SessionUtil.getSession();
-        session.invalidate();
-        this.username = null;
-        this.password = null;
+    public String logout() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest request = SessionUtil.getRequest();
+        try {
+            this.user = null;
+            request.logout();
+            // clear the session
+            SessionUtil.getSession().invalidate();
+        } catch (ServletException ignored) {
+        }
         return Constants.LOGIN;
     }
 
-    public String redirect() throws IOException {
-        HttpSession session = SessionUtil.getSession();
-        if (session.getAttribute(Constants.USERNAME)==null) {
-            SessionUtil.getResponse().sendRedirect(Constants.LOGIN + ".xhtml");
-        }
-        return Constants.MYPAGE;
-    }
-
     public User getUser(){
-        return userDao.getUser((String)SessionUtil.getSession().getAttribute(Constants.USERNAME));
+        return (User)SessionUtil.getSessionMap().get(Constants.USER);
     }
 
     public String getPassword() {

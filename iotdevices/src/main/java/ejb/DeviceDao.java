@@ -1,9 +1,7 @@
 package ejb;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import entities.*;
+import helpers.Status;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -11,9 +9,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
-
-import entities.*;
-import helpers.Status;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Stateless
 public class DeviceDao {

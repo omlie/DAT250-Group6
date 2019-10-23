@@ -2,14 +2,13 @@ package entities;
 
 import helpers.Status;
 
+import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.json.bind.annotation.JsonbTransient;
-import javax.persistence.*;
-import javax.transaction.Transactional;
 
 @Entity
 @Table(name = "devices")

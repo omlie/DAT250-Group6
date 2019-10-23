@@ -21,12 +21,12 @@
                 <h:form>
                     <div class="container">
 
-                        <h:inputText a:placeholder="Username" value="#{userController.user.userName}"/>
+                        <h:inputText a:placeholder="Username" value="#{userController.user.userName}" required="true"/>
                         <h:inputText a:placeholder="First name" value="#{userController.user.firstName}"/>
                         <h:inputText a:placeholder="Last name" value="#{userController.user.lastName}"/>
-                        <h:inputSecret a:placeholder="Password" value="#{userController.user.password}"/>
+                        <h:inputSecret a:placeholder="Password" value="#{userController.user.password}" required="true"/>
                         <div class="button-row">
-                            <h:commandButton action="#{userController.saveUser()}" value="Register"/>
+                            <h:commandButton action="#{userController.register()}" value="Register"/>
                             <h:button outcome="index" value="Back"/>
                         </div>
                     </div>

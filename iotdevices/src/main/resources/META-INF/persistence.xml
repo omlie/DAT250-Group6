@@ -9,6 +9,7 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
         <class>entities.User</class>
         <class>entities.Feedback</class>
         <class>entities.Device</class>
+        <class>entities.SecurityGroup</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action"
                       value="none"/>
