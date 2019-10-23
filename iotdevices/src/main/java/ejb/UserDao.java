@@ -197,11 +197,15 @@ public class UserDao {
         Device d = em.find(Device.class, deviceid);
         List<Label> devicelabels = new ArrayList<>();
         for (Label l : labels) {
-            if (l != null && l.getLabelValue() != null) {
+            if (l != null && !l.getLabelValue().equals("")) {
                 devicelabels.add(addLabel(l.getLabelValue()));
             }
         }
-        d.setLabels(devicelabels);
+        if(!devicelabels.isEmpty()) {
+            for (Label l : devicelabels) {
+                d.addLabel(l);
+            }
+        }
         em.merge(d);
     }
 
@@ -216,6 +220,7 @@ public class UserDao {
         if (labels.isEmpty()) {
             l = new Label();
             l.setLabelValue(labelvalue);
+            em.persist(l);
         }
         // This label exist, use the existing
         else {

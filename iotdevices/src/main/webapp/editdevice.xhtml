@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xml:lang="en" lang="en"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<head>
+    <title>Edit device</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<h:body>
+    <f:view>
+        <ui:composition template="templates/common.xhtml">
+            <ui:define name="content">
+                <div class="container">
+                    <h:form>
+                        <h2 class="deviceHeading">
+                            <h:inputText value="#{deviceController.device.deviceName}"/>
+                        </h2>
+                        <h:graphicImage class="deviceimage" url="#{deviceController.device.deviceImg}"/>
+
+                        <div>
+                            <h:outputText value="New image url: "/>
+                            <h:inputText value="${deviceController.device.deviceImg}"/>
+                        </div>
+                        <div>
+                            <h:outputText value="Status: "/>
+                            <h:selectOneMenu value="#{deviceController.device.status}" label="Status" >
+                                <f:selectItems value="#{deviceController.device.getStatuses()}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div>
+                            <h:outputText value="API URL: "/>
+                            <h:inputText value="#{deviceController.device.apiUrl}"/>
+                        </div>
+                        <div>
+                            <h:outputText value="Label(s): "/>
+                            <ui:repeat value="${deviceController.getDevice(deviceController.device.id).labels}" var="label">
+                                <h:outputText value="${label.labelValue}"/>
+                                <h:commandButton value="Delete label" action="#{deviceController.deleteLabel(deviceController.getDevice(), label)}"/>
+                            </ui:repeat>
+                            <br/>
+                            <h:inputText a:placeholder="New label" value="#{userController.l1.labelValue}"/>
+                            <h:inputText a:placeholder="New label" value="#{userController.l2.labelValue}"/>
+                            <h:inputText a:placeholder="New label" value="#{userController.l3.labelValue}"/>
+                            <h:commandButton value="Add new labels" action="#{userController.addLabels(deviceController.getDevice().id)}"/>
+                        </div>
+                        <h:commandButton action="#{userController.editOwned(deviceController.getDevice())}" value="Save device"/>
+                    </h:form>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </f:view>
+</h:body>
+</html>

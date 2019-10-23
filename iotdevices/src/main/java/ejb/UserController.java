@@ -82,7 +82,11 @@ public class UserController implements Serializable {
         return Constants.MYPAGE;
     }
 
-    public String addLabels(int deviceid, List<Label> labels){
+    public String addLabels(int deviceid){
+        List<Label> labels = new ArrayList<>();
+        labels.add(l1);
+        labels.add(l2);
+        labels.add(l3);
         try {
             userDao.addLabels(deviceid, labels);
         } catch (Exception e) {
@@ -110,24 +114,12 @@ public class UserController implements Serializable {
         return Constants.DEVICE;
     }
 
-    public String publishDevice(int deviceid){
-        try {
-            userDao.publishDevice(deviceid);
-        } catch (Exception e) {
-            return Constants.ERROR;
-        }
-        return Constants.DEVICE;
-    }
-
     public String addDevice(Device device){
         try {
             if(device != null) {
                 // Add and reset labels
-                if(l1 != null)
                     device.addLabel(l1);
-                if(l2 != null)
                     device.addLabel(l2);
-                if(l3 != null)
                     device.addLabel(l3);
 
                 userDao.addDevice(getUsername(), device);

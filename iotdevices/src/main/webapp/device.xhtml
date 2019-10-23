@@ -33,19 +33,25 @@
 
 
                         </h2>
-
-                        <ui:fragment rendered="${userController.hasConnectionTo(deviceController.device.id)}">
+                        <div>
                             <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
-                        </ui:fragment>
-                        <h:outputText value="Label: "/>
+                        </div>
+                        <div>
+                            <h:outputText value="Label: "/>
+                            <ui:repeat value="${deviceController.getDevice(deviceController.device.id).labels}" var="label">
+                                <h:outputText value="${label.labelValue}"/>
+                            </ui:repeat>
 
-
-                        <ui:repeat value="${deviceController.device.labels}" var="label">
-                            <h:outputText value="${label.labelValue}"/>
-                        </ui:repeat>
-                        <ui:fragment rendered="${userController.isOwner(deviceController.device.id)}">
-                            <h:commandButton action="${userController.deleteOwned(deviceController.device.id)}"
-                                             value="Delete"/>
+                            <ui:fragment rendered="${userController.hasConnectionTo(deviceController.device.id)}">
+                                <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
+                            </ui:fragment>
+                            <br/>
+                            <ui:fragment rendered="${userController.isOwner(deviceController.device.id)}">
+                                <h:commandButton action="${userController.deleteOwned(deviceController.device.id)}"
+                                                 value="Delete"/>
+                                <h:commandButton action="${deviceController.editDevice()}"
+                                                 value="Edit"/>
+                            </ui:fragment>
                             <ui:fragment
                                     rendered="${subscriptionController.hasPendingSubscribers(deviceController.device.id)}">
                                 <h3>
@@ -72,7 +78,7 @@
                                     </tbody>
                                 </table>
                             </ui:fragment>
-                        </ui:fragment>
+                        </div>
                         <ui:fragment rendered="${userController.isSubscribedTo(deviceController.device.id)}">
                             <h:commandButton action="${userController.unsubscribe(deviceController.device.id)}"
                                              value="Unsubscribe"/>
