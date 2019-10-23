@@ -9,9 +9,11 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
         <class>entities.User</class>
         <class>entities.Feedback</class>
         <class>entities.Device</class>
+        <class>SecurityTest.SecurityGroup</class>
+        <class>SecurityTest.SecurityUser</class>
         <properties>
             <property name="javax.persistence.schema-generation.database.action"
-                      value="none"/>
+                      value="create"/>
         </properties>
     </persistence-unit>
 </persistence>
