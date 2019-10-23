@@ -42,7 +42,8 @@
                         </div>
                         <div>
                             <h:outputText value="Label: "/>
-                            <ui:repeat value="${deviceController.getDevice(deviceController.device.id).labels}" var="label">
+                            <ui:repeat value="${deviceController.getDevice(deviceController.device.id).labels}"
+                                       var="label">
                                 <h:outputText value="${label.labelValue}"/>
                             </ui:repeat>
 
@@ -57,7 +58,7 @@
                                                  value="Edit"/>
                             </ui:fragment>
                             <ui:fragment
-                                    rendered="${subscriptionController.hasPendingSubscribers(deviceController.device.id)}">
+                                    rendered="${subscriptionController.hasPendingSubscribers(deviceController.device.id) and userController.isOwner(deviceController.device.id)}">
                                 <h3>
                                     Pending subscribers
                                 </h3>

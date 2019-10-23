@@ -139,6 +139,7 @@ public class UserController implements Serializable {
                 l2 = null;
                 l3 = null;
             }
+            this.user = userDao.getUser(this.user.getUserName());
         } catch (Exception e) {
             // redirect
             return Constants.ERROR;
