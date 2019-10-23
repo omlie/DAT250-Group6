@@ -1,24 +1,20 @@
-<?xml version = "1.0" encoding = "UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns = "http://www.w3.org/1999/xhtml"
-      xmlns:h = "http://java.sun.com/jsf/html"
-      xmlns:ui = "http://java.sun.com/jsf/facelets">
-
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui">
 <h:head>
-    <link rel="stylesheet" href="styles.css" />
+    <title>Login Form</title>
 </h:head>
-
 <h:body>
-    <ui:composition template = "templates/common.xhtml">
-        <ui:define name = "header">
-            <h1>IOT Devices</h1>
-        </ui:define>
+    <div>
+        <form method="POST" action="j_security_check">
+            Username: <input type="text" name="j_username" />
+            Password: <input type="password" name="j_password" />
 
-        <ui:define name="content">
-            <ui:include src = "login.xhtml" />
-        </ui:define>
-    </ui:composition>
+
+            <input type="submit" value="Login" />
+            <input type="reset" value="Reset" />
+        </form>
+    </div>
 </h:body>
 </html>
