@@ -87,6 +87,12 @@ public class UserController implements Serializable {
         labels.add(l1);
         labels.add(l2);
         labels.add(l3);
+        try {
+            userDao.addLabels(deviceid, labels);
+        } catch (Exception e) {
+            return Constants.ERROR;
+        }
+        return Constants.DEVICE;
     }
 
     public String updateUser() {
