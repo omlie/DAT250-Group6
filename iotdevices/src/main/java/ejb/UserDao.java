@@ -52,6 +52,38 @@ public class UserDao {
     }
 
     /**
+     * Delete a user from the database
+     * @param user
+     */
+    public void deleteUser(User user){
+        for(Subscription s : user.getSubscriptions()){
+            unsubscribe(user.getUserName(), s.getDevice().getId());
+        }
+        for(Feedback f : user.getFeedback()) {
+            f.setAuthor(null);
+            em.merge(f);
+        }
+        em.createQuery("DELETE from User u WHERE u.id=?1", User.class)
+                .setParameter(1, user.getId())
+                .executeUpdate();
+    }
+
+    public void makeAdmin(User user){
+        SecurityGroup group = em.find(SecurityGroup.class, user.getUserName());
+        if(group == null)
+            throw new NotFoundException();
+        group.setGroupname(SecurityGroup.ADMINS_GROUP);
+        em.merge(group);
+    }
+
+    public boolean isAdmin(String username){
+        SecurityGroup group = em.find(SecurityGroup.class, username);
+        if(group == null)
+            return false;
+        return group.getGroupname().equals(SecurityGroup.ADMINS_GROUP);
+    }
+
+    /**
      * Applies the changes to apiurl, deviceimage and devicename to the
      * given device
      *

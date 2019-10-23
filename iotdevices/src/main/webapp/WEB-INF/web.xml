@@ -34,6 +34,11 @@
     <role-name>securityusers</role-name>
   </security-role>
 
+  <security-role>
+    <description/>
+    <role-name>securityadmin</role-name>
+  </security-role>
+
   <security-constraint>
     <display-name>Restricted to users</display-name>
     <web-resource-collection>
@@ -42,6 +47,20 @@
     </web-resource-collection>
     <auth-constraint>
       <role-name>securityusers</role-name>
+      <role-name>securityadmin</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+  <security-constraint>
+    <display-name>Restricted to admins</display-name>
+    <web-resource-collection>
+      <web-resource-name>Restricted Access</web-resource-name>
+      <url-pattern>/admin/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>securityadmin</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>

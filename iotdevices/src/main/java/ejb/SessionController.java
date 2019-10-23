@@ -45,7 +45,10 @@ public class SessionController implements Serializable {
         SessionUtil.getSession().setAttribute(Constants.USERNAME, this.username);
         if (request.isUserInRole("securityusers")) {
             return "user/" + Constants.MYPAGE;
-        } else {
+        } else if(request.isUserInRole("securityadmin")){
+            return "admin/" + Constants.ADMINPAGE;
+        }
+        else {
             return Constants.LOGIN;
         }
     }

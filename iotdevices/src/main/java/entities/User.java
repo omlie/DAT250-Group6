@@ -38,7 +38,7 @@ public class User implements Serializable {
     private List<Device> ownedDevices = new ArrayList<>();
 
     @JsonbTransient
-    @OneToMany(mappedBy = "author", cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "author", orphanRemoval = true)
     private Set<Feedback> feedback = new HashSet<>();
 
     @JsonbTransient
