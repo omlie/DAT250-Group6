@@ -47,10 +47,9 @@ public class SessionController implements Serializable {
         SessionUtil.getSession().setAttribute(Constants.USERNAME, this.username);
         if (request.isUserInRole("securityusers")) {
             return "user/" + Constants.MYPAGE;
-        } else if(request.isUserInRole("securityadmin")){
+        } else if (request.isUserInRole("securityadmin")) {
             return "admin/" + Constants.ADMINPAGE;
-        }
-        else {
+        } else {
             return Constants.LOGIN;
         }
     }
@@ -70,8 +69,16 @@ public class SessionController implements Serializable {
         return "/index?faces-redirect=true";
     }
 
-    public User getUser(){
-        return (User)SessionUtil.getSessionMap().get(Constants.USER);
+    public void redirect(String to) {
+        try {
+            SessionUtil.getResponse().sendRedirect(SessionUtil.getRequest().getContextPath() + to + ".xhtml");
+        } catch (Exception e) {
+
+        }
+    }
+
+    public User getUser() {
+        return (User) SessionUtil.getSessionMap().get(Constants.USER);
     }
 
     public String getPassword() {
