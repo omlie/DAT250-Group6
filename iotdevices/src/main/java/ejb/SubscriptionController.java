@@ -61,6 +61,24 @@ public class SubscriptionController implements Serializable {
             }
     }
 
+    public void denySubscriber(int deviceId, int userId) {
+        device = deviceDao.getDeviceById(deviceId);
+        for (Subscription sub : device.getSubscriptions())
+            if (sub.getUser().getId() == userId) {
+                subDao.denySubscription(sub);
+                return;
+            }
+    }
+
+    public void resetSubscriber(int deviceId, int userId) {
+        device = deviceDao.getDeviceById(deviceId);
+        for (Subscription sub : device.getSubscriptions())
+            if (sub.getUser().getId() == userId) {
+                subDao.resetSubscription(sub);
+                return;
+            }
+    }
+
     public String pendingSubscriberStatus(int deviceId) {
         device = deviceDao.getDeviceById(deviceId);
         int numberOfPending = device.getSubscriptions()

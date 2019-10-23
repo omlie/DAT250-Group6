@@ -80,7 +80,11 @@
                                             <h:outputLabel value="Awaiting approval from owner"/>
                                         </ui:fragment>
                                         <ui:fragment
-                                                rendered="${!userController.subscriptionIsPending(dev.id)}">
+                                                rendered="${userController.subscriptionIsDenied(dev.id)}">
+                                            <h:outputLabel value="Subscription denied by owner"/>
+                                        </ui:fragment>
+                                        <ui:fragment
+                                                rendered="${userController.subscriptionIsApproved(dev.id)}">
                                             <h:outputText
                                                     class="${deviceController.device.status}"
                                                     value="#{deviceController.mapStatusToCharacter(deviceController.device.status)}"/>
