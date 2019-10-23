@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "device_subscriber")
-public class Subscription {
+public class Subscription implements Serializable {
 
 
     // @EmbeddedId
