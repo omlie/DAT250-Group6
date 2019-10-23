@@ -1,17 +1,16 @@
 package ejb;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import entities.Device;
+import helpers.Constants;
+import helpers.Status;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-
-import entities.Device;
-import helpers.Constants;
-import helpers.Status;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Named(value = "deviceController")
 @SessionScoped

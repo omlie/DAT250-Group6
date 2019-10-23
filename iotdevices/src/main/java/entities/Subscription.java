@@ -1,10 +1,8 @@
 package entities;
 
-import javax.jws.soap.SOAPBinding;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "device_subscriber")

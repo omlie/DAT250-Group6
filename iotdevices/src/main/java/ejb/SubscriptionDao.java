@@ -1,7 +1,9 @@
 package ejb;
 
-
 import javax.annotation.Resource;
+
+import entities.Subscription;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jms.JMSConnectionFactory;
@@ -10,8 +12,6 @@ import javax.jms.JMSSessionMode;
 import javax.jms.Topic;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import entities.Subscription;
 
 @Stateless
 public class SubscriptionDao {

@@ -5,6 +5,7 @@ import entities.Label;
 import entities.Subscription;
 import entities.User;
 import helpers.Constants;
+import helpers.SessionUtil;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
@@ -139,22 +140,13 @@ public class UserController implements Serializable {
             // redirect
             return Constants.ERROR;
         }
-        return "mypage";
+        return Constants.MYPAGE;
     }
 
-    public String saveUser() {
-        try {
-            List<User> users = this.userDao.getAllUsers();
-            for(User u : users){
-                if(u.getUserName().equals(this.user.getUserName())){
-                    return Constants.LOGIN;
-                }
-            }
-            this.userDao.persist(this.user);
-        } catch (Exception e) {
-            // redirect
-            return Constants.ERROR;
-        }
+    public String register() {
+        if(userDao.userExists(user.getUserName()))
+            return Constants.REGISTER;
+        userDao.createUser(this.user);
         return Constants.LOGIN;
     }
 
@@ -188,7 +180,7 @@ public class UserController implements Serializable {
     }
 
     public String getUsername(){
-        return (String)SessionUtil.getSession().getAttribute(Constants.USERNAME);
+        return (String) SessionUtil.getSession().getAttribute(Constants.USERNAME);
     }
 
     public boolean isOwner(int deviceId) {

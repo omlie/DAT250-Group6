@@ -1,9 +1,8 @@
 package ejb;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import entities.*;
+import helpers.AuthenticationUtility;
+import helpers.Status;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -11,25 +10,18 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.NotFoundException;
-
-import entities.Device;
-import entities.Label;
-import entities.Subscription;
-import entities.User;
-import helpers.Status;
-import org.mindrot.jbcrypt.BCrypt;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Stateless
 public class UserDao {
     // Injected database connection:
     @PersistenceContext(unitName = "IOTDevices")
     private EntityManager em;
-
-    // Stores a new tweet:
-    public void persist(User user) {
-        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
-        em.persist(user);
-    }
 
     public void merge(User user) {
         em.merge(user);
@@ -42,6 +34,21 @@ public class UserDao {
         List<User> users = new ArrayList<User>();
         users = query.getResultList();
         return users;
+    }
+
+    public User createUser(User user) {
+        try {
+            user.setPassword(AuthenticationUtility.encodeSHA256(user.getPassword()));
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, e);
+            e.printStackTrace();
+        }
+        SecurityGroup group = new SecurityGroup();
+        group.setUsername(user.getUserName());
+        group.setGroupname(SecurityGroup.USERS_GROUP);
+        em.persist(user);
+        em.persist(group);
+        return user;
     }
 
     /**
@@ -116,6 +123,13 @@ public class UserDao {
         merge(user);
     }
 
+    public boolean userExists(String username) {
+        TypedQuery<User> q = em.createQuery("select user from User user where user.userName=?1", User.class);
+        q.setParameter(1, username);
+        List<User> users = q.getResultList();
+        return !users.isEmpty();
+    }
+
     /**
      * Get a user with the given id
      *
@@ -158,22 +172,6 @@ public class UserDao {
         if (users.isEmpty())
             throw new NotFoundException();
         return users.get(0);
-    }
-
-    /**
-     * Check that the password for a given user is OK
-     *
-     * @param username
-     * @param password
-     * @return
-     */
-    public boolean checkPassword(String username, String password) {
-        TypedQuery<User> q = em.createQuery("SELECT user from User user WHERE user.userName=?1", User.class);
-        q.setParameter(1, username);
-        List<User> users = q.getResultList();
-        if (users.isEmpty())
-            return false;
-        return BCrypt.checkpw(password, users.get(0).getPassword());
     }
 
     /**

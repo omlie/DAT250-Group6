@@ -1,11 +1,11 @@
-package ejb;
+package helpers;
 
-import helpers.Constants;
-
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 public class SessionUtil {
 
@@ -22,6 +22,11 @@ public class SessionUtil {
     public static HttpServletResponse getResponse() {
         return (HttpServletResponse) FacesContext.getCurrentInstance()
                 .getExternalContext().getResponse();
+    }
+
+    public static Map<String, Object> getSessionMap(){
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        return externalContext.getSessionMap();
     }
 
     public static String getUserName() {

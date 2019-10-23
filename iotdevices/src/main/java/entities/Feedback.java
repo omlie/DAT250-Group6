@@ -1,7 +1,7 @@
 package entities;
-import java.io.Serializable;
-import javax.json.bind.annotation.JsonbTransient;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name="Feedback")
