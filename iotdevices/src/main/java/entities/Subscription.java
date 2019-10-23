@@ -29,6 +29,8 @@ public class Subscription implements Serializable {
 
     private boolean isApprovedSubscription = false;
 
+    private boolean isDeniedSubscription = false;
+
     public Subscription() {
     }
 
@@ -81,5 +83,13 @@ public class Subscription implements Serializable {
 
     public void setApprovedSubscription(boolean approvedSubscription) {
         isApprovedSubscription = approvedSubscription;
+    }
+
+    public boolean isDeniedSubscription() {
+        return isDeniedSubscription;
+    }
+
+    public void setDeniedSubscription(boolean deniedSubscription) {
+        isDeniedSubscription = deniedSubscription;
     }
 }

@@ -29,9 +29,21 @@ public class SubscriptionDao {
 
     public void approveSubscription(Subscription subscription) {
         subscription.setApprovedSubscription(true);
-
+        subscription.setDeniedSubscription(false);
         em.merge(subscription);
 
         context.createProducer().setProperty("topicSubscription", "dweet").send(topic, subscription); // .setProperty("topicUser", tweet.getTopic()).send(topic, tweet);
+    }
+
+    public void denySubscription(Subscription subscription) {
+        subscription.setDeniedSubscription(true);
+        subscription.setApprovedSubscription(false);
+        em.merge(subscription);
+    }
+
+    public void resetSubscription(Subscription subscription) {
+        subscription.setDeniedSubscription(false);
+        subscription.setApprovedSubscription(false);
+        em.merge(subscription);
     }
 }

@@ -25,6 +25,10 @@
                                 <h:outputLabel value="Awaiting approval from owner"/>
                             </ui:fragment>
                             <ui:fragment
+                                    rendered="${userController.subscriptionIsDenied(deviceController.device.id)}">
+                                <h:outputLabel value="Owner denied your proposed subscription"/>
+                            </ui:fragment>
+                            <ui:fragment
                                     rendered="${!userController.subscriptionIsPending(deviceController.device.id)}">
                                 <h:outputText
                                         class="${deviceController.device.status}"
@@ -72,6 +76,11 @@
                                                             action="${subscriptionController.approveSubscriber(deviceController.device.id, pending.getId())}"
                                                             value="Approve"/>
                                                 </td>
+                                                <td>
+                                                    <h:commandButton
+                                                            action="${subscriptionController.denySubscriber(deviceController.device.id, pending.getId())}"
+                                                            value="Deny"/>
+                                                </td>
                                             </tr>
                                         </h:form>
                                     </ui:repeat>
@@ -83,8 +92,13 @@
                             <h:commandButton action="${userController.unsubscribe(deviceController.device.id)}"
                                              value="Unsubscribe"/>
                         </ui:fragment>
+                        <ui:fragment rendered="${userController.subscriptionIsDenied(deviceController.device.id)}">
+                            <h:commandButton action="${subscriptionController.resetSubscriber(deviceController.device.id, sessionController.user.id)}"
+                                             value="Try to subscribe again"/>
+                        </ui:fragment>
                         <ui:fragment
                                 rendered="${!userController.hasConnectionTo(deviceController.device.id) and !userController.subscriptionIsPending(deviceController.device.id)}">
+
                             <h:commandButton
                                     action="${userController.addSubscription(deviceController.device.id, sessionController.username)}"
                                     value="Subscribe"/>

@@ -40,9 +40,9 @@ public class UserController implements Serializable {
         return reverseDeviceList;
     }
 
-    public List<Device> subscribedTo(){
+    public List<Device> subscribedTo() {
         List<Device> subscribedTo = new ArrayList<>();
-        for(Subscription s : userDao.getUser(getUsername()).getSubscriptions()){
+        for (Subscription s : userDao.getUser(getUsername()).getSubscriptions()) {
             subscribedTo.add(s.getDevice());
         }
         return subscribedTo;
@@ -52,7 +52,7 @@ public class UserController implements Serializable {
         return userDao.getUser(getUsername()).getSubscriptions();
     }
 
-    public String unsubscribe(int deviceid){
+    public String unsubscribe(int deviceid) {
         try {
             userDao.unsubscribe(getUsername(), deviceid);
         } catch (Exception e) {
@@ -62,7 +62,7 @@ public class UserController implements Serializable {
         return "feedback";
     }
 
-    public String addSubscription(int deviceid, String username){
+    public String addSubscription(int deviceid, String username) {
         try {
             userDao.addSubscriber(deviceid, username);
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class UserController implements Serializable {
         return Constants.MYPAGE;
     }
 
-    public String deleteOwned(int deviceId){
+    public String deleteOwned(int deviceId) {
         try {
             userDao.deleteOwned(getUsername(), deviceId);
         } catch (Exception e) {
@@ -82,20 +82,14 @@ public class UserController implements Serializable {
         return Constants.MYPAGE;
     }
 
-    public String addLabels(int deviceid){
+    public String addLabels(int deviceid) {
         List<Label> labels = new ArrayList<>();
         labels.add(l1);
         labels.add(l2);
         labels.add(l3);
-        try {
-            userDao.addLabels(deviceid, labels);
-        } catch (Exception e) {
-            return Constants.ERROR;
-        }
-        return Constants.DEVICE;
     }
 
-    public String updateUser(){
+    public String updateUser() {
         try {
             userDao.updateUser(user);
         } catch (Exception ignored) {
@@ -103,9 +97,9 @@ public class UserController implements Serializable {
         return Constants.MYPAGE;
     }
 
-    public String editOwned(Device device){
+    public String editOwned(Device device) {
         try {
-            if(device != null) {
+            if (device != null) {
                 userDao.editOwned(device);
             }
         } catch (Exception e) {
@@ -114,13 +108,14 @@ public class UserController implements Serializable {
         return Constants.DEVICE;
     }
 
-    public String addDevice(Device device){
+
+    public String addDevice(Device device) {
         try {
-            if(device != null) {
+            if (device != null) {
                 // Add and reset labels
-                    device.addLabel(l1);
-                    device.addLabel(l2);
-                    device.addLabel(l3);
+                device.addLabel(l1);
+                device.addLabel(l2);
+                device.addLabel(l3);
 
                 userDao.addDevice(getUsername(), device);
                 this.device = null;
@@ -136,9 +131,10 @@ public class UserController implements Serializable {
     }
 
     public String register() {
-        if(userDao.userExists(user.getUserName()))
+        if (userDao.userExists(user.getUserName()))
             return Constants.REGISTER;
         userDao.createUser(this.user);
+
         return Constants.LOGIN;
     }
 
@@ -171,7 +167,7 @@ public class UserController implements Serializable {
         return l3;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return (String) SessionUtil.getSession().getAttribute(Constants.USERNAME);
     }
 
@@ -184,23 +180,36 @@ public class UserController implements Serializable {
     }
 
     public boolean isSubscribedTo(int deviceId) {
-        if(isOwner(deviceId)) return false;
+        if (isOwner(deviceId)) return false;
         for (Subscription sub : subscriptions())
-            if(sub.getDevice().getId() == deviceId && sub.isApprovedSubscription())
+            if (sub.getDevice().getId() == deviceId && sub.isApprovedSubscription())
                 return true;
 
         return false;
     }
 
     public boolean subscriptionIsPending(int deviceId) {
+        return !subscriptionIsApproved(deviceId) && !subscriptionIsDenied(deviceId);
+    }
+
+    public boolean subscriptionIsDenied(int deviceId) {
         for (Subscription sub : subscriptions())
-            if(sub.getDevice().getId() == deviceId && !sub.isApprovedSubscription())
-                return true;
+            if (sub.getDevice().getId() == deviceId)
+                return sub.isDeniedSubscription();
+
+        return false;
+    }
+
+
+    public boolean subscriptionIsApproved(int deviceId) {
+        for (Subscription sub : subscriptions())
+            if (sub.getDevice().getId() == deviceId)
+                return sub.isApprovedSubscription();
 
         return false;
     }
 
     public boolean hasConnectionTo(int deviceId) {
-        return (isOwner(deviceId) || isSubscribedTo(deviceId));
+        return (isOwner(deviceId) || subscriptionIsApproved(deviceId) || subscriptionIsDenied(deviceId));
     }
 }
