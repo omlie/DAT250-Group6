@@ -11,6 +11,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Map;
@@ -61,9 +63,11 @@ public class SessionController implements Serializable {
             request.logout();
             // clear the session
             SessionUtil.getSession().invalidate();
-        } catch (ServletException ignored) {
+            SessionUtil.getSessionMap().clear();
+            return "/index?faces-redirect=true";
+        } catch (Exception ignored) {
         }
-        return Constants.LOGIN;
+        return "/index?faces-redirect=true";
     }
 
     public User getUser(){
