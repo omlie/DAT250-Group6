@@ -98,6 +98,7 @@ public class UserDao {
         d.setApiUrl(device.getApiUrl());
         d.setDeviceImg(device.getDeviceImg());
         d.setDeviceName(device.getDeviceName());
+        d.setStatus(device.getStatus());
         em.merge(d);
     }
 
