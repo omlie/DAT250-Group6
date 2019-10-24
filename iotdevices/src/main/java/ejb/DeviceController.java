@@ -94,7 +94,7 @@ public class DeviceController implements Serializable {
     }
 
     public boolean existsFeedback() {
-        return device.getFeedback().size() == 0;
+        return device.getFeedback().size() != 0;
     }
 
     public Label getNewLabel() {
