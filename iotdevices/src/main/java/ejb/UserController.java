@@ -192,6 +192,10 @@ public class UserController implements Serializable {
         return (String) SessionUtil.getSession().getAttribute(Constants.USERNAME);
     }
 
+    private boolean isCorrectUserAndDevice(Subscription sub, int deviceId) {
+        return sub.getDevice().getId() == deviceId && sub.getUser().getUserName().equals(getUsername());
+    }
+
     public boolean isOwner(int deviceId) {
         for (Device dev : userDao.getUser(getUsername()).getOwnedDevices())
             if (dev.getId() == deviceId)
@@ -203,19 +207,27 @@ public class UserController implements Serializable {
     public boolean isSubscribedTo(int deviceId) {
         if (isOwner(deviceId)) return false;
         for (Subscription sub : subscriptions())
-            if (sub.getDevice().getId() == deviceId && sub.isApprovedSubscription())
+            if (isCorrectUserAndDevice(sub, deviceId) && sub.isApprovedSubscription())
+                return true;
+
+        return false;
+    }
+
+    private boolean existsSubscription(int deviceId) {
+        for (Subscription sub : userDao.getUser(getUsername()).getSubscriptions())
+            if (sub.getDevice().getId() == deviceId)
                 return true;
 
         return false;
     }
 
     public boolean subscriptionIsPending(int deviceId) {
-        return !subscriptionIsApproved(deviceId) && !subscriptionIsDenied(deviceId);
+        return existsSubscription(deviceId) && !subscriptionIsApproved(deviceId) && !subscriptionIsDenied(deviceId);
     }
 
     public boolean subscriptionIsDenied(int deviceId) {
         for (Subscription sub : subscriptions())
-            if (sub.getDevice().getId() == deviceId)
+            if (isCorrectUserAndDevice(sub, deviceId))
                 return sub.isDeniedSubscription();
 
         return false;
@@ -224,7 +236,7 @@ public class UserController implements Serializable {
 
     public boolean subscriptionIsApproved(int deviceId) {
         for (Subscription sub : subscriptions())
-            if (sub.getDevice().getId() == deviceId)
+            if (isCorrectUserAndDevice(sub, deviceId))
                 return sub.isApprovedSubscription();
 
         return false;
