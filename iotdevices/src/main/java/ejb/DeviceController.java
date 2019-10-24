@@ -93,6 +93,10 @@ public class DeviceController implements Serializable {
         return "✕";
     }
 
+    public boolean existsFeedback() {
+        return device.getFeedback().size() == 0;
+    }
+
     public Label getNewLabel() {
         return newLabel;
     }

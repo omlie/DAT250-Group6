@@ -29,7 +29,7 @@
                                 <h:outputLabel value="Owner denied your proposed subscription"/>
                             </ui:fragment>
                             <ui:fragment
-                                    rendered="${!userController.subscriptionIsPending(deviceController.device.id)}">
+                                    rendered="${userController.subscriptionIsApproved(deviceController.device.id)}">
                                 <h:outputText
                                         class="${deviceController.device.status}"
                                         value="#{deviceController.mapStatusToCharacter(deviceController.device.status)}"/>
@@ -37,12 +37,15 @@
 
 
                         </h2>
-                        <div>
-                            <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
-                        </div>
+                        <ui:fragment rendered="${userController.subscriptionIsApproved(deviceController.device.id)}">
+                            <div>
+                                <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
+                            </div>
+                        </ui:fragment>
                         <div>
                             <h:outputText value="Label: "/>
-                            <ui:repeat value="${deviceController.getDevice(deviceController.device.id).labels}" var="label">
+                            <ui:repeat value="${deviceController.getDevice(deviceController.device.id).labels}"
+                                       var="label">
                                 <h:outputText value="${label.labelValue}"/>
                             </ui:repeat>
 
@@ -57,7 +60,7 @@
                                                  value="Edit"/>
                             </ui:fragment>
                             <ui:fragment
-                                    rendered="${subscriptionController.hasPendingSubscribers(deviceController.device.id)}">
+                                    rendered="${subscriptionController.hasPendingSubscribers(deviceController.device.id) and userController.isOwner(deviceController.device.id)}">
                                 <h3>
                                     Pending subscribers
                                 </h3>
@@ -93,8 +96,9 @@
                                              value="Unsubscribe"/>
                         </ui:fragment>
                         <ui:fragment rendered="${userController.subscriptionIsDenied(deviceController.device.id)}">
-                            <h:commandButton action="${subscriptionController.resetSubscriber(deviceController.device.id, sessionController.user.id)}"
-                                             value="Try to subscribe again"/>
+                            <h:commandButton
+                                    action="${subscriptionController.resetSubscriber(deviceController.device.id, sessionController.user.id)}"
+                                    value="Try to subscribe again"/>
                         </ui:fragment>
                         <ui:fragment
                                 rendered="${!userController.hasConnectionTo(deviceController.device.id) and !userController.subscriptionIsPending(deviceController.device.id)}">
@@ -103,27 +107,29 @@
                                     action="${userController.addSubscription(deviceController.device.id, sessionController.username)}"
                                     value="Subscribe"/>
                         </ui:fragment>
-                        <h3>
-                            Feedback
-                        </h3>
-                        <table>
-                            <tbody>
-                            <ui:repeat value="#{deviceController.device.getFeedback()}" var="feedback">
-                                <h:form>
-                                    <tr>
-                                        <td>
-                                            <h:outputText value="#{feedback.getPublishedDate()}"/>
-                                            <h:outputText value="    "/>
-                                            <h:outputText value="#{feedback.getAuthor().getUserName()}"/>
-                                        </td>
-                                        <td>
-                                            <h:outputText value="#{feedback.getFeedbackContent()}"/>
-                                        </td>
-                                    </tr>
-                                </h:form>
-                            </ui:repeat>
-                            </tbody>
-                        </table>
+                        <ui:fragment rendered="${deviceController.existsFeedback()}">
+                            <h3>
+                                Feedback
+                            </h3>
+                            <table>
+                                <tbody>
+                                <ui:repeat value="#{deviceController.device.getFeedback()}" var="feedback">
+                                    <h:form>
+                                        <tr>
+                                            <td>
+                                                <h:outputText value="#{feedback.getPublishedDate()}"/>
+                                                <h:outputText value="    "/>
+                                                <h:outputText value="#{feedback.getAuthor().getUserName()}"/>
+                                            </td>
+                                            <td>
+                                                <h:outputText value="#{feedback.getFeedbackContent()}"/>
+                                            </td>
+                                        </tr>
+                                    </h:form>
+                                </ui:repeat>
+                                </tbody>
+                            </table>
+                        </ui:fragment>
                     </div>
                 </h:form>
             </ui:define>
