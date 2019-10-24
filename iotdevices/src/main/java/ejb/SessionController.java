@@ -11,6 +11,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Map;
@@ -44,7 +46,9 @@ public class SessionController implements Serializable {
         sessionMap.put(Constants.USER, user);
         SessionUtil.getSession().setAttribute(Constants.USERNAME, this.username);
         if (request.isUserInRole("securityusers")) {
-            return Constants.MYPAGE;
+            return "user/" + Constants.MYPAGE;
+        } else if (request.isUserInRole("securityadmin")) {
+            return "admin/" + Constants.ADMINPAGE;
         } else {
             return Constants.LOGIN;
         }
@@ -58,13 +62,23 @@ public class SessionController implements Serializable {
             request.logout();
             // clear the session
             SessionUtil.getSession().invalidate();
-        } catch (ServletException ignored) {
+            SessionUtil.getSessionMap().clear();
+            return "/index?faces-redirect=true";
+        } catch (Exception ignored) {
         }
-        return Constants.LOGIN;
+        return "/index?faces-redirect=true";
     }
 
-    public User getUser(){
-        return (User)SessionUtil.getSessionMap().get(Constants.USER);
+    public void redirect(String to) {
+        try {
+            SessionUtil.getResponse().sendRedirect(SessionUtil.getRequest().getContextPath() + to + ".xhtml");
+        } catch (Exception e) {
+
+        }
+    }
+
+    public User getUser() {
+        return (User) SessionUtil.getSessionMap().get(Constants.USER);
     }
 
     public String getPassword() {

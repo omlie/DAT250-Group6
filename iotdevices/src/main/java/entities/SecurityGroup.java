@@ -11,6 +11,7 @@ public class SecurityGroup implements Serializable {
     private static final long serialVersionUID = 1528447384986169065L;
 
     public static final String USERS_GROUP = "securityusers";
+    public static final String ADMINS_GROUP = "securityadmin";
 
     @Id
     @Column(name="username", nullable=false, length=255)

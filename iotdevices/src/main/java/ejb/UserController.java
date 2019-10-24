@@ -1,12 +1,10 @@
 package ejb;
 
-import entities.Device;
-import entities.Label;
-import entities.Subscription;
-import entities.User;
+import entities.*;
 import helpers.Constants;
 import helpers.SessionUtil;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
@@ -62,7 +60,11 @@ public class UserController implements Serializable {
         return "feedback";
     }
 
-    public String addSubscription(int deviceid, String username) {
+    public void makeAdmin(User user){
+        userDao.makeAdmin(user);
+    }
+
+    public String addSubscription(int deviceid, String username){
         try {
             userDao.addSubscriber(deviceid, username);
         } catch (Exception e) {
@@ -72,7 +74,15 @@ public class UserController implements Serializable {
         return Constants.MYPAGE;
     }
 
-    public String deleteOwned(int deviceId) {
+    @RolesAllowed("securityadmin")
+    public void deleteUser(User user){
+        for(Device d : user.getOwnedDevices()){
+            userDao.deleteOwned(user.getUserName(), d.getId());
+        }
+        userDao.deleteUser(user);
+    }
+
+    public String deleteOwned(int deviceId){
         try {
             userDao.deleteOwned(getUsername(), deviceId);
         } catch (Exception e) {
@@ -134,6 +144,10 @@ public class UserController implements Serializable {
             return Constants.ERROR;
         }
         return Constants.MYPAGE;
+    }
+
+    public boolean isAdmin(User user){
+        return userDao.isAdmin(user.getUserName());
     }
 
     public String register() {

@@ -10,27 +10,23 @@
 >
 
 <head>
-    <title>Devices</title>
-    <link rel="stylesheet" href="styles.css"/>
+    <title>Search device</title>
+    <link rel="stylesheet" href="../styles.css"/>
 </head>
 
 <body>
 
-<ui:composition template="templates/common.xhtml">
+<h1><h:outputText value="#{searchController.searchWord}"/></h1>
+<ui:composition template="../templates/common.xhtml">
     <ui:define name="content">
         <div class="container">
             <div class="deviceTableHeader">
-                <h2>All registered devices</h2>
-                <h:form>
-                    <h:inputText value="${searchController.searchWord}"/>
-                    <h:commandButton action="#{searchController.search(searchController.searchWord)}" value="Search"/>
-                </h:form>
-                <h:button outcome="newdevice" value="Add new device"/>
+                <h2>Search device</h2>
             </div>
             <div class="devices">
                 <table>
                     <tbody>
-                    <ui:repeat value="#{searchController.getSearchResult()}" var="dev">
+                    <ui:repeat value="#{searchController.search(searchController.searchWord)}" var="dev">
                         <h:form>
                             <tr>
                                 <td>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xml:lang="en" lang="en"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<head>
+    <title>Devices</title>
+    <link rel="stylesheet" href="../styles.css"/>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+
+<body>
+    <div class="menu">
+        <h:form>
+            <h:commandButton class="headerButton" value="Leave admin view" action="#{sessionController.redirect('/user/mypage')}"/>
+            <h:commandButton class="headerButton" value = "Log out" action="#{sessionController.logout()}"/>
+        </h:form>
+    </div>
+
+<div class="container">
+    <f:view>
+        <div class="div-form">
+            <h:form class="form-tweets">
+                <div class="div-container-sender">
+                    <h:outputLabel value="Username: "/>
+                    <h:inputText value="#{userController.user.userName}"/>
+                </div>
+                <div class="div-container-sender">
+                    <h:outputLabel value="First name: "/>
+                    <h:inputText value="#{userController.user.firstName}"/>
+                </div>
+                <div class="div-container-sender">
+                    <h:outputLabel value="Last name: "/>
+                    <h:inputText value="#{userController.user.lastName}"/>
+                </div>
+                <div class="div-container-sender">
+                    <h:outputLabel value="password: "/>
+                    <h:inputSecret value="#{userController.user.password}"/>
+                </div>
+                <div class="div-container-sender div-container-sender-button">
+                    <h:commandButton action="#{userController.register()}" value="Add user"/>
+                </div>
+
+            </h:form>
+        </div>
+    </f:view>
+    <br/>
+
+    <div class="div-container-tweets">
+
+        <div>
+            <table border="1">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Delete user</th>
+                    <th>Make admin</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ui:repeat value="#{userController.getUsers()}" var="user">
+                    <h:form>
+                        <tr>
+                            <td>
+                                <h:outputText value="#{user.id}"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{user.userName}"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{user.firstName}"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{user.lastName}"/>
+                            </td>
+                            <td>
+                                <h:commandButton action="#{userController.deleteUser(user)}" value="Delete"/>
+                            </td>
+                            <td>
+                                <h:commandButton action="#{userController.makeAdmin(user)}" value="Make admin"
+                                                 rendered="#{!userController.isAdmin(user)}"/>
+                            </td>
+                        </tr>
+                    </h:form>
+                </ui:repeat>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

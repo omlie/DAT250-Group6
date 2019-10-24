@@ -11,7 +11,8 @@
         <h:link class="headerButton" value = "My page" outcome = "mypage" />
         <h:link class="headerButton" value = "Devices" outcome = "devices" />
         <h:form style="display: inline">
-        <h:commandButton class="headerButton" value = "Logout" action="#{sessionController.logout()}"/>
+            <h:commandButton class="headerButton" value = "Log out" action="#{sessionController.logout()}"/>
+            <h:commandButton class="headerButton" rendered="#{userController.isAdmin(sessionController.getUser())}" value = "Go to admin view" action="#{sessionController.redirect('/admin/users')}"/>
         </h:form>
     </div>
 </ui:composition>
