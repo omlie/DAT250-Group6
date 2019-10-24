@@ -43,6 +43,7 @@ public class UserController implements Serializable {
         for (Subscription s : userDao.getUser(getUsername()).getSubscriptions()) {
             subscribedTo.add(s.getDevice());
         }
+        Collections.sort(subscribedTo);
         return subscribedTo;
     }
 

@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "devices")
 @NamedQuery(name = "Device.findAll", query = "SELECT d FROM Device d")
-public class Device implements Serializable {
+public class Device implements Serializable, Comparable<Device>  {
     public static final String FIND_ALL = "Device.findAll";
     private static final long serialVersionUID = 1L;
     //Create elements ids automatically, incremented 1 by 1
@@ -134,5 +134,10 @@ public class Device implements Serializable {
 
     public void setSubscriptions(Set<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
+    }
+
+    @Override
+    public int compareTo(Device o) {
+        return this.getId() - o.getId();
     }
 }
