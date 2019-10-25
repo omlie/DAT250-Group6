@@ -130,9 +130,9 @@ public class UserController implements Serializable {
         try {
             if (device != null) {
                 // Add and reset labels
-                device.addLabel(l1);
-                device.addLabel(l2);
-                device.addLabel(l3);
+                if (l1 != null) device.addLabel(l1);
+                if (l2 != null) device.addLabel(l2);
+                if (l3 != null) device.addLabel(l3);
 
                 userDao.addDevice(getUsername(), device);
                 this.device = null;

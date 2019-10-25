@@ -11,7 +11,7 @@
             <div class="container">
             <h:form>
             <h:inputTextarea value="#{feedbackController.inputtedFeedback}"/>
-                <h:commandButton action="${feedbackController.submitFeedback(deviceController.device.id, sessionController.username)}"
+                <h:commandButton action="#{feedbackController.submitFeedback(deviceController.device.id, sessionController.username)}"
                         value="Submit feedback"/>
             </h:form>
             </div>

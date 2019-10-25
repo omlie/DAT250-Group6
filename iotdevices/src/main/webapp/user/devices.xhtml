@@ -22,7 +22,7 @@
             <div class="deviceTableHeader">
                 <h2>All registered devices</h2>
                 <h:form>
-                    <h:inputText value="${searchController.searchWord}"/>
+                    <h:inputText value="#{searchController.searchWord}"/>
                     <h:commandButton action="#{searchController.search(searchController.searchWord)}" value="Search"/>
                 </h:form>
                 <h:button outcome="newdevice" value="Add new device"/>
@@ -34,18 +34,18 @@
                         <h:form>
                             <tr>
                                 <td>
-                                    <h:graphicImage url="${dev.deviceImg}"/>
+                                    <h:graphicImage url="#{dev.deviceImg}"/>
                                 </td>
                                 <td>
                                     <h:outputText value="#{dev.deviceName}"/>
                                 </td>
                                 <td>
-                                    <h:outputText class="${dev.status}"
+                                    <h:outputText class="#{dev.status}"
                                                   value="#{deviceController.mapStatusToCharacter(dev.status)}"/>
                                 </td>
                                 <td>
                                     <h:commandButton
-                                            action="${deviceController.viewDevice(dev.id)}"
+                                            action="#{deviceController.viewDevice(dev.id)}"
                                             value="View device"/>
                                 </td>
                             </tr>

@@ -36,22 +36,22 @@
                             <h:form>
                                 <tr>
                                     <td>
-                                        <h:graphicImage url="${dev.deviceImg}"/>
+                                        <h:graphicImage url="#{dev.deviceImg}"/>
                                     </td>
                                     <td>
                                         <h:outputText value="#{dev.deviceName}"/>
                                     </td>
 
                                     <td>
-                                        <h:outputText class="${dev.status}"
+                                        <h:outputText class="#{dev.status}"
                                                       value="#{deviceController.mapStatusToCharacter(dev.status)}"/>
                                     </td>
                                     <td>
                                         <h:outputText
-                                                value="${subscriptionController.pendingSubscriberStatus(dev.id)}"/>
+                                                value="#{subscriptionController.pendingSubscriberStatus(dev.id)}"/>
                                     </td>
                                     <td>
-                                        <h:commandButton action="${deviceController.viewDevice(dev.id)}"
+                                        <h:commandButton action="#{deviceController.viewDevice(dev.id)}"
                                                          value="View device"/>
                                     </td>
                                 </tr>
@@ -69,29 +69,29 @@
                             <h:form>
                                 <tr>
                                     <td>
-                                        <h:graphicImage url="${dev.deviceImg}"/>
+                                        <h:graphicImage url="#{dev.deviceImg}"/>
                                     </td>
                                     <td>
                                         <h:outputText value="#{dev.deviceName}"/>
                                     </td>
                                     <td>
                                         <ui:fragment
-                                                rendered="${userController.subscriptionIsPending(dev.id)}">
+                                                rendered="#{userController.subscriptionIsPending(dev.id)}">
                                             <h:outputLabel value="Awaiting approval from owner"/>
                                         </ui:fragment>
                                         <ui:fragment
-                                                rendered="${userController.subscriptionIsDenied(dev.id)}">
+                                                rendered="#{userController.subscriptionIsDenied(dev.id)}">
                                             <h:outputLabel value="Subscription denied by owner"/>
                                         </ui:fragment>
                                         <ui:fragment
-                                                rendered="${userController.subscriptionIsApproved(dev.id)}">
+                                                rendered="#{userController.subscriptionIsApproved(dev.id)}">
                                             <h:outputText
-                                                    class="${deviceController.device.status}"
+                                                    class="#{deviceController.device.status}"
                                                     value="#{deviceController.mapStatusToCharacter(deviceController.device.status)}"/>
                                         </ui:fragment>
                                     </td>
                                     <td>
-                                        <h:commandButton action="${deviceController.viewDevice(dev.id)}"
+                                        <h:commandButton action="#{deviceController.viewDevice(dev.id)}"
                                                          value="Manage device"/>
                                     </td>
                                 </tr>
