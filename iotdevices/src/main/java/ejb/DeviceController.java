@@ -66,6 +66,11 @@ public class DeviceController implements Serializable {
         return this.device;
     }
 
+    public List<Label> getLabelsForDevice(int deviceid){
+        this.device = deviceDao.getDeviceById(deviceid);
+        return this.device.getLabels();
+    }
+
     public String editDevice() {
         if(device == null) {
             return "devices";

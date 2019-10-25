@@ -21,46 +21,46 @@
                             <h:outputText value="#{deviceController.device.deviceName}"/>
 
                             <ui:fragment
-                                    rendered="${userController.subscriptionIsPending(deviceController.device.id)}">
+                                    rendered="#{userController.subscriptionIsPending(deviceController.device.id)}">
                                 <h:outputLabel value="Awaiting approval from owner"/>
                             </ui:fragment>
                             <ui:fragment
-                                    rendered="${userController.subscriptionIsDenied(deviceController.device.id)}">
+                                    rendered="#{userController.subscriptionIsDenied(deviceController.device.id)}">
                                 <h:outputLabel value="Owner denied your proposed subscription"/>
                             </ui:fragment>
                             <ui:fragment
-                                    rendered="${userController.subscriptionIsApproved(deviceController.device.id)}">
+                                    rendered="#{userController.subscriptionIsApproved(deviceController.device.id)}">
                                 <h:outputText
-                                        class="${deviceController.device.status}"
+                                        class="#{deviceController.device.status}"
                                         value="#{deviceController.mapStatusToCharacter(deviceController.device.status)}"/>
                             </ui:fragment>
 
 
                         </h2>
-                        <ui:fragment rendered="${userController.subscriptionIsApproved(deviceController.device.id)}">
+                        <ui:fragment rendered="#{userController.subscriptionIsApproved(deviceController.device.id)}">
                             <div>
                                 <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
                             </div>
                         </ui:fragment>
                         <div>
                             <h:outputText value="Label: "/>
-                            <ui:repeat value="${deviceController.getDevice(deviceController.device.id).labels}"
+                            <ui:repeat value="#{deviceController.getDevice(deviceController.device.id).labels}"
                                        var="label">
-                                <h:outputText value="${label.labelValue}"/>
+                                <h:outputText value="#{label.labelValue}"/>
                             </ui:repeat>
 
-                            <ui:fragment rendered="${userController.hasConnectionTo(deviceController.device.id)}">
+                            <ui:fragment rendered="#{userController.hasConnectionTo(deviceController.device.id)}">
                                 <h:outputText value="API URL: #{deviceController.device.apiUrl}"/>
                             </ui:fragment>
                             <br/>
-                            <ui:fragment rendered="${userController.isOwner(deviceController.device.id)}">
-                                <h:commandButton action="${userController.deleteOwned(deviceController.device.id)}"
+                            <ui:fragment rendered="#{userController.isOwner(deviceController.device.id)}">
+                                <h:commandButton action="#{userController.deleteOwned(deviceController.device.id)}"
                                                  value="Delete"/>
-                                <h:commandButton action="${deviceController.editDevice()}"
+                                <h:commandButton action="#{deviceController.editDevice()}"
                                                  value="Edit"/>
                             </ui:fragment>
                             <ui:fragment
-                                    rendered="${subscriptionController.hasPendingSubscribers(deviceController.device.id) and userController.isOwner(deviceController.device.id)}">
+                                    rendered="#{subscriptionController.hasPendingSubscribers(deviceController.device.id) and userController.isOwner(deviceController.device.id)}">
                                 <h3>
                                     Pending subscribers
                                 </h3>
@@ -76,12 +76,12 @@
                                                 </td>
                                                 <td>
                                                     <h:commandButton
-                                                            action="${subscriptionController.approveSubscriber(deviceController.device.id, pending.getId())}"
+                                                            action="#{subscriptionController.approveSubscriber(deviceController.device.id, pending.getId())}"
                                                             value="Approve"/>
                                                 </td>
                                                 <td>
                                                     <h:commandButton
-                                                            action="${subscriptionController.denySubscriber(deviceController.device.id, pending.getId())}"
+                                                            action="#{subscriptionController.denySubscriber(deviceController.device.id, pending.getId())}"
                                                             value="Deny"/>
                                                 </td>
                                             </tr>
@@ -91,23 +91,23 @@
                                 </table>
                             </ui:fragment>
                         </div>
-                        <ui:fragment rendered="${userController.isSubscribedTo(deviceController.device.id)}">
-                            <h:commandButton action="${userController.unsubscribe(deviceController.device.id)}"
+                        <ui:fragment rendered="#{userController.isSubscribedTo(deviceController.device.id)}">
+                            <h:commandButton action="#{userController.unsubscribe(deviceController.device.id)}"
                                              value="Unsubscribe"/>
                         </ui:fragment>
-                        <ui:fragment rendered="${userController.subscriptionIsDenied(deviceController.device.id)}">
+                        <ui:fragment rendered="#{userController.subscriptionIsDenied(deviceController.device.id)}">
                             <h:commandButton
-                                    action="${subscriptionController.resetSubscriber(deviceController.device.id, sessionController.user.id)}"
+                                    action="#{subscriptionController.resetSubscriber(deviceController.device.id, sessionController.user.id)}"
                                     value="Try to subscribe again"/>
                         </ui:fragment>
                         <ui:fragment
-                                rendered="${!userController.hasConnectionTo(deviceController.device.id) and !userController.subscriptionIsPending(deviceController.device.id)}">
+                                rendered="#{!userController.hasConnectionTo(deviceController.device.id) and !userController.subscriptionIsPending(deviceController.device.id)}">
 
                             <h:commandButton
-                                    action="${userController.addSubscription(deviceController.device.id, sessionController.username)}"
+                                    action="#{userController.addSubscription(deviceController.device.id, sessionController.username)}"
                                     value="Subscribe"/>
                         </ui:fragment>
-                        <ui:fragment rendered="${deviceController.existsFeedback()}">
+                        <ui:fragment rendered="#{deviceController.existsFeedback()}">
                             <h3>
                                 Feedback
                             </h3>

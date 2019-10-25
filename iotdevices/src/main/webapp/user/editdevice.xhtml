@@ -25,7 +25,7 @@
 
                         <div>
                             <h:outputText value="New image url: "/>
-                            <h:inputText value="${deviceController.device.deviceImg}"/>
+                            <h:inputText value="#{deviceController.device.deviceImg}"/>
                         </div>
                         <div>
                             <h:outputText value="Status: "/>
@@ -39,8 +39,8 @@
                         </div>
                         <div>
                             <h:outputText value="Label(s): "/>
-                            <ui:repeat value="${deviceController.getDevice(deviceController.device.id).labels}" var="label">
-                                <h:outputText value="${label.labelValue}"/>
+                            <ui:repeat value="#{deviceController.getLabelsForDevice(deviceController.device.id)}" var="label">
+                                <h:outputText value="#{label.labelValue}"/>
                                 <h:commandButton value="Delete label" action="#{deviceController.deleteLabel(deviceController.getDevice(), label)}"/>
                             </ui:repeat>
                             <br/>
