@@ -5976,8 +5976,13 @@ var $author$project$Main$update = F2(
 		}
 	});
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Helpers$Menu$menuButtons = _List_fromArray(
+	[
+		_Utils_Tuple2('My page', '/mypage'),
+		_Utils_Tuple2('Devices', '/devices'),
+		_Utils_Tuple2('404', '/not-found'),
+		_Utils_Tuple2('Index', '/')
+	]);
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$string = _Json_wrap;
@@ -5988,14 +5993,15 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			key,
 			$elm$json$Json$Encode$string(string));
 	});
-var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
 };
-var $author$project$Helpers$View$viewButton = F2(
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Helpers$Buttons$viewHrefButton = F2(
 	function (name, ref) {
 		return A2(
 			$elm$html$Html$a,
@@ -6007,16 +6013,33 @@ var $author$project$Helpers$View$viewButton = F2(
 				[
 					A2(
 					$elm$html$Html$button,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button btn big-button')
-						]),
+					_List_Nil,
 					_List_fromArray(
 						[
 							$elm$html$Html$text(name)
 						]))
 				]));
 	});
+var $author$project$Helpers$Menu$viewMenuButtons = function (buttons) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		A2(
+			$elm$core$List$map,
+			function (_v0) {
+				var name = _v0.a;
+				var ref = _v0.b;
+				return A2($author$project$Helpers$Buttons$viewHrefButton, name, ref);
+			},
+			buttons));
+};
+var $author$project$Helpers$Menu$viewMenu = A2(
+	$elm$html$Html$div,
+	_List_Nil,
+	_List_fromArray(
+		[
+			$author$project$Helpers$Menu$viewMenuButtons($author$project$Helpers$Menu$menuButtons)
+		]));
 var $author$project$Page$Devices$view = function (model) {
 	return {
 		body: _List_fromArray(
@@ -6025,43 +6048,7 @@ var $author$project$Page$Devices$view = function (model) {
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('devices')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, '404', '/not-found')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'My page', '/mypage')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'Devices', '/devices')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'Index', '/')
-							]))
-					]))
+					[$author$project$Helpers$Menu$viewMenu]))
 			]),
 		title: 'Devices'
 	};
@@ -6074,43 +6061,7 @@ var $author$project$Page$Error$view = function (model) {
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('404')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, '404', '/not-found')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'My page', '/mypage')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'Devices', '/devices')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'Index', '/')
-							]))
-					]))
+					[$author$project$Helpers$Menu$viewMenu]))
 			]),
 		title: '404'
 	};
@@ -6123,43 +6074,7 @@ var $author$project$Page$Index$view = function (model) {
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Index')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, '404', '/not-found')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'My page', '/mypage')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'Devices', '/devices')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'Index', '/')
-							]))
-					]))
+					[$author$project$Helpers$Menu$viewMenu]))
 			]),
 		title: 'Index'
 	};
@@ -6172,43 +6087,7 @@ var $author$project$Page$MyPage$view = function (model) {
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('My page')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, '404', '/not-found')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'My page', '/mypage')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'Devices', '/devices')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_Nil,
-						_List_fromArray(
-							[
-								A2($author$project$Helpers$View$viewButton, 'Index', '/')
-							]))
-					]))
+					[$author$project$Helpers$Menu$viewMenu]))
 			]),
 		title: 'My Page'
 	};
