@@ -5978,197 +5978,40 @@ var author$project$Page$Devices$view = function (model) {
 		title: 'Devices'
 	};
 };
-var elm$html$Html$a = _VirtualDom_node('a');
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
-var author$project$Page$Error$viewButton = F2(
-	function (name, ref) {
-		return A2(
-			elm$html$Html$a,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$href(ref)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('button btn big-button')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text(name)
-						]))
-				]));
-	});
-var elm$html$Html$div = _VirtualDom_node('div');
 var author$project$Page$Error$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
 				A2(
-				elm$html$Html$div,
+				elm$html$Html$span,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('page')
+						elm$html$Html$Attributes$class('welcome-message')
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('content')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$div,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('top-container')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('big-button--container')
-											]),
-										_List_fromArray(
-											[
-												A2(author$project$Page$Error$viewButton, '404', '/not-found')
-											])),
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('big-button--container')
-											]),
-										_List_fromArray(
-											[
-												A2(author$project$Page$Error$viewButton, 'My page', '/mypage')
-											])),
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('big-button--container')
-											]),
-										_List_fromArray(
-											[
-												A2(author$project$Page$Error$viewButton, 'Devices', '/devices')
-											]))
-									]))
-							]))
+						elm$html$Html$text('Page not found')
 					]))
 			]),
 		title: '404'
 	};
 };
-var author$project$Page$Index$viewButton = F2(
-	function (name, ref) {
-		return A2(
-			elm$html$Html$a,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$href(ref)
-				]),
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('button btn big-button')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text(name)
-						]))
-				]));
-	});
 var author$project$Page$Index$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
 				A2(
-				elm$html$Html$div,
+				elm$html$Html$span,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('page')
+						elm$html$Html$Attributes$class('welcome-message')
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('content')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$div,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('top-container')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('big-button--container')
-											]),
-										_List_fromArray(
-											[
-												A2(author$project$Page$Index$viewButton, '404', '/not-found')
-											])),
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('big-button--container')
-											]),
-										_List_fromArray(
-											[
-												A2(author$project$Page$Index$viewButton, 'My page', '/mypage')
-											])),
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('big-button--container')
-											]),
-										_List_fromArray(
-											[
-												A2(author$project$Page$Index$viewButton, 'Devices', '/devices')
-											])),
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												elm$html$Html$Attributes$class('big-button--container')
-											]),
-										_List_fromArray(
-											[
-												A2(author$project$Page$Index$viewButton, 'Index', '/')
-											]))
-									]))
-							]))
+						elm$html$Html$text('Index!')
 					]))
 			]),
-		title: '404'
+		title: 'Index'
 	};
 };
 var author$project$Page$MyPage$view = function (model) {
