@@ -1,61 +1,28 @@
-module Main exposing (..)
+module Main exposing (main)
 
-import Browser
+import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav
-import Html exposing (Html, span, text)
-import Html.Attributes exposing (class)
-import Model exposing (..)
-import Page.Devices as Devices
-import Page.Error as Error
-import Page.Index as Index
-import Page.MyPage as MyPage
-import Route
-import Url
+import Html exposing (..)
+import Page.DeviceListPage as DeviceListPage
+import Page.ErrorPage as ErrorPage
+import Page.IndexPage as IndexPage
+import Page.UserInformationPage as UserInformationPage
+import Route exposing (Route)
+import Url exposing (Url)
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-    let
-        page =
-            Route.urlToPage url
-    in
-    ( { key = key
-      , url = url
-      , page = page
-      }
-    , Cmd.none
-    )
+type alias Model =
+    { route : Route
+    , page : Page
+    , navKey : Nav.Key
+    }
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        LinkClicked urlRequest ->
-            case urlRequest of
-                Browser.Internal url ->
-                    ( model, Nav.pushUrl model.key (Url.toString url) )
-
-                Browser.External href ->
-                    ( model, Nav.load href )
-
-        UrlChanged url ->
-            ( { model | url = url, page = Route.urlToPage url }, Cmd.none )
-
-
-view : Model -> Browser.Document Msg
-view model =
-    case model.page of
-        Index ->
-            Index.view model
-
-        MyPage ->
-            MyPage.view model
-
-        Devices ->
-            Devices.view model
-
-        Error ->
-            Error.view model
+type Page
+    = NotFoundPage
+    | UserInformationPage UserInformationPage.Model
+    | IndexPage
+    | DeviceListPage DeviceListPage.Model
 
 
 main : Program () Model Msg
@@ -64,7 +31,117 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = \_ -> Sub.none
         , onUrlRequest = LinkClicked
         , onUrlChange = UrlChanged
         }
+
+
+type Msg
+    = LinkClicked UrlRequest
+    | UrlChanged Url
+    | UserInformationPageMsg UserInformationPage.Msg
+    | DeviceListPageMsg DeviceListPage.Msg
+
+
+init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url navKey =
+    let
+        model =
+            { route = Route.parseUrl url
+            , page = NotFoundPage
+            , navKey = navKey
+            }
+    in
+    initCurrentPage ( model, Cmd.none )
+
+
+initCurrentPage : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+initCurrentPage ( model, existingCmds ) =
+    let
+        ( currentPage, mappedPageCmds ) =
+            case model.route of
+                Route.NotFound ->
+                    ( NotFoundPage, Cmd.none )
+
+                Route.IndexPage ->
+                    ( IndexPage, Cmd.none )
+
+                Route.DeviceListPage ->
+                    let
+                        ( pageModel, pageCmds ) =
+                            DeviceListPage.init
+                    in
+                    ( DeviceListPage pageModel, Cmd.map DeviceListPageMsg pageCmds )
+
+                Route.UserInformationPage ->
+                    let
+                        ( pageModel, pageCmds ) =
+                            UserInformationPage.init
+                    in
+                    ( UserInformationPage pageModel, Cmd.map UserInformationPageMsg pageCmds )
+    in
+    ( { model | page = currentPage }
+    , Cmd.batch [ existingCmds, mappedPageCmds ]
+    )
+
+
+view : Model -> Document Msg
+view model =
+    { title = "Post App"
+    , body = [ currentView model ]
+    }
+
+
+currentView : Model -> Html Msg
+currentView model =
+    case model.page of
+        NotFoundPage ->
+            ErrorPage.view
+
+        DeviceListPage pageModel ->
+            DeviceListPage.view pageModel
+                |> Html.map DeviceListPageMsg
+
+        IndexPage ->
+            IndexPage.view
+
+        UserInformationPage pageModel ->
+            UserInformationPage.view pageModel
+                |> Html.map UserInformationPageMsg
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case ( msg, model.page ) of
+        ( UserInformationPageMsg subMsg, UserInformationPage pageModel ) ->
+            let
+                ( updatedPageModel, updatedCmd ) =
+                    UserInformationPage.update subMsg pageModel
+            in
+            ( { model | page = UserInformationPage updatedPageModel }
+            , Cmd.map UserInformationPageMsg updatedCmd
+            )
+
+        ( LinkClicked urlRequest, _ ) ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model
+                    , Nav.pushUrl model.navKey (Url.toString url)
+                    )
+
+                Browser.External url ->
+                    ( model
+                    , Nav.load url
+                    )
+
+        ( UrlChanged url, _ ) ->
+            let
+                newRoute =
+                    Route.parseUrl url
+            in
+            ( { model | route = newRoute }, Cmd.none )
+                |> initCurrentPage
+
+        ( _, _ ) ->
+            ( model, Cmd.none )

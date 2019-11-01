@@ -1,24 +1,23 @@
-module Helpers.Menu exposing (viewMenu)
+module View.Menu exposing (viewMenu)
 
 import Browser
-import Helpers.Buttons exposing (viewHrefButton)
 import Html exposing (..)
 import Html.Attributes exposing (class, href)
+import View.Buttons exposing (viewHrefButton)
 
 
 menuButtons : List ( String, String )
 menuButtons =
-    [ ( "My page", "/mypage" ), ( "Devices", "/devices" ), ( "404", "/not-found" ), ( "Index", "/" ) ]
+    [ ( "My page", "/mypage" ), ( "Devices", "/devices" ), ( "Index", "/" ) ]
 
 
 viewMenu : Html msg
 viewMenu =
-    div []
-        [ viewMenuButtons menuButtons ]
+    viewMenuButtons menuButtons
 
 
 viewMenuButtons : List ( String, String ) -> Html msg
 viewMenuButtons buttons =
     buttons
         |> List.map (\( name, ref ) -> viewHrefButton name ref)
-        |> div []
+        |> div [ class "header" ]

@@ -1,22 +1,31 @@
-module Route exposing (urlParser, urlToPage)
+module Route exposing (Route(..), parseUrl)
 
-import Model exposing (Page(..), RequestStatus(..))
 import Url exposing (Url)
-import Url.Parser as Url exposing ((</>), Parser, string)
+import Url.Parser exposing (..)
 
 
-urlToPage : Url -> Page
-urlToPage url =
-    url
-        |> Url.parse urlParser
-        |> Maybe.withDefault Index
+type Route
+    = NotFound
+    | UserInformationPage
+    | IndexPage
+    | DeviceListPage
 
 
-urlParser : Parser (Page -> a) a
-urlParser =
-    Url.oneOf
-        [ Url.map Index Url.top
-        , Url.map MyPage (Url.s "mypage")
-        , Url.map Devices (Url.s "devices")
-        , Url.map Error (Url.s "not-found")
+parseUrl : Url -> Route
+parseUrl url =
+    case parse matchRoute url of
+        Just route ->
+            route
+
+        Nothing ->
+            NotFound
+
+
+matchRoute : Parser (Route -> a) a
+matchRoute =
+    oneOf
+        [ map IndexPage top
+        , map UserInformationPage (s "mypage")
+        , map DeviceListPage (s "devices")
+        , map NotFound (s "not-found")
         ]
