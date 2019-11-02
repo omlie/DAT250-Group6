@@ -3,12 +3,14 @@ module Main exposing (main)
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav
 import Html exposing (..)
+import Html.Attributes exposing (class)
 import Page.DeviceInformationPage as DeviceInformationPage
 import Page.DeviceListPage as DeviceListPage
 import Page.ErrorPage as ErrorPage
 import Page.UserInformationPage as UserInformationPage
 import Route exposing (Route)
 import Url exposing (Url)
+import View.Menu exposing (viewMenu)
 
 
 type alias Model =
@@ -94,7 +96,13 @@ initCurrentPage ( model, existingCmds ) =
 view : Model -> Document Msg
 view model =
     { title = "Post App"
-    , body = [ currentView model ]
+    , body =
+        [ div [ class "wrapper" ]
+            [ viewMenu
+            , div [ class "content" ]
+                [ currentView model ]
+            ]
+        ]
     }
 
 

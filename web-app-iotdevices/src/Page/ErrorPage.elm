@@ -8,7 +8,4 @@ import View.Menu exposing (viewMenu)
 
 view : Html msg
 view =
-    div [ class "wrapper" ]
-        [ viewMenu
-        , div [ class "content" ] [ text "Could not find what you're looking for" ]
-        ]
+    text "Could not find what you're looking for"

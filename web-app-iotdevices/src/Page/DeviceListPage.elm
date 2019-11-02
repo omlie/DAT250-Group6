@@ -48,12 +48,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "wrapper" ]
-        [ viewMenu
-        , div [ class "content" ]
-            [ viewDeviceListPage model.devices
-            ]
-        ]
+    viewDeviceListPage model.devices
 
 
 viewDeviceListPage : WebData (List Device) -> Html Msg

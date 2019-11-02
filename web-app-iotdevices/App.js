@@ -9845,6 +9845,7 @@ var $author$project$Main$UserInformationPageMsg = function (a) {
 	return {$: 'UserInformationPageMsg', a: a};
 };
 var $krisajenkins$remotedata$RemoteData$Loading = {$: 'Loading'};
+var $krisajenkins$remotedata$RemoteData$NotAsked = {$: 'NotAsked'};
 var $author$project$Page$DeviceInformationPage$DeviceReceived = function (a) {
 	return {$: 'DeviceReceived', a: a};
 };
@@ -10166,7 +10167,7 @@ var $author$project$Page$DeviceInformationPage$fetchDevice = function (deviceId)
 };
 var $author$project$Page$DeviceInformationPage$init = function (deviceId) {
 	return _Utils_Tuple2(
-		{device: $krisajenkins$remotedata$RemoteData$Loading, deviceId: deviceId},
+		{device: $krisajenkins$remotedata$RemoteData$Loading, deviceId: deviceId, feedback: $krisajenkins$remotedata$RemoteData$NotAsked},
 		$author$project$Page$DeviceInformationPage$fetchDevice(deviceId));
 };
 var $author$project$Page$DeviceListPage$DevicesReceived = function (a) {
@@ -10601,21 +10602,70 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
+var $author$project$Page$DeviceInformationPage$FeedbackReceived = function (a) {
+	return {$: 'FeedbackReceived', a: a};
+};
+var $author$project$Api$Feedback$Feedback = F4(
+	function (id, author, feedbackContent, publishedDate) {
+		return {author: author, feedbackContent: feedbackContent, id: id, publishedDate: publishedDate};
+	});
+var $author$project$Api$Feedback$feedbackDecoder = A3(
+	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'publishedDate',
+	$elm$json$Json$Decode$string,
+	A3(
+		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'feedbackContent',
+		$elm$json$Json$Decode$string,
+		A3(
+			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'author',
+			$author$project$Api$User$userDecoder,
+			A3(
+				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+				'id',
+				$elm$json$Json$Decode$int,
+				$elm$json$Json$Decode$succeed($author$project$Api$Feedback$Feedback)))));
+var $author$project$Api$Feedback$feedbackListDecoder = $elm$json$Json$Decode$list($author$project$Api$Feedback$feedbackDecoder);
+var $author$project$Page$DeviceInformationPage$fetchFeedback = function (deviceId) {
+	return $elm$http$Http$get(
+		{
+			expect: A2(
+				$elm$http$Http$expectJson,
+				A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$DeviceInformationPage$FeedbackReceived),
+				$author$project$Api$Feedback$feedbackListDecoder),
+			url: 'http://localhost:8080/iotdevices/rest/devices/' + ($elm$core$String$fromInt(deviceId) + '/feedback')
+		});
+};
 var $author$project$Page$DeviceInformationPage$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'FetchDevice') {
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{device: $krisajenkins$remotedata$RemoteData$Loading}),
-				$author$project$Page$DeviceInformationPage$fetchDevice(model.deviceId));
-		} else {
-			var response = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{device: response}),
-				$elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'FetchDevice':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{device: $krisajenkins$remotedata$RemoteData$Loading}),
+					$author$project$Page$DeviceInformationPage$fetchDevice(model.deviceId));
+			case 'FetchFeedback':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{feedback: $krisajenkins$remotedata$RemoteData$Loading}),
+					$author$project$Page$DeviceInformationPage$fetchFeedback(model.deviceId));
+			case 'DeviceReceived':
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{device: response, feedback: $krisajenkins$remotedata$RemoteData$Loading}),
+					$author$project$Page$DeviceInformationPage$fetchFeedback(model.deviceId));
+			default:
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{feedback: response}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Page$DeviceListPage$update = F2(
@@ -10787,7 +10837,7 @@ var $author$project$Main$update = F2(
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
-var $author$project$Page$DeviceInformationPage$buildErrorMessage = function (httpError) {
+var $author$project$View$ErrorViews$buildErrorMessage = function (httpError) {
 	switch (httpError.$) {
 		case 'BadUrl':
 			var message = httpError.a;
@@ -10804,9 +10854,104 @@ var $author$project$Page$DeviceInformationPage$buildErrorMessage = function (htt
 			return message;
 	}
 };
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$View$DeviceViews$deviceInformation = F2(
+	function (device, feedback) {
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('content')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('deviceInformationWrapper')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$img,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('deviceImage'),
+									$elm$html$Html$Attributes$src(device.deviceImg)
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('deviceInformation')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$h2,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(device.deviceName)
+										])),
+									A2(
+									$elm$html$Html$span,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text(device.status)
+										])),
+									A2(
+									$elm$html$Html$span,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('API URL: ' + device.apiUrl)
+										])),
+									A2(
+									$elm$html$Html$div,
+									_List_Nil,
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$h2,
+											_List_Nil,
+											_List_fromArray(
+												[
+													$elm$html$Html$text('Feedback')
+												])),
+											A2(
+											$elm$html$Html$div,
+											_List_Nil,
+											A2(
+												$elm$core$List$map,
+												function (f) {
+													return A2(
+														$elm$html$Html$div,
+														_List_Nil,
+														_List_fromArray(
+															[
+																$elm$html$Html$text(f.feedbackContent)
+															]));
+												},
+												feedback))
+										]))
+								]))
+						]))
+				]));
+	});
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $author$project$Page$DeviceInformationPage$viewFetchError = function (errorMessage) {
-	var errorHeading = 'Couldn\'t fetch Device at this time.';
+var $author$project$View$ErrorViews$viewFetchError = function (errorMessage) {
+	var errorHeading = 'Couldn\'t fetch User at this time.';
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -10822,8 +10967,121 @@ var $author$project$Page$DeviceInformationPage$viewFetchError = function (errorM
 				$elm$html$Html$text('Error: ' + errorMessage)
 			]));
 };
-var $author$project$Page$DeviceInformationPage$viewDevice = function (device) {
-	switch (device.$) {
+var $author$project$Page$DeviceInformationPage$viewDevice = F2(
+	function (device, feedback) {
+		var _v0 = _Utils_Tuple2(device, feedback);
+		switch (_v0.a.$) {
+			case 'NotAsked':
+				var _v1 = _v0.a;
+				return $elm$html$Html$text('');
+			case 'Loading':
+				var _v2 = _v0.a;
+				return A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Loading...')
+						]));
+			case 'Success':
+				switch (_v0.b.$) {
+					case 'Success':
+						var actualDevice = _v0.a.a;
+						var actualFeedback = _v0.b.a;
+						return A2($author$project$View$DeviceViews$deviceInformation, actualDevice, actualFeedback);
+					case 'Failure':
+						var httpError = _v0.b.a;
+						return $author$project$View$ErrorViews$viewFetchError(
+							$author$project$View$ErrorViews$buildErrorMessage(httpError));
+					default:
+						return A2(
+							$elm$html$Html$h3,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Loading...')
+								]));
+				}
+			default:
+				var httpError = _v0.a.a;
+				return $author$project$View$ErrorViews$viewFetchError(
+					$author$project$View$ErrorViews$buildErrorMessage(httpError));
+		}
+	});
+var $author$project$Page$DeviceInformationPage$view = function (model) {
+	return A2($author$project$Page$DeviceInformationPage$viewDevice, model.device, model.feedback);
+};
+var $author$project$View$DeviceViews$deviceListItem = function (device) {
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$href(
+				'/device/' + $elm$core$String$fromInt(device.id))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('deviceListItem')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('deviceListColumn')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(device.deviceName)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('deviceListColumn')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(device.status)
+							]))
+					]))
+			]));
+};
+var $author$project$View$DeviceViews$deviceList = F2(
+	function (heading, devices) {
+		var _v0 = $elm$core$List$length(devices);
+		if (!_v0) {
+			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+		} else {
+			return A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('deviceList')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h3,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(heading)
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						A2($elm$core$List$map, $author$project$View$DeviceViews$deviceListItem, devices))
+					]));
+		}
+	});
+var $author$project$Page$DeviceListPage$viewDeviceListPage = function (devices) {
+	switch (devices.$) {
 		case 'NotAsked':
 			return $elm$html$Html$text('');
 		case 'Loading':
@@ -10835,18 +11093,104 @@ var $author$project$Page$DeviceInformationPage$viewDevice = function (device) {
 						$elm$html$Html$text('Loading...')
 					]));
 		case 'Success':
-			var actualDevice = device.a;
+			var actualdevices = devices.a;
+			return A2($author$project$View$DeviceViews$deviceList, 'All devices', actualdevices);
+		default:
+			var httpError = devices.a;
+			return $author$project$View$ErrorViews$viewFetchError(
+				$author$project$View$ErrorViews$buildErrorMessage(httpError));
+	}
+};
+var $author$project$Page$DeviceListPage$view = function (model) {
+	return $author$project$Page$DeviceListPage$viewDeviceListPage(model.devices);
+};
+var $author$project$Page$ErrorPage$view = $elm$html$Html$text('Could not find what you\'re looking for');
+var $author$project$Page$UserInformationPage$viewDevices = F2(
+	function (heading, devices) {
+		switch (devices.$) {
+			case 'NotAsked':
+				return $elm$html$Html$text('');
+			case 'Loading':
+				return A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Loading...')
+						]));
+			case 'Success':
+				var actualdevices = devices.a;
+				return A2($author$project$View$DeviceViews$deviceList, heading, actualdevices);
+			default:
+				var httpError = devices.a;
+				return $author$project$View$ErrorViews$viewFetchError(
+					$author$project$View$ErrorViews$buildErrorMessage(httpError));
+		}
+	});
+var $author$project$View$UserInfoViews$viewUserInformation = function (user) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Hello ' + (user.firstname + (' ' + (user.lastname + '!'))))
+			]));
+};
+var $author$project$Page$UserInformationPage$viewUser = function (user) {
+	switch (user.$) {
+		case 'NotAsked':
+			return $elm$html$Html$text('');
+		case 'Loading':
 			return A2(
-				$elm$html$Html$div,
+				$elm$html$Html$h3,
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Hello ' + actualDevice.deviceName)
+						$elm$html$Html$text('Loading...')
 					]));
+		case 'Success':
+			var actualUser = user.a;
+			return $author$project$View$UserInfoViews$viewUserInformation(actualUser);
 		default:
-			var httpError = device.a;
-			return $author$project$Page$DeviceInformationPage$viewFetchError(
-				$author$project$Page$DeviceInformationPage$buildErrorMessage(httpError));
+			var httpError = user.a;
+			return $author$project$View$ErrorViews$viewFetchError(
+				$author$project$View$ErrorViews$buildErrorMessage(httpError));
+	}
+};
+var $author$project$Page$UserInformationPage$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$author$project$Page$UserInformationPage$viewUser(model.user),
+				A2($author$project$Page$UserInformationPage$viewDevices, 'Owned devices', model.ownedDevices),
+				A2($author$project$Page$UserInformationPage$viewDevices, 'Subscribed devices', model.subscribedDevices)
+			]));
+};
+var $author$project$Main$currentView = function (model) {
+	var _v0 = model.page;
+	switch (_v0.$) {
+		case 'NotFoundPage':
+			return $author$project$Page$ErrorPage$view;
+		case 'DeviceListPage':
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$DeviceListPageMsg,
+				$author$project$Page$DeviceListPage$view(pageModel));
+		case 'UserInformationPage':
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$UserInformationPageMsg,
+				$author$project$Page$UserInformationPage$view(pageModel));
+		default:
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$DeviceInformationPageMsg,
+				$author$project$Page$DeviceInformationPage$view(pageModel));
 	}
 };
 var $author$project$View$Menu$menuButtons = _List_fromArray(
@@ -10891,298 +11235,30 @@ var $author$project$View$Menu$viewMenuButtons = function (buttons) {
 			buttons));
 };
 var $author$project$View$Menu$viewMenu = $author$project$View$Menu$viewMenuButtons($author$project$View$Menu$menuButtons);
-var $author$project$Page$DeviceInformationPage$view = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('wrapper')
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$Menu$viewMenu,
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('content')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Page$DeviceInformationPage$viewDevice(model.device)
-					]))
-			]));
-};
-var $author$project$View$ErrorViews$buildErrorMessage = function (httpError) {
-	switch (httpError.$) {
-		case 'BadUrl':
-			var message = httpError.a;
-			return message;
-		case 'Timeout':
-			return 'Server is taking too long to respond. Please try again later.';
-		case 'NetworkError':
-			return 'Unable to reach server.';
-		case 'BadStatus':
-			var statusCode = httpError.a;
-			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
-		default:
-			var message = httpError.a;
-			return message;
-	}
-};
-var $elm$html$Html$td = _VirtualDom_node('td');
-var $elm$html$Html$tr = _VirtualDom_node('tr');
-var $author$project$View$DeviceViews$deviceListItem = function (device) {
-	return A2(
-		$elm$html$Html$tr,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('deviceListItem')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$td,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(device.deviceName)
-					])),
-				A2(
-				$elm$html$Html$td,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(device.status)
-					])),
-				A2(
-				$elm$html$Html$td,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$a,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$href(
-								'/device/' + $elm$core$String$fromInt(device.id))
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(' View device >')
-							]))
-					]))
-			]));
-};
-var $elm$html$Html$table = _VirtualDom_node('table');
-var $author$project$View$DeviceViews$deviceList = F2(
-	function (heading, devices) {
-		var _v0 = $elm$core$List$length(devices);
-		if (!_v0) {
-			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
-		} else {
-			return A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$h3,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text(heading)
-							])),
-						A2(
-						$elm$html$Html$table,
-						_List_Nil,
-						A2($elm$core$List$map, $author$project$View$DeviceViews$deviceListItem, devices))
-					]));
-		}
-	});
-var $author$project$View$ErrorViews$viewFetchError = function (errorMessage) {
-	var errorHeading = 'Couldn\'t fetch User at this time.';
-	return A2(
-		$elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(errorHeading)
-					])),
-				$elm$html$Html$text('Error: ' + errorMessage)
-			]));
-};
-var $author$project$Page$DeviceListPage$viewDeviceListPage = function (devices) {
-	switch (devices.$) {
-		case 'NotAsked':
-			return $elm$html$Html$text('');
-		case 'Loading':
-			return A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Loading...')
-					]));
-		case 'Success':
-			var actualdevices = devices.a;
-			return A2($author$project$View$DeviceViews$deviceList, 'All devices', actualdevices);
-		default:
-			var httpError = devices.a;
-			return $author$project$View$ErrorViews$viewFetchError(
-				$author$project$View$ErrorViews$buildErrorMessage(httpError));
-	}
-};
-var $author$project$Page$DeviceListPage$view = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('wrapper')
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$Menu$viewMenu,
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('content')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Page$DeviceListPage$viewDeviceListPage(model.devices)
-					]))
-			]));
-};
-var $author$project$Page$ErrorPage$view = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('wrapper')
-		]),
-	_List_fromArray(
-		[
-			$author$project$View$Menu$viewMenu,
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('content')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Could not find what you\'re looking for')
-				]))
-		]));
-var $author$project$Page$UserInformationPage$viewDevices = F2(
-	function (heading, devices) {
-		switch (devices.$) {
-			case 'NotAsked':
-				return $elm$html$Html$text('');
-			case 'Loading':
-				return A2(
-					$elm$html$Html$h3,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Loading...')
-						]));
-			case 'Success':
-				var actualdevices = devices.a;
-				return A2($author$project$View$DeviceViews$deviceList, heading, actualdevices);
-			default:
-				var httpError = devices.a;
-				return $author$project$View$ErrorViews$viewFetchError(
-					$author$project$View$ErrorViews$buildErrorMessage(httpError));
-		}
-	});
-var $author$project$Page$UserInformationPage$viewUser = function (user) {
-	switch (user.$) {
-		case 'NotAsked':
-			return $elm$html$Html$text('');
-		case 'Loading':
-			return A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Loading...')
-					]));
-		case 'Success':
-			var actualUser = user.a;
-			return A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Hello ' + actualUser.username)
-					]));
-		default:
-			var httpError = user.a;
-			return $author$project$View$ErrorViews$viewFetchError(
-				$author$project$View$ErrorViews$buildErrorMessage(httpError));
-	}
-};
-var $author$project$Page$UserInformationPage$view = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('wrapper')
-			]),
-		_List_fromArray(
-			[
-				$author$project$View$Menu$viewMenu,
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('content')
-					]),
-				_List_fromArray(
-					[
-						$author$project$Page$UserInformationPage$viewUser(model.user),
-						A2($author$project$Page$UserInformationPage$viewDevices, 'Owned devices', model.ownedDevices),
-						A2($author$project$Page$UserInformationPage$viewDevices, 'Subscribed devices', model.subscribedDevices)
-					]))
-			]));
-};
-var $author$project$Main$currentView = function (model) {
-	var _v0 = model.page;
-	switch (_v0.$) {
-		case 'NotFoundPage':
-			return $author$project$Page$ErrorPage$view;
-		case 'DeviceListPage':
-			var pageModel = _v0.a;
-			return A2(
-				$elm$html$Html$map,
-				$author$project$Main$DeviceListPageMsg,
-				$author$project$Page$DeviceListPage$view(pageModel));
-		case 'UserInformationPage':
-			var pageModel = _v0.a;
-			return A2(
-				$elm$html$Html$map,
-				$author$project$Main$UserInformationPageMsg,
-				$author$project$Page$UserInformationPage$view(pageModel));
-		default:
-			var pageModel = _v0.a;
-			return A2(
-				$elm$html$Html$map,
-				$author$project$Main$DeviceInformationPageMsg,
-				$author$project$Page$DeviceInformationPage$view(pageModel));
-	}
-};
 var $author$project$Main$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
-				$author$project$Main$currentView(model)
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('wrapper')
+					]),
+				_List_fromArray(
+					[
+						$author$project$View$Menu$viewMenu,
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('content')
+							]),
+						_List_fromArray(
+							[
+								$author$project$Main$currentView(model)
+							]))
+					]))
 			]),
 		title: 'Post App'
 	};
@@ -11199,4 +11275,4 @@ var $author$project$Main$main = $elm$browser$Browser$application(
 		view: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Device.Device":{"args":[],"type":"{ id : Basics.Int, deviceName : String.String, apiUrl : String.String, deviceImg : String.String, status : String.String, statuses : List.List String.String }"},"Api.User.User":{"args":[],"type":"{ id : Basics.Int, username : String.String, firstname : String.String, lastname : String.String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"UserInformationPageMsg":["Page.UserInformationPage.Msg"],"DeviceListPageMsg":["Page.DeviceListPage.Msg"],"DeviceInformationPageMsg":["Page.DeviceInformationPage.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Page.DeviceInformationPage.Msg":{"args":[],"tags":{"FetchDevice":[],"DeviceReceived":["RemoteData.WebData Api.Device.Device"]}},"Page.DeviceListPage.Msg":{"args":[],"tags":{"FetchDevices":[],"DevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Page.UserInformationPage.Msg":{"args":[],"tags":{"FetchUser":[],"FetchOwnedDevices":[],"FetchSubscribedDevices":[],"UserReceived":["RemoteData.WebData Api.User.User"],"OwnedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SubscribedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Device.Device":{"args":[],"type":"{ id : Basics.Int, deviceName : String.String, apiUrl : String.String, deviceImg : String.String, status : String.String, statuses : List.List String.String }"},"Api.Feedback.Feedback":{"args":[],"type":"{ id : Basics.Int, author : Api.User.User, feedbackContent : String.String, publishedDate : String.String }"},"Api.User.User":{"args":[],"type":"{ id : Basics.Int, username : String.String, firstname : String.String, lastname : String.String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"UserInformationPageMsg":["Page.UserInformationPage.Msg"],"DeviceListPageMsg":["Page.DeviceListPage.Msg"],"DeviceInformationPageMsg":["Page.DeviceInformationPage.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Page.DeviceInformationPage.Msg":{"args":[],"tags":{"FetchDevice":[],"FetchFeedback":[],"DeviceReceived":["RemoteData.WebData Api.Device.Device"],"FeedbackReceived":["RemoteData.WebData (List.List Api.Feedback.Feedback)"]}},"Page.DeviceListPage.Msg":{"args":[],"tags":{"FetchDevices":[],"DevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Page.UserInformationPage.Msg":{"args":[],"tags":{"FetchUser":[],"FetchOwnedDevices":[],"FetchSubscribedDevices":[],"UserReceived":["RemoteData.WebData Api.User.User"],"OwnedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SubscribedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}}}}})}});}(this));

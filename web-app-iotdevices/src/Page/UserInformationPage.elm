@@ -11,6 +11,7 @@ import RemoteData exposing (WebData)
 import View.DeviceViews exposing (deviceList)
 import View.ErrorViews exposing (..)
 import View.Menu exposing (viewMenu)
+import View.UserInfoViews exposing (viewUserInformation)
 
 
 type alias Model =
@@ -92,13 +93,10 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "wrapper" ]
-        [ viewMenu
-        , div [ class "content" ]
-            [ viewUser model.user
-            , viewDevices "Owned devices" model.ownedDevices
-            , viewDevices "Subscribed devices" model.subscribedDevices
-            ]
+    div []
+        [ viewUser model.user
+        , viewDevices "Owned devices" model.ownedDevices
+        , viewDevices "Subscribed devices" model.subscribedDevices
         ]
 
 
@@ -112,8 +110,7 @@ viewUser user =
             h3 [] [ text "Loading..." ]
 
         RemoteData.Success actualUser ->
-            div []
-                [ text ("Hello " ++ actualUser.username) ]
+            viewUserInformation actualUser
 
         RemoteData.Failure httpError ->
             viewFetchError (buildErrorMessage httpError)

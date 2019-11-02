@@ -1,14 +1,15 @@
 body {
   margin: 0;
+  font-family: "Courier New";
+  font-size: 18px;
 }
+
 a {
   text-decoration: none;
   color: inherit;
 }
 
 div.wrapper {
-  font-family: "Courier New";
-  font-size: 18px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -22,7 +23,6 @@ div.header {
   padding: 0;
   font-size: 28px;
   width: 100vw;
-  margin-bottom: 24px;
 }
 
 a.headerButton {
@@ -45,90 +45,59 @@ a.headerButton:hover {
   align-items: center;
   height: 100%;
   width: 100%;
-  padding-bottom: 30px;
+  padding-bottom: 32px;
+  padding-top: 64px;
 }
 
-div.button-row {
+div.deviceList {
+  padding-bottom: 24px;
+  padding-top: 24px;
+}
+
+div.deviceListItem {
   display: flex;
-  flex-direction: row;
   justify-content: space-evenly;
-}
-
-div.button-row > * {
-  width: 75px;
-  height: 40px;
-}
-
-div.devices {
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  justify-content: space-between;
-}
-
-div.label {
-  padding: 0;
-  margin: 0;
-}
-
-table {
-  border-collapse: collapse;
-}
-
-tr.deviceListItem {
+  align-items: center;
   background-color: #98bec8;
-  border-bottom: 2px solid #deeaed;
+  border-bottom: 3px solid #deeaed;
+  height: 64px;
+  min-width: 512px;
 }
 
-tr.deviceListItem:hover {
+div.deviceListItem:hover {
   background-color: #deeaed;
 }
 
-th,
-td {
-  width: 256px;
-  height: 64px;
-  text-align: center;
+div.deviceListColumn {
+  padding: 24px;
+  width: 50%;
 }
 
-td > img {
-  height: 100px;
-  width: auto;
+div.deviceListColumn:last-child {
+  text-align: end;
 }
 
-input.feedback {
-  height: 100px;
-  width: 200px;
-}
-
-span.ONLINE,
-span.AVAILABLE {
-  font-size: 32px;
-  color: green;
-}
-
-span.OFFLINE,
-span.UNAVAILABLE {
-  font-size: 32px;
-  color: red;
-}
-
-div.deviceTableHeader {
+div.deviceInformationWrapper {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid slategrey;
 }
 
-img.deviceimage {
-  height: 500px;
+img.deviceImage {
+  height: 512px;
   width: auto;
 }
 
-h2.deviceHeading {
+div.deviceInformation {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  height: auto;
   width: auto;
+  padding: 24px;
+  background-color: #98bec8;
+  flex-direction: column;
+}
+
+div.deviceInformation > * {
+  padding: 6px;
 }
