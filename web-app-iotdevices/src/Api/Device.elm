@@ -7,10 +7,11 @@ import Json.Decode.Pipeline exposing (required)
 
 type alias Device =
     { id : Int
-    , name : String
-    , api : String
+    , deviceName : String
+    , apiUrl : String
+    , deviceImg : String
     , status : String
-    , image : String
+    , statuses : List String
     }
 
 
@@ -24,6 +25,7 @@ deviceDecoder =
     Decode.succeed Device
         |> required "id" int
         |> required "deviceName" string
-        |> required "api" string
-        |> required "image" string
+        |> required "apiUrl" string
+        |> required "deviceImg" string
         |> required "status" string
+        |> required "statuses" (list string)

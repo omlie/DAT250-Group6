@@ -9826,13 +9826,18 @@ var $elm$core$Basics$never = function (_v0) {
 };
 var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Main$NotFoundPage = {$: 'NotFoundPage'};
+var $author$project$Main$DeviceInformationPage = function (a) {
+	return {$: 'DeviceInformationPage', a: a};
+};
+var $author$project$Main$DeviceInformationPageMsg = function (a) {
+	return {$: 'DeviceInformationPageMsg', a: a};
+};
 var $author$project$Main$DeviceListPage = function (a) {
 	return {$: 'DeviceListPage', a: a};
 };
 var $author$project$Main$DeviceListPageMsg = function (a) {
 	return {$: 'DeviceListPageMsg', a: a};
 };
-var $author$project$Main$IndexPage = {$: 'IndexPage'};
 var $author$project$Main$UserInformationPage = function (a) {
 	return {$: 'UserInformationPage', a: a};
 };
@@ -9840,17 +9845,17 @@ var $author$project$Main$UserInformationPageMsg = function (a) {
 	return {$: 'UserInformationPageMsg', a: a};
 };
 var $krisajenkins$remotedata$RemoteData$Loading = {$: 'Loading'};
-var $author$project$Page$DeviceListPage$DeviceListPageReceived = function (a) {
-	return {$: 'DeviceListPageReceived', a: a};
+var $author$project$Page$DeviceInformationPage$DeviceReceived = function (a) {
+	return {$: 'DeviceReceived', a: a};
 };
 var $elm$core$Basics$composeR = F3(
 	function (f, g, x) {
 		return g(
 			f(x));
 	});
-var $author$project$Api$Device$Device = F5(
-	function (id, name, api, status, image) {
-		return {api: api, id: id, image: image, name: name, status: status};
+var $author$project$Api$Device$Device = F6(
+	function (id, deviceName, apiUrl, deviceImg, status, statuses) {
+		return {apiUrl: apiUrl, deviceImg: deviceImg, deviceName: deviceName, id: id, status: status, statuses: statuses};
 	});
 var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$custom = $elm$json$Json$Decode$map2($elm$core$Basics$apR);
@@ -9863,26 +9868,29 @@ var $NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 	});
 var $author$project$Api$Device$deviceDecoder = A3(
 	$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-	'status',
-	$elm$json$Json$Decode$string,
+	'statuses',
+	$elm$json$Json$Decode$list($elm$json$Json$Decode$string),
 	A3(
 		$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-		'image',
+		'status',
 		$elm$json$Json$Decode$string,
 		A3(
 			$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-			'api',
+			'deviceImg',
 			$elm$json$Json$Decode$string,
 			A3(
 				$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-				'deviceName',
+				'apiUrl',
 				$elm$json$Json$Decode$string,
 				A3(
 					$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
-					'id',
-					$elm$json$Json$Decode$int,
-					$elm$json$Json$Decode$succeed($author$project$Api$Device$Device))))));
-var $author$project$Api$Device$devicesDecoder = $elm$json$Json$Decode$list($author$project$Api$Device$deviceDecoder);
+					'deviceName',
+					$elm$json$Json$Decode$string,
+					A3(
+						$NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+						'id',
+						$elm$json$Json$Decode$int,
+						$elm$json$Json$Decode$succeed($author$project$Api$Device$Device)))))));
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
 		return {$: 'BadStatus_', a: a, b: b};
@@ -10146,17 +10154,36 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$Page$DeviceListPage$fetchDeviceListPage = $elm$http$Http$get(
+var $author$project$Page$DeviceInformationPage$fetchDevice = function (deviceId) {
+	return $elm$http$Http$get(
+		{
+			expect: A2(
+				$elm$http$Http$expectJson,
+				A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$DeviceInformationPage$DeviceReceived),
+				$author$project$Api$Device$deviceDecoder),
+			url: 'http://localhost:8080/iotdevices/rest/devices/' + $elm$core$String$fromInt(deviceId)
+		});
+};
+var $author$project$Page$DeviceInformationPage$init = function (deviceId) {
+	return _Utils_Tuple2(
+		{device: $krisajenkins$remotedata$RemoteData$Loading, deviceId: deviceId},
+		$author$project$Page$DeviceInformationPage$fetchDevice(deviceId));
+};
+var $author$project$Page$DeviceListPage$DevicesReceived = function (a) {
+	return {$: 'DevicesReceived', a: a};
+};
+var $author$project$Api$Device$devicesDecoder = $elm$json$Json$Decode$list($author$project$Api$Device$deviceDecoder);
+var $author$project$Page$DeviceListPage$fetchDevices = $elm$http$Http$get(
 	{
 		expect: A2(
 			$elm$http$Http$expectJson,
-			A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$DeviceListPage$DeviceListPageReceived),
+			A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$DeviceListPage$DevicesReceived),
 			$author$project$Api$Device$devicesDecoder),
 		url: 'http://localhost:8080/iotdevices/rest/devices'
 	});
 var $author$project$Page$DeviceListPage$init = _Utils_Tuple2(
 	{devices: $krisajenkins$remotedata$RemoteData$Loading},
-	$author$project$Page$DeviceListPage$fetchDeviceListPage);
+	$author$project$Page$DeviceListPage$fetchDevices);
 var $author$project$Page$UserInformationPage$UserReceived = function (a) {
 	return {$: 'UserReceived', a: a};
 };
@@ -10190,7 +10217,7 @@ var $author$project$Page$UserInformationPage$fetchUser = $elm$http$Http$get(
 		url: 'http://localhost:8080/iotdevices/rest/users/1'
 	});
 var $author$project$Page$UserInformationPage$init = _Utils_Tuple2(
-	{user: $krisajenkins$remotedata$RemoteData$Loading},
+	{ownedDevices: $krisajenkins$remotedata$RemoteData$Loading, subscribedDevices: $krisajenkins$remotedata$RemoteData$Loading, user: $krisajenkins$remotedata$RemoteData$Loading},
 	$author$project$Page$UserInformationPage$fetchUser);
 var $author$project$Main$initCurrentPage = function (_v0) {
 	var model = _v0.a;
@@ -10200,8 +10227,6 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 		switch (_v2.$) {
 			case 'NotFound':
 				return _Utils_Tuple2($author$project$Main$NotFoundPage, $elm$core$Platform$Cmd$none);
-			case 'IndexPage':
-				return _Utils_Tuple2($author$project$Main$IndexPage, $elm$core$Platform$Cmd$none);
 			case 'DeviceListPage':
 				var _v3 = $author$project$Page$DeviceListPage$init;
 				var pageModel = _v3.a;
@@ -10209,13 +10234,21 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				return _Utils_Tuple2(
 					$author$project$Main$DeviceListPage(pageModel),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$DeviceListPageMsg, pageCmds));
-			default:
+			case 'UserInformationPage':
 				var _v4 = $author$project$Page$UserInformationPage$init;
 				var pageModel = _v4.a;
 				var pageCmds = _v4.b;
 				return _Utils_Tuple2(
 					$author$project$Main$UserInformationPage(pageModel),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$UserInformationPageMsg, pageCmds));
+			default:
+				var deviceid = _v2.a;
+				var _v5 = $author$project$Page$DeviceInformationPage$init(deviceid);
+				var pageModel = _v5.a;
+				var pageCmds = _v5.b;
+				return _Utils_Tuple2(
+					$author$project$Main$DeviceInformationPage(pageModel),
+					A2($elm$core$Platform$Cmd$map, $author$project$Main$DeviceInformationPageMsg, pageCmds));
 		}
 	}();
 	var currentPage = _v1.a;
@@ -10229,8 +10262,10 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				[existingCmds, mappedPageCmds])));
 };
 var $author$project$Route$NotFound = {$: 'NotFound'};
+var $author$project$Route$DeviceInformationPage = function (a) {
+	return {$: 'DeviceInformationPage', a: a};
+};
 var $author$project$Route$DeviceListPage = {$: 'DeviceListPage'};
-var $author$project$Route$IndexPage = {$: 'IndexPage'};
 var $author$project$Route$UserInformationPage = {$: 'UserInformationPage'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
@@ -10239,6 +10274,40 @@ var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
 		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
 	});
+var $elm$url$Url$Parser$custom = F2(
+	function (tipe, stringToSomething) {
+		return $elm$url$Url$Parser$Parser(
+			function (_v0) {
+				var visited = _v0.visited;
+				var unvisited = _v0.unvisited;
+				var params = _v0.params;
+				var frag = _v0.frag;
+				var value = _v0.value;
+				if (!unvisited.b) {
+					return _List_Nil;
+				} else {
+					var next = unvisited.a;
+					var rest = unvisited.b;
+					var _v2 = stringToSomething(next);
+					if (_v2.$ === 'Just') {
+						var nextValue = _v2.a;
+						return _List_fromArray(
+							[
+								A5(
+								$elm$url$Url$Parser$State,
+								A2($elm$core$List$cons, next, visited),
+								rest,
+								params,
+								frag,
+								value(nextValue))
+							]);
+					} else {
+						return _List_Nil;
+					}
+				}
+			});
+	});
+var $elm$url$Url$Parser$int = A2($elm$url$Url$Parser$custom, 'NUMBER', $elm$core$String$toInt);
 var $elm$url$Url$Parser$mapState = F2(
 	function (func, _v0) {
 		var visited = _v0.visited;
@@ -10309,6 +10378,18 @@ var $elm$url$Url$Parser$s = function (str) {
 			}
 		});
 };
+var $elm$url$Url$Parser$slash = F2(
+	function (_v0, _v1) {
+		var parseBefore = _v0.a;
+		var parseAfter = _v1.a;
+		return $elm$url$Url$Parser$Parser(
+			function (state) {
+				return A2(
+					$elm$core$List$concatMap,
+					parseAfter,
+					parseBefore(state));
+			});
+	});
 var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
 	function (state) {
 		return _List_fromArray(
@@ -10317,11 +10398,18 @@ var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
 var $author$project$Route$matchRoute = $elm$url$Url$Parser$oneOf(
 	_List_fromArray(
 		[
-			A2($elm$url$Url$Parser$map, $author$project$Route$IndexPage, $elm$url$Url$Parser$top),
+			A2($elm$url$Url$Parser$map, $author$project$Route$UserInformationPage, $elm$url$Url$Parser$top),
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$UserInformationPage,
 			$elm$url$Url$Parser$s('mypage')),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$DeviceInformationPage,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('device'),
+				$elm$url$Url$Parser$int)),
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$DeviceListPage,
@@ -10513,27 +10601,110 @@ var $elm$url$Url$toString = function (url) {
 					_Utils_ap(http, url.host)),
 				url.path)));
 };
-var $author$project$Page$UserInformationPage$update = F2(
+var $author$project$Page$DeviceInformationPage$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'FetchUser') {
+		if (msg.$ === 'FetchDevice') {
 			return _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{user: $krisajenkins$remotedata$RemoteData$Loading}),
-				$author$project$Page$UserInformationPage$fetchUser);
+					{device: $krisajenkins$remotedata$RemoteData$Loading}),
+				$author$project$Page$DeviceInformationPage$fetchDevice(model.deviceId));
 		} else {
 			var response = msg.a;
 			return _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{user: response}),
+					{device: response}),
 				$elm$core$Platform$Cmd$none);
+		}
+	});
+var $author$project$Page$DeviceListPage$update = F2(
+	function (msg, model) {
+		if (msg.$ === 'FetchDevices') {
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{devices: $krisajenkins$remotedata$RemoteData$Loading}),
+				$author$project$Page$DeviceListPage$fetchDevices);
+		} else {
+			var response = msg.a;
+			return _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{devices: response}),
+				$elm$core$Platform$Cmd$none);
+		}
+	});
+var $author$project$Page$UserInformationPage$OwnedDevicesReceived = function (a) {
+	return {$: 'OwnedDevicesReceived', a: a};
+};
+var $author$project$Page$UserInformationPage$fetchOwnedDevices = $elm$http$Http$get(
+	{
+		expect: A2(
+			$elm$http$Http$expectJson,
+			A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$UserInformationPage$OwnedDevicesReceived),
+			$author$project$Api$Device$devicesDecoder),
+		url: 'http://localhost:8080/iotdevices/rest/users/1/devices'
+	});
+var $author$project$Page$UserInformationPage$SubscribedDevicesReceived = function (a) {
+	return {$: 'SubscribedDevicesReceived', a: a};
+};
+var $author$project$Page$UserInformationPage$fetchSubscribedDevices = $elm$http$Http$get(
+	{
+		expect: A2(
+			$elm$http$Http$expectJson,
+			A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$UserInformationPage$SubscribedDevicesReceived),
+			$author$project$Api$Device$devicesDecoder),
+		url: 'http://localhost:8080/iotdevices/rest/users/1/subscribedDevices'
+	});
+var $author$project$Page$UserInformationPage$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'FetchUser':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{user: $krisajenkins$remotedata$RemoteData$Loading}),
+					$author$project$Page$UserInformationPage$fetchUser);
+			case 'FetchOwnedDevices':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{ownedDevices: $krisajenkins$remotedata$RemoteData$Loading}),
+					$author$project$Page$UserInformationPage$fetchOwnedDevices);
+			case 'FetchSubscribedDevices':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{subscribedDevices: $krisajenkins$remotedata$RemoteData$Loading}),
+					$author$project$Page$UserInformationPage$fetchSubscribedDevices);
+			case 'UserReceived':
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{user: response}),
+					$author$project$Page$UserInformationPage$fetchOwnedDevices);
+			case 'OwnedDevicesReceived':
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{ownedDevices: response}),
+					$author$project$Page$UserInformationPage$fetchSubscribedDevices);
+			default:
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{subscribedDevices: response}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model.page);
-		_v0$3:
+		_v0$5:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'UserInformationPageMsg':
@@ -10551,7 +10722,41 @@ var $author$project$Main$update = F2(
 								}),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$UserInformationPageMsg, updatedCmd));
 					} else {
-						break _v0$3;
+						break _v0$5;
+					}
+				case 'DeviceListPageMsg':
+					if (_v0.b.$ === 'DeviceListPage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v2 = A2($author$project$Page$DeviceListPage$update, subMsg, pageModel);
+						var updatedPageModel = _v2.a;
+						var updatedCmd = _v2.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$DeviceListPage(updatedPageModel)
+								}),
+							A2($elm$core$Platform$Cmd$map, $author$project$Main$DeviceListPageMsg, updatedCmd));
+					} else {
+						break _v0$5;
+					}
+				case 'DeviceInformationPageMsg':
+					if (_v0.b.$ === 'DeviceInformationPage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v3 = A2($author$project$Page$DeviceInformationPage$update, subMsg, pageModel);
+						var updatedPageModel = _v3.a;
+						var updatedCmd = _v3.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$DeviceInformationPage(updatedPageModel)
+								}),
+							A2($elm$core$Platform$Cmd$map, $author$project$Main$DeviceInformationPageMsg, updatedCmd));
+					} else {
+						break _v0$5;
 					}
 				case 'LinkClicked':
 					var urlRequest = _v0.a.a;
@@ -10569,7 +10774,7 @@ var $author$project$Main$update = F2(
 							model,
 							$elm$browser$Browser$Navigation$load(url));
 					}
-				case 'UrlChanged':
+				default:
 					var url = _v0.a.a;
 					var newRoute = $author$project$Route$parseUrl(url);
 					return $author$project$Main$initCurrentPage(
@@ -10578,13 +10783,11 @@ var $author$project$Main$update = F2(
 								model,
 								{route: newRoute}),
 							$elm$core$Platform$Cmd$none));
-				default:
-					break _v0$3;
 			}
 		}
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
-var $author$project$Page$DeviceListPage$buildErrorMessage = function (httpError) {
+var $author$project$Page$DeviceInformationPage$buildErrorMessage = function (httpError) {
 	switch (httpError.$) {
 		case 'BadUrl':
 			var message = httpError.a;
@@ -10602,9 +10805,8 @@ var $author$project$Page$DeviceListPage$buildErrorMessage = function (httpError)
 	}
 };
 var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $elm$html$Html$table = _VirtualDom_node('table');
-var $author$project$Page$DeviceListPage$viewFetchError = function (errorMessage) {
-	var errorHeading = 'Couldn\'t fetch devices at this time.';
+var $author$project$Page$DeviceInformationPage$viewFetchError = function (errorMessage) {
+	var errorHeading = 'Couldn\'t fetch Device at this time.';
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
@@ -10620,68 +10822,8 @@ var $author$project$Page$DeviceListPage$viewFetchError = function (errorMessage)
 				$elm$html$Html$text('Error: ' + errorMessage)
 			]));
 };
-var $elm$html$Html$td = _VirtualDom_node('td');
-var $elm$html$Html$tr = _VirtualDom_node('tr');
-var $author$project$Page$DeviceListPage$viewPost = function (device) {
-	return A2(
-		$elm$html$Html$tr,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$td,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						$elm$core$String$fromInt(device.id))
-					])),
-				A2(
-				$elm$html$Html$td,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(device.name)
-					])),
-				A2(
-				$elm$html$Html$td,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(device.status)
-					]))
-			]));
-};
-var $elm$html$Html$th = _VirtualDom_node('th');
-var $author$project$Page$DeviceListPage$viewTableHeader = A2(
-	$elm$html$Html$tr,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('ID')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Title')
-				])),
-			A2(
-			$elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Author')
-				]))
-		]));
-var $author$project$Page$DeviceListPage$viewDeviceListPage = function (devices) {
-	switch (devices.$) {
+var $author$project$Page$DeviceInformationPage$viewDevice = function (device) {
+	switch (device.$) {
 		case 'NotAsked':
 			return $elm$html$Html$text('');
 		case 'Loading':
@@ -10693,38 +10835,24 @@ var $author$project$Page$DeviceListPage$viewDeviceListPage = function (devices) 
 						$elm$html$Html$text('Loading...')
 					]));
 		case 'Success':
-			var actualdevices = devices.a;
+			var actualDevice = device.a;
 			return A2(
 				$elm$html$Html$div,
 				_List_Nil,
 				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$h3,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('devices')
-							])),
-						A2(
-						$elm$html$Html$table,
-						_List_Nil,
-						_Utils_ap(
-							_List_fromArray(
-								[$author$project$Page$DeviceListPage$viewTableHeader]),
-							A2($elm$core$List$map, $author$project$Page$DeviceListPage$viewPost, actualdevices)))
+						$elm$html$Html$text('Hello ' + actualDevice.deviceName)
 					]));
 		default:
-			var httpError = devices.a;
-			return $author$project$Page$DeviceListPage$viewFetchError(
-				$author$project$Page$DeviceListPage$buildErrorMessage(httpError));
+			var httpError = device.a;
+			return $author$project$Page$DeviceInformationPage$viewFetchError(
+				$author$project$Page$DeviceInformationPage$buildErrorMessage(httpError));
 	}
 };
 var $author$project$View$Menu$menuButtons = _List_fromArray(
 	[
 		_Utils_Tuple2('My page', '/mypage'),
-		_Utils_Tuple2('Devices', '/devices'),
-		_Utils_Tuple2('Index', '/')
+		_Utils_Tuple2('Devices', '/devices')
 	]);
 var $author$project$View$Buttons$viewHrefButton = F2(
 	function (name, ref) {
@@ -10763,6 +10891,153 @@ var $author$project$View$Menu$viewMenuButtons = function (buttons) {
 			buttons));
 };
 var $author$project$View$Menu$viewMenu = $author$project$View$Menu$viewMenuButtons($author$project$View$Menu$menuButtons);
+var $author$project$Page$DeviceInformationPage$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('wrapper')
+			]),
+		_List_fromArray(
+			[
+				$author$project$View$Menu$viewMenu,
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('content')
+					]),
+				_List_fromArray(
+					[
+						$author$project$Page$DeviceInformationPage$viewDevice(model.device)
+					]))
+			]));
+};
+var $author$project$View$ErrorViews$buildErrorMessage = function (httpError) {
+	switch (httpError.$) {
+		case 'BadUrl':
+			var message = httpError.a;
+			return message;
+		case 'Timeout':
+			return 'Server is taking too long to respond. Please try again later.';
+		case 'NetworkError':
+			return 'Unable to reach server.';
+		case 'BadStatus':
+			var statusCode = httpError.a;
+			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
+		default:
+			var message = httpError.a;
+			return message;
+	}
+};
+var $elm$html$Html$td = _VirtualDom_node('td');
+var $elm$html$Html$tr = _VirtualDom_node('tr');
+var $author$project$View$DeviceViews$deviceListItem = function (device) {
+	return A2(
+		$elm$html$Html$tr,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('deviceListItem')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$td,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(device.deviceName)
+					])),
+				A2(
+				$elm$html$Html$td,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(device.status)
+					])),
+				A2(
+				$elm$html$Html$td,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$href(
+								'/device/' + $elm$core$String$fromInt(device.id))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(' View device >')
+							]))
+					]))
+			]));
+};
+var $elm$html$Html$table = _VirtualDom_node('table');
+var $author$project$View$DeviceViews$deviceList = F2(
+	function (heading, devices) {
+		var _v0 = $elm$core$List$length(devices);
+		if (!_v0) {
+			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+		} else {
+			return A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h3,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(heading)
+							])),
+						A2(
+						$elm$html$Html$table,
+						_List_Nil,
+						A2($elm$core$List$map, $author$project$View$DeviceViews$deviceListItem, devices))
+					]));
+		}
+	});
+var $author$project$View$ErrorViews$viewFetchError = function (errorMessage) {
+	var errorHeading = 'Couldn\'t fetch User at this time.';
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(errorHeading)
+					])),
+				$elm$html$Html$text('Error: ' + errorMessage)
+			]));
+};
+var $author$project$Page$DeviceListPage$viewDeviceListPage = function (devices) {
+	switch (devices.$) {
+		case 'NotAsked':
+			return $elm$html$Html$text('');
+		case 'Loading':
+			return A2(
+				$elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Loading...')
+					]));
+		case 'Success':
+			var actualdevices = devices.a;
+			return A2($author$project$View$DeviceViews$deviceList, 'All devices', actualdevices);
+		default:
+			var httpError = devices.a;
+			return $author$project$View$ErrorViews$viewFetchError(
+				$author$project$View$ErrorViews$buildErrorMessage(httpError));
+	}
+};
 var $author$project$Page$DeviceListPage$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -10805,60 +11080,28 @@ var $author$project$Page$ErrorPage$view = A2(
 					$elm$html$Html$text('Could not find what you\'re looking for')
 				]))
 		]));
-var $author$project$Page$IndexPage$view = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('wrapper')
-		]),
-	_List_fromArray(
-		[
-			$author$project$View$Menu$viewMenu,
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('content')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('hello')
-				]))
-		]));
-var $author$project$Page$UserInformationPage$buildErrorMessage = function (httpError) {
-	switch (httpError.$) {
-		case 'BadUrl':
-			var message = httpError.a;
-			return message;
-		case 'Timeout':
-			return 'Server is taking too long to respond. Please try again later.';
-		case 'NetworkError':
-			return 'Unable to reach server.';
-		case 'BadStatus':
-			var statusCode = httpError.a;
-			return 'Request failed with status code: ' + $elm$core$String$fromInt(statusCode);
-		default:
-			var message = httpError.a;
-			return message;
-	}
-};
-var $author$project$Page$UserInformationPage$viewFetchError = function (errorMessage) {
-	var errorHeading = 'Couldn\'t fetch User at this time.';
-	return A2(
-		$elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				$elm$html$Html$h3,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text(errorHeading)
-					])),
-				$elm$html$Html$text('Error: ' + errorMessage)
-			]));
-};
+var $author$project$Page$UserInformationPage$viewDevices = F2(
+	function (heading, devices) {
+		switch (devices.$) {
+			case 'NotAsked':
+				return $elm$html$Html$text('');
+			case 'Loading':
+				return A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Loading...')
+						]));
+			case 'Success':
+				var actualdevices = devices.a;
+				return A2($author$project$View$DeviceViews$deviceList, heading, actualdevices);
+			default:
+				var httpError = devices.a;
+				return $author$project$View$ErrorViews$viewFetchError(
+					$author$project$View$ErrorViews$buildErrorMessage(httpError));
+		}
+	});
 var $author$project$Page$UserInformationPage$viewUser = function (user) {
 	switch (user.$) {
 		case 'NotAsked':
@@ -10882,8 +11125,8 @@ var $author$project$Page$UserInformationPage$viewUser = function (user) {
 					]));
 		default:
 			var httpError = user.a;
-			return $author$project$Page$UserInformationPage$viewFetchError(
-				$author$project$Page$UserInformationPage$buildErrorMessage(httpError));
+			return $author$project$View$ErrorViews$viewFetchError(
+				$author$project$View$ErrorViews$buildErrorMessage(httpError));
 	}
 };
 var $author$project$Page$UserInformationPage$view = function (model) {
@@ -10904,7 +11147,9 @@ var $author$project$Page$UserInformationPage$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$Page$UserInformationPage$viewUser(model.user)
+						$author$project$Page$UserInformationPage$viewUser(model.user),
+						A2($author$project$Page$UserInformationPage$viewDevices, 'Owned devices', model.ownedDevices),
+						A2($author$project$Page$UserInformationPage$viewDevices, 'Subscribed devices', model.subscribedDevices)
 					]))
 			]));
 };
@@ -10919,14 +11164,18 @@ var $author$project$Main$currentView = function (model) {
 				$elm$html$Html$map,
 				$author$project$Main$DeviceListPageMsg,
 				$author$project$Page$DeviceListPage$view(pageModel));
-		case 'IndexPage':
-			return $author$project$Page$IndexPage$view;
-		default:
+		case 'UserInformationPage':
 			var pageModel = _v0.a;
 			return A2(
 				$elm$html$Html$map,
 				$author$project$Main$UserInformationPageMsg,
 				$author$project$Page$UserInformationPage$view(pageModel));
+		default:
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$DeviceInformationPageMsg,
+				$author$project$Page$DeviceInformationPage$view(pageModel));
 	}
 };
 var $author$project$Main$view = function (model) {
@@ -10950,4 +11199,4 @@ var $author$project$Main$main = $elm$browser$Browser$application(
 		view: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Device.Device":{"args":[],"type":"{ id : Basics.Int, name : String.String, api : String.String, status : String.String, image : String.String }"},"Api.User.User":{"args":[],"type":"{ id : Basics.Int, username : String.String, firstname : String.String, lastname : String.String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"UserInformationPageMsg":["Page.UserInformationPage.Msg"],"DeviceListPageMsg":["Page.DeviceListPage.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Page.DeviceListPage.Msg":{"args":[],"tags":{"FetchDeviceListPage":[],"DeviceListPageReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Page.UserInformationPage.Msg":{"args":[],"tags":{"FetchUser":[],"UserReceived":["RemoteData.WebData Api.User.User"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Device.Device":{"args":[],"type":"{ id : Basics.Int, deviceName : String.String, apiUrl : String.String, deviceImg : String.String, status : String.String, statuses : List.List String.String }"},"Api.User.User":{"args":[],"type":"{ id : Basics.Int, username : String.String, firstname : String.String, lastname : String.String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"UserInformationPageMsg":["Page.UserInformationPage.Msg"],"DeviceListPageMsg":["Page.DeviceListPage.Msg"],"DeviceInformationPageMsg":["Page.DeviceInformationPage.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Page.DeviceInformationPage.Msg":{"args":[],"tags":{"FetchDevice":[],"DeviceReceived":["RemoteData.WebData Api.Device.Device"]}},"Page.DeviceListPage.Msg":{"args":[],"tags":{"FetchDevices":[],"DevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Page.UserInformationPage.Msg":{"args":[],"tags":{"FetchUser":[],"FetchOwnedDevices":[],"FetchSubscribedDevices":[],"UserReceived":["RemoteData.WebData Api.User.User"],"OwnedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SubscribedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}}}}})}});}(this));

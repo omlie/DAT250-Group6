@@ -1,6 +1,10 @@
 body {
   margin: 0;
 }
+a {
+  text-decoration: none;
+  color: inherit;
+}
 
 div.wrapper {
   font-family: "Courier New";
@@ -71,8 +75,13 @@ table {
   border-collapse: collapse;
 }
 
-tr {
-  border-bottom: 1px solid slategrey;
+tr.deviceListItem {
+  background-color: #98bec8;
+  border-bottom: 2px solid #deeaed;
+}
+
+tr.deviceListItem:hover {
+  background-color: #deeaed;
 }
 
 th,
@@ -80,11 +89,6 @@ td {
   width: 256px;
   height: 64px;
   text-align: center;
-}
-
-th.noborder,
-td.noborder {
-  border: 0;
 }
 
 td > img {

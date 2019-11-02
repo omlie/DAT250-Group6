@@ -7,8 +7,8 @@ import Url.Parser exposing (..)
 type Route
     = NotFound
     | UserInformationPage
-    | IndexPage
     | DeviceListPage
+    | DeviceInformationPage Int
 
 
 parseUrl : Url -> Route
@@ -24,8 +24,9 @@ parseUrl url =
 matchRoute : Parser (Route -> a) a
 matchRoute =
     oneOf
-        [ map IndexPage top
+        [ map UserInformationPage top
         , map UserInformationPage (s "mypage")
+        , map DeviceInformationPage (s "device" </> int)
         , map DeviceListPage (s "devices")
         , map NotFound (s "not-found")
         ]

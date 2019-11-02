@@ -7,6 +7,8 @@ import Html.Events exposing (onClick)
 import Http
 import Json.Decode as Decode
 import RemoteData exposing (WebData)
+import View.DeviceViews exposing (deviceList)
+import View.ErrorViews exposing (..)
 import View.Menu exposing (viewMenu)
 
 
@@ -15,32 +17,32 @@ type alias Model =
 
 
 type Msg
-    = FetchDeviceListPage
-    | DeviceListPageReceived (WebData (List Device))
+    = FetchDevices
+    | DevicesReceived (WebData (List Device))
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { devices = RemoteData.Loading }, fetchDeviceListPage )
+    ( { devices = RemoteData.Loading }, fetchDevices )
 
 
-fetchDeviceListPage : Cmd Msg
-fetchDeviceListPage =
+fetchDevices : Cmd Msg
+fetchDevices =
     Http.get
         { url = "http://localhost:8080/iotdevices/rest/devices"
         , expect =
             devicesDecoder
-                |> Http.expectJson (RemoteData.fromResult >> DeviceListPageReceived)
+                |> Http.expectJson (RemoteData.fromResult >> DevicesReceived)
         }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        FetchDeviceListPage ->
-            ( { model | devices = RemoteData.Loading }, fetchDeviceListPage )
+        FetchDevices ->
+            ( { model | devices = RemoteData.Loading }, fetchDevices )
 
-        DeviceListPageReceived response ->
+        DevicesReceived response ->
             ( { model | devices = response }, Cmd.none )
 
 
@@ -64,66 +66,7 @@ viewDeviceListPage devices =
             h3 [] [ text "Loading..." ]
 
         RemoteData.Success actualdevices ->
-            div []
-                [ h3 [] [ text "devices" ]
-                , table []
-                    ([ viewTableHeader ] ++ List.map viewPost actualdevices)
-                ]
+            deviceList "All devices" actualdevices
 
         RemoteData.Failure httpError ->
             viewFetchError (buildErrorMessage httpError)
-
-
-viewTableHeader : Html Msg
-viewTableHeader =
-    tr []
-        [ th []
-            [ text "ID" ]
-        , th []
-            [ text "Title" ]
-        , th []
-            [ text "Author" ]
-        ]
-
-
-viewPost : Device -> Html Msg
-viewPost device =
-    tr []
-        [ td []
-            [ text (String.fromInt device.id) ]
-        , td []
-            [ text device.name ]
-        , td []
-            [ text device.status ]
-        ]
-
-
-viewFetchError : String -> Html Msg
-viewFetchError errorMessage =
-    let
-        errorHeading =
-            "Couldn't fetch devices at this time."
-    in
-    div []
-        [ h3 [] [ text errorHeading ]
-        , text ("Error: " ++ errorMessage)
-        ]
-
-
-buildErrorMessage : Http.Error -> String
-buildErrorMessage httpError =
-    case httpError of
-        Http.BadUrl message ->
-            message
-
-        Http.Timeout ->
-            "Server is taking too long to respond. Please try again later."
-
-        Http.NetworkError ->
-            "Unable to reach server."
-
-        Http.BadStatus statusCode ->
-            "Request failed with status code: " ++ String.fromInt statusCode
-
-        Http.BadBody message ->
-            message

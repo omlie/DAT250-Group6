@@ -8,7 +8,7 @@ import View.Buttons exposing (viewHrefButton)
 
 menuButtons : List ( String, String )
 menuButtons =
-    [ ( "My page", "/mypage" ), ( "Devices", "/devices" ), ( "Index", "/" ) ]
+    [ ( "My page", "/mypage" ), ( "Devices", "/devices" ) ]
 
 
 viewMenu : Html msg
