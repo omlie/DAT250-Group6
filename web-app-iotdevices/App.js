@@ -10854,7 +10854,64 @@ var $author$project$View$ErrorViews$buildErrorMessage = function (httpError) {
 			return message;
 	}
 };
+var $author$project$View$DeviceViews$feedbackListItem = function (feedback) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('feedbackListItem')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(feedback.publishedDate)
+					])),
+				A2(
+				$elm$html$Html$span,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(feedback.author.username + (': ' + feedback.feedbackContent))
+					]))
+			]));
+};
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $author$project$View$DeviceViews$feedbackList = function (feedback) {
+	if (!feedback.b) {
+		return $elm$html$Html$text('');
+	} else {
+		var items = feedback;
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h2,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Feedback')
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('feedbackList')
+						]),
+					A2(
+						$elm$core$List$map,
+						function (f) {
+							return $author$project$View$DeviceViews$feedbackListItem(f);
+						},
+						items))
+				]));
+	}
+};
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
@@ -10917,34 +10974,7 @@ var $author$project$View$DeviceViews$deviceInformation = F2(
 										[
 											$elm$html$Html$text('API URL: ' + device.apiUrl)
 										])),
-									A2(
-									$elm$html$Html$div,
-									_List_Nil,
-									_List_fromArray(
-										[
-											A2(
-											$elm$html$Html$h2,
-											_List_Nil,
-											_List_fromArray(
-												[
-													$elm$html$Html$text('Feedback')
-												])),
-											A2(
-											$elm$html$Html$div,
-											_List_Nil,
-											A2(
-												$elm$core$List$map,
-												function (f) {
-													return A2(
-														$elm$html$Html$div,
-														_List_Nil,
-														_List_fromArray(
-															[
-																$elm$html$Html$text(f.feedbackContent)
-															]));
-												},
-												feedback))
-										]))
+									$author$project$View$DeviceViews$feedbackList(feedback)
 								]))
 						]))
 				]));

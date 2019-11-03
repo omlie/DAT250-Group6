@@ -101,3 +101,14 @@ div.deviceInformation {
 div.deviceInformation > * {
   padding: 6px;
 }
+
+div.feedbackListItem {
+  background-color: white;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+div.feedbackListItem > *:last-child {
+  margin-top: 24px;
+}

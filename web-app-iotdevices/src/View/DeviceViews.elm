@@ -40,7 +40,25 @@ deviceInformation device feedback =
                 [ h2 [] [ text device.deviceName ]
                 , span [] [ text device.status ]
                 , span [] [ text ("API URL: " ++ device.apiUrl) ]
-                , div [] [ h2 [] [ text "Feedback" ], div [] (List.map (\f -> div [] [ text f.feedbackContent ]) feedback) ]
+                , feedbackList feedback
                 ]
             ]
+        ]
+
+
+feedbackList : List Feedback -> Html msg
+feedbackList feedback =
+    case feedback of
+        [] ->
+            text ""
+
+        items ->
+            div [] [ h2 [] [ text "Feedback" ], div [ class "feedbackList" ] (List.map (\f -> feedbackListItem f) items) ]
+
+
+feedbackListItem : Feedback -> Html msg
+feedbackListItem feedback =
+    div [ class "feedbackListItem" ]
+        [ span [] [ text feedback.publishedDate ]
+        , span [] [ text (feedback.author.username ++ ": " ++ feedback.feedbackContent) ]
         ]
