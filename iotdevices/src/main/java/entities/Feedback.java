@@ -1,5 +1,6 @@
 package entities;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -27,6 +28,7 @@ public class Feedback implements Serializable {
     @JoinColumn(name= "user_id")
     private User author;
 
+    @JsonbTransient
     @ManyToOne
     @JoinColumn(name= "device_id")
     private Device device;

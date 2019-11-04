@@ -49,9 +49,7 @@
       <role-name>securityusers</role-name>
       <role-name>securityadmin</role-name>
     </auth-constraint>
-    <user-data-constraint>
-      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-    </user-data-constraint>
+
   </security-constraint>
   <security-constraint>
     <display-name>Restricted to admins</display-name>
@@ -62,9 +60,7 @@
     <auth-constraint>
       <role-name>securityadmin</role-name>
     </auth-constraint>
-    <user-data-constraint>
-      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-    </user-data-constraint>
+
   </security-constraint>
   <security-constraint>
     <display-name>Open</display-name>
@@ -72,8 +68,6 @@
       <web-resource-name>Not restricted</web-resource-name>
       <url-pattern>/*</url-pattern>
     </web-resource-collection>
-    <user-data-constraint>
-      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-    </user-data-constraint>
+
   </security-constraint>
 </web-app>
