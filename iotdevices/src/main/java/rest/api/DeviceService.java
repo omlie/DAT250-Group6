@@ -3,10 +3,13 @@ package rest.api;
 import ejb.DeviceDao;
 import ejb.UserDao;
 import entities.Device;
+import entities.Feedback;
 import entities.Label;
+import entities.User;
 import helpers.Status;
 
 import javax.ejb.EJB;
+import javax.ejb.PostActivate;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
@@ -79,7 +82,31 @@ public class DeviceService extends Application {
     }
 
     @POST
-    @Path("create/device")
+    @Path("give/feedback/{id}")
+    @Transactional
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response submitFeedback(@HeaderParam("feedback") String feedback,
+                                   @HeaderParam("userId") int userid,
+                                   @HeaderParam("publishedDate") String date,
+                                   @PathParam("id") int deviceid){
+        try {
+            Feedback f = new Feedback();
+            User user = userDao.getUser(userid);
+            f.setAuthor(user);
+            f.setPublishedDate(date);
+            f.setDevice(deviceDao.getDeviceById(deviceid));
+            f.setFeedbackContent(feedback);
+            deviceDao.addFeedback(f);
+            return Response.ok(f).build();
+        } catch (NotFoundException e){
+            return Response.status(404, "No such user" + userid).build();
+        } catch (Exception e) {
+            return Response.status(404, "Unknown error").build();
+        }
+    }
+
+    @POST
+    @Path("create")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDevice(@HeaderParam("devicename") String devicename,

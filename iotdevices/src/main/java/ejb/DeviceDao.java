@@ -32,6 +32,10 @@ public class DeviceDao {
         return query.getResultList();
     }
 
+    public void addFeedback(Feedback f){
+        em.persist(f);
+    }
+
     public void createDevice(Device d){
         em.persist(d);
     }
