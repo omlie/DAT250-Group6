@@ -24,7 +24,7 @@ public class Feedback implements Serializable {
 
     private String feedbackContent;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name= "user_id")
     private User author;
 

@@ -271,6 +271,7 @@ public class UserDao {
      */
     public void addDevice(String username, Device device) {
         User user = getUser(username);
+        device.setOwner(user);
         if (user == null)
             throw new NotFoundException();
 

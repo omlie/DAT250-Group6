@@ -25,6 +25,10 @@ public class Device implements Serializable, Comparable<Device>  {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "yourTableGenerator")
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "owner")
+    private User owner;
+
     private String deviceName;
 
     private String deviceImg;
@@ -135,6 +139,16 @@ public class Device implements Serializable, Comparable<Device>  {
     public void setSubscriptions(Set<Subscription> subscriptions) {
         this.subscriptions = subscriptions;
     }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+
 
     @Override
     public int compareTo(Device o) {
