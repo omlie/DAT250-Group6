@@ -109,6 +109,12 @@ fabric.properties
 
 # Sonarlint plugin
 .idea/sonarlint
-
+# elm-package generated files
+elm-stuff
+# elm-repl generated files
+repl-temp-*
+node_modules
+.DS_Store
+public/.DS_Store
 # End of https://www.gitignore.io/api/intellij
 
