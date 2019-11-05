@@ -32,6 +32,10 @@ public class DeviceDao {
         return query.getResultList();
     }
 
+    public void createDevice(Device d){
+        em.persist(d);
+    }
+
     /**
      * Get the device with the given id
      * @param deviceId
