@@ -74,22 +74,4 @@ public class UserService extends Application {
 
         return Response.ok(userDao.getOwnedDevices(idInt)).build();
     }
-
-    @GET
-    @Path("{id}/subscribedDevices")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getSubscribedDevices(@PathParam("id") String id) {
-        int idInt = Integer.parseInt(id);
-        return Response.ok(userDao.getSubscribedDevices(idInt)).build();
-    }
-
-    @POST
-    @Transactional
-    @Path("{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addSubscriber(@HeaderParam("userId") int userId, @PathParam("id") String deviceId) {
-        int idInt = Integer.parseInt(deviceId);
-        userDao.addSubscriber(idInt, userId);
-        return Response.ok().build();
-    }
 }

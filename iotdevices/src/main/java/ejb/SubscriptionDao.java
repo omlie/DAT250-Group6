@@ -12,6 +12,8 @@ import javax.jms.JMSSessionMode;
 import javax.jms.Topic;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.ws.rs.NotFoundException;
+import java.util.List;
 
 @Stateless
 public class SubscriptionDao {
@@ -45,5 +47,25 @@ public class SubscriptionDao {
         subscription.setDeniedSubscription(false);
         subscription.setApprovedSubscription(false);
         em.merge(subscription);
+    }
+
+    public Subscription getSubscription(int deviceid, int userid) {
+        List<Subscription> q =
+                em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.id=?2", Subscription.class)
+                        .setParameter(1, deviceid)
+                        .setParameter(2, userid)
+                        .getResultList();
+        if (q.isEmpty()) {
+            throw new NotFoundException();
+        }
+        return q.get(0);
+    }
+
+    public List<Subscription> getPending(int deviceid){
+        List<Subscription> q =
+                em.createQuery("select s from Subscription s where s.device.id=?1 and s.isApprovedSubscription=false and s.isDeniedSubscription=false", Subscription.class)
+                        .setParameter(1, deviceid)
+                        .getResultList();
+        return q;
     }
 }
