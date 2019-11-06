@@ -125,6 +125,20 @@ public class DeviceService extends Application {
     }
 
     @POST
+    @Path("delete/{id}")
+    @Transactional
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteDevice(@HeaderParam("username") String username,
+                                 @PathParam("id") int id){
+        try {
+            userDao.deleteOwned(username, id);
+            return Response.ok().build();
+        } catch (NotFoundException e){
+            return Response.status(404, "Could not delete device " + id).build();
+        }
+    }
+
+    @POST
     @Path("unsubscribe/{id}")
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
