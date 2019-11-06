@@ -11242,13 +11242,7 @@ var $author$project$Page$DeviceListPage$view = function (model) {
 						$elm$html$Html$Events$onInput($author$project$Page$DeviceListPage$SearchDevice)
 					]),
 				_List_Nil),
-				A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2($author$project$Page$DeviceListPage$viewDeviceListPage, model.devices, model.searchBarContent)
-					]))
+				A2($author$project$Page$DeviceListPage$viewDeviceListPage, model.devices, model.searchBarContent)
 			]));
 };
 var $author$project$Page$ErrorPage$view = $elm$html$Html$text('Could not find what you\'re looking for');

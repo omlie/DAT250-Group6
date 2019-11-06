@@ -55,9 +55,8 @@ view model =
     div [ class "devicePage" ] 
     [
         input [ placeholder "Search for a device", value model.searchBarContent, onInput SearchDevice ] []
-        , div [] [
-            viewDeviceListPage model.devices model.searchBarContent
-        ]
+        , 
+        viewDeviceListPage model.devices model.searchBarContent
     ]
 
 
