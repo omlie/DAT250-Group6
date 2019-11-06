@@ -3,7 +3,7 @@ module Page.DeviceListPage exposing (Model, Msg, init, update, view)
 import Api.Device exposing (Device, devicesDecoder)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode as Decode
 import RemoteData exposing (WebData)
@@ -13,17 +13,18 @@ import View.Menu exposing (viewMenu)
 
 
 type alias Model =
-    { devices : WebData (List Device) }
+    { devices : WebData (List Device), searchBarContent : String }
 
 
 type Msg
     = FetchDevices
     | DevicesReceived (WebData (List Device))
+    | SearchDevice String
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { devices = RemoteData.Loading }, fetchDevices )
+    ( { devices = RemoteData.Loading, searchBarContent = "" }, fetchDevices )
 
 
 fetchDevices : Cmd Msg
@@ -44,15 +45,24 @@ update msg model =
 
         DevicesReceived response ->
             ( { model | devices = response }, Cmd.none )
+        
+        SearchDevice searchText ->
+            ({ model | searchBarContent = searchText}, Cmd.none)
 
 
 view : Model -> Html Msg
 view model =
-    viewDeviceListPage model.devices
+    div [ class "devicePage" ] 
+    [
+        input [ placeholder "Search for a device", value model.searchBarContent, onInput SearchDevice ] []
+        , div [] [
+            viewDeviceListPage model.devices model.searchBarContent
+        ]
+    ]
 
 
-viewDeviceListPage : WebData (List Device) -> Html Msg
-viewDeviceListPage devices =
+viewDeviceListPage : WebData (List Device) -> String -> Html Msg
+viewDeviceListPage devices searchBarContent =
     case devices of
         RemoteData.NotAsked ->
             text ""
@@ -61,7 +71,17 @@ viewDeviceListPage devices =
             h3 [] [ text "Loading..." ]
 
         RemoteData.Success actualdevices ->
-            deviceList "All devices" actualdevices
+            deviceList "All devices" (filterDevices actualdevices searchBarContent)
 
         RemoteData.Failure httpError ->
             viewFetchError (buildErrorMessage httpError)
+
+filterDevices : List Device -> String -> List Device
+filterDevices devices filterOn = List.filter (\device -> deviceNameFitsSearchBar device filterOn) devices
+
+deviceNameFitsSearchBar : Device -> String -> Bool
+deviceNameFitsSearchBar device filterOn = let 
+                                            lengthOfFilter = 
+                                                String.length filterOn 
+                                            in
+                                            (String.left lengthOfFilter (String.toLower device.deviceName)) == (String.toLower filterOn)
