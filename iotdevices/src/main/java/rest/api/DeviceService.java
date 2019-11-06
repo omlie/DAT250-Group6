@@ -124,6 +124,27 @@ public class DeviceService extends Application {
         return Response.ok(device).build();
     }
 
+    @POST
+    @Path("edit/{id}")
+    @Transactional
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response edit(@HeaderParam("devicename") String devicename,
+                              @HeaderParam("apiurl") String apiurl,
+                              @HeaderParam("status") int status,
+                              @HeaderParam("labels") List<String> labels,
+                              @PathParam("id") int id){
+        try {
+            Device device = deviceDao.getDeviceById(id);
+            device.setStatus(getStatus(status));
+            device.setLabels(getLabels(labels));
+            device.setDeviceName(devicename);
+            device.setApiUrl(apiurl);
+            deviceDao.saveEditedDevice(device);
+            return Response.ok(device).build();
+        } catch(NotFoundException e){
+            return Response.status(404, "Device " + id + " not found.").build();
+        }
+    }
 
     private Status getStatus(int status){
         if(status == 0)
@@ -134,8 +155,7 @@ public class DeviceService extends Application {
     private List<Label> getLabels(List<String> strings){
         List<Label> labels = new ArrayList<>();
         for(String s : strings){
-            Label l = new Label();
-            l.setLabelValue(s);
+            Label l = deviceDao.addNewLabel(s);
             labels.add(l);
         }
         return labels;
