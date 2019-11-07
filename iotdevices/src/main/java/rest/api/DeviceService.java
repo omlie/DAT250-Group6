@@ -7,9 +7,9 @@ import entities.Feedback;
 import entities.Label;
 import entities.User;
 import helpers.Status;
+import rest.models.DeviceAddRequest;
 
 import javax.ejb.EJB;
-import javax.ejb.PostActivate;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 
 @Path("/devices")
 public class DeviceService extends Application {
@@ -104,7 +105,7 @@ public class DeviceService extends Application {
             deviceDao.addFeedback(f);
             return Response.ok(f).build();
         } catch (NotFoundException e) {
-            return Response.status(404).entity( "No such user" + userid).build();
+            return Response.status(404).entity("No such user" + userid).build();
         } catch (Exception e) {
             return Response.status(404).entity("Unknown error").build();
         }
@@ -113,18 +114,16 @@ public class DeviceService extends Application {
     @POST
     @Path("create")
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDevice(@HeaderParam("devicename") String devicename,
-                              @HeaderParam("apiurl") String apiurl,
-                              @HeaderParam("status") int status,
-                              @HeaderParam("labels") List<String> labels,
-                              @HeaderParam("ownerId") int ownerId) {
+    public Response addDevice(DeviceAddRequest request) {
         Device device = new Device();
-        device.setOwner(userDao.getUser(ownerId));
-        device.setStatus(getStatus(status));
-        device.setLabels(getLabels(labels));
-        device.setDeviceName(devicename);
-        device.setApiUrl(apiurl);
+        device.setOwner(userDao.getUser(request.ownerId));
+        device.setStatus(getStatus(request.status));
+        device.setLabels(getLabels(request.labels));
+        device.setDeviceName(request.devicename);
+        device.setApiUrl(request.apiurl);
+        device.setDeviceImg(request.deviceimg);
         deviceDao.createDevice(device);
         return Response.ok(device).build();
     }

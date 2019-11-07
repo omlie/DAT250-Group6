@@ -9838,6 +9838,12 @@ var $author$project$Main$DeviceListPage = function (a) {
 var $author$project$Main$DeviceListPageMsg = function (a) {
 	return {$: 'DeviceListPageMsg', a: a};
 };
+var $author$project$Main$NewDevicePage = function (a) {
+	return {$: 'NewDevicePage', a: a};
+};
+var $author$project$Main$NewDevicePageMsg = function (a) {
+	return {$: 'NewDevicePageMsg', a: a};
+};
 var $author$project$Main$UserInformationPage = function (a) {
 	return {$: 'UserInformationPage', a: a};
 };
@@ -10185,6 +10191,9 @@ var $author$project$Page$DeviceListPage$fetchDevices = $elm$http$Http$get(
 var $author$project$Page$DeviceListPage$init = _Utils_Tuple2(
 	{devices: $krisajenkins$remotedata$RemoteData$Loading, searchBarContent: ''},
 	$author$project$Page$DeviceListPage$fetchDevices);
+var $author$project$Page$NewDevicePage$init = _Utils_Tuple2(
+	{apiurl: '', deviceimg: '', devicename: '', labels: _List_Nil, ownerId: 1, status: 0},
+	$elm$core$Platform$Cmd$none);
 var $author$project$Page$UserInformationPage$UserReceived = function (a) {
 	return {$: 'UserReceived', a: a};
 };
@@ -10242,11 +10251,18 @@ var $author$project$Main$initCurrentPage = function (_v0) {
 				return _Utils_Tuple2(
 					$author$project$Main$UserInformationPage(pageModel),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$UserInformationPageMsg, pageCmds));
-			default:
-				var deviceid = _v2.a;
-				var _v5 = $author$project$Page$DeviceInformationPage$init(deviceid);
+			case 'NewDevicePage':
+				var _v5 = $author$project$Page$NewDevicePage$init;
 				var pageModel = _v5.a;
 				var pageCmds = _v5.b;
+				return _Utils_Tuple2(
+					$author$project$Main$NewDevicePage(pageModel),
+					A2($elm$core$Platform$Cmd$map, $author$project$Main$NewDevicePageMsg, pageCmds));
+			default:
+				var deviceid = _v2.a;
+				var _v6 = $author$project$Page$DeviceInformationPage$init(deviceid);
+				var pageModel = _v6.a;
+				var pageCmds = _v6.b;
 				return _Utils_Tuple2(
 					$author$project$Main$DeviceInformationPage(pageModel),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$DeviceInformationPageMsg, pageCmds));
@@ -10267,6 +10283,7 @@ var $author$project$Route$DeviceInformationPage = function (a) {
 	return {$: 'DeviceInformationPage', a: a};
 };
 var $author$project$Route$DeviceListPage = {$: 'DeviceListPage'};
+var $author$project$Route$NewDevicePage = {$: 'NewDevicePage'};
 var $author$project$Route$UserInformationPage = {$: 'UserInformationPage'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
@@ -10415,6 +10432,13 @@ var $author$project$Route$matchRoute = $elm$url$Url$Parser$oneOf(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$DeviceListPage,
 			$elm$url$Url$Parser$s('devices')),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Route$NewDevicePage,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('device'),
+				$elm$url$Url$Parser$s('add'))),
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Route$NotFound,
@@ -10693,6 +10717,112 @@ var $author$project$Page$DeviceListPage$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Page$NewDevicePage$DeviceAdded = function (a) {
+	return {$: 'DeviceAdded', a: a};
+};
+var $elm$json$Json$Encode$int = _Json_wrap;
+var $author$project$Page$NewDevicePage$encodeDevice = function (model) {
+	var bodylist = _List_fromArray(
+		[
+			_Utils_Tuple2(
+			'devicename',
+			$elm$json$Json$Encode$string(model.devicename)),
+			_Utils_Tuple2(
+			'apiurl',
+			$elm$json$Json$Encode$string(model.apiurl)),
+			_Utils_Tuple2(
+			'deviceimg',
+			$elm$json$Json$Encode$string(model.deviceimg)),
+			_Utils_Tuple2(
+			'status',
+			$elm$json$Json$Encode$int(model.status)),
+			_Utils_Tuple2(
+			'labels',
+			A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, model.labels)),
+			_Utils_Tuple2(
+			'ownerId',
+			$elm$json$Json$Encode$int(model.ownerId))
+		]);
+	return $elm$json$Json$Encode$object(bodylist);
+};
+var $elm$http$Http$jsonBody = function (value) {
+	return A2(
+		_Http_pair,
+		'application/json',
+		A2($elm$json$Json$Encode$encode, 0, value));
+};
+var $author$project$Page$NewDevicePage$addDevice = function (model) {
+	return $elm$http$Http$request(
+		{
+			body: $elm$http$Http$jsonBody(
+				$author$project$Page$NewDevicePage$encodeDevice(model)),
+			expect: A2(
+				$elm$http$Http$expectJson,
+				A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$NewDevicePage$DeviceAdded),
+				$author$project$Api$Device$deviceDecoder),
+			headers: _List_Nil,
+			method: 'POST',
+			timeout: $elm$core$Maybe$Nothing,
+			tracker: $elm$core$Maybe$Nothing,
+			url: 'http://localhost:8080/iotdevices/rest/devices/create'
+		});
+};
+var $author$project$Page$NewDevicePage$redirect = function (device) {
+	if (device.$ === 'Success') {
+		var actualdevice = device.a;
+		return $elm$browser$Browser$Navigation$load(
+			'http://localhost:8000/device/' + $elm$core$String$fromInt(actualdevice.id));
+	} else {
+		return $elm$browser$Browser$Navigation$load('http://localhost:8000/mypage');
+	}
+};
+var $author$project$Page$NewDevicePage$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'DeviceNameChange':
+				var name = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{devicename: name}),
+					$elm$core$Platform$Cmd$none);
+			case 'DeviceImageChange':
+				var url = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{deviceimg: url}),
+					$elm$core$Platform$Cmd$none);
+			case 'ApiUrlChange':
+				var url = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{apiurl: url}),
+					$elm$core$Platform$Cmd$none);
+			case 'StatusChange':
+				var status = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							status: A2(
+								$elm$core$Maybe$withDefault,
+								0,
+								$elm$core$String$toInt(status))
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'AddDevice':
+				return _Utils_Tuple2(
+					model,
+					$author$project$Page$NewDevicePage$addDevice(model));
+			default:
+				var response = msg.a;
+				return _Utils_Tuple2(
+					model,
+					$author$project$Page$NewDevicePage$redirect(response));
+		}
+	});
 var $author$project$Page$UserInformationPage$OwnedDevicesReceived = function (a) {
 	return {$: 'OwnedDevicesReceived', a: a};
 };
@@ -10762,7 +10892,7 @@ var $author$project$Page$UserInformationPage$update = F2(
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		var _v0 = _Utils_Tuple2(msg, model.page);
-		_v0$5:
+		_v0$6:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'UserInformationPageMsg':
@@ -10780,7 +10910,7 @@ var $author$project$Main$update = F2(
 								}),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$UserInformationPageMsg, updatedCmd));
 					} else {
-						break _v0$5;
+						break _v0$6;
 					}
 				case 'DeviceListPageMsg':
 					if (_v0.b.$ === 'DeviceListPage') {
@@ -10797,7 +10927,7 @@ var $author$project$Main$update = F2(
 								}),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$DeviceListPageMsg, updatedCmd));
 					} else {
-						break _v0$5;
+						break _v0$6;
 					}
 				case 'DeviceInformationPageMsg':
 					if (_v0.b.$ === 'DeviceInformationPage') {
@@ -10814,7 +10944,24 @@ var $author$project$Main$update = F2(
 								}),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$DeviceInformationPageMsg, updatedCmd));
 					} else {
-						break _v0$5;
+						break _v0$6;
+					}
+				case 'NewDevicePageMsg':
+					if (_v0.b.$ === 'NewDevicePage') {
+						var subMsg = _v0.a.a;
+						var pageModel = _v0.b.a;
+						var _v4 = A2($author$project$Page$NewDevicePage$update, subMsg, pageModel);
+						var updatedPageModel = _v4.a;
+						var updatedCmd = _v4.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									page: $author$project$Main$NewDevicePage(updatedPageModel)
+								}),
+							A2($elm$core$Platform$Cmd$map, $author$project$Main$NewDevicePageMsg, updatedCmd));
+					} else {
+						break _v0$6;
 					}
 				case 'LinkClicked':
 					var urlRequest = _v0.a.a;
@@ -10883,7 +11030,7 @@ var $author$project$View$DeviceViews$feedbackListItem = function (feedback) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(feedback.author.username + (': ' + feedback.feedbackContent))
+						$elm$html$Html$text(feedback.author.username + (':  ' + feedback.feedbackContent))
 					]))
 			]));
 };
@@ -11171,13 +11318,10 @@ var $author$project$View$DeviceViews$deviceList = F2(
 var $elm$core$String$toLower = _String_toLower;
 var $author$project$Page$DeviceListPage$deviceNameFitsSearchBar = F2(
 	function (device, filterOn) {
-		var lengthOfFilter = $elm$core$String$length(filterOn);
-		return _Utils_eq(
-			A2(
-				$elm$core$String$left,
-				lengthOfFilter,
-				$elm$core$String$toLower(device.deviceName)),
-			$elm$core$String$toLower(filterOn));
+		return A2(
+			$elm$core$String$contains,
+			$elm$core$String$toLower(filterOn),
+			$elm$core$String$toLower(device.deviceName));
 	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -11246,6 +11390,103 @@ var $author$project$Page$DeviceListPage$view = function (model) {
 			]));
 };
 var $author$project$Page$ErrorPage$view = $elm$html$Html$text('Could not find what you\'re looking for');
+var $author$project$Page$NewDevicePage$AddDevice = {$: 'AddDevice'};
+var $author$project$Page$NewDevicePage$ApiUrlChange = function (a) {
+	return {$: 'ApiUrlChange', a: a};
+};
+var $author$project$Page$NewDevicePage$DeviceImageChange = function (a) {
+	return {$: 'DeviceImageChange', a: a};
+};
+var $author$project$Page$NewDevicePage$DeviceNameChange = function (a) {
+	return {$: 'DeviceNameChange', a: a};
+};
+var $author$project$Page$NewDevicePage$StatusChange = function (a) {
+	return {$: 'StatusChange', a: a};
+};
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $author$project$Page$NewDevicePage$statusRadioButtons = A2(
+	$elm$html$Html$select,
+	_List_fromArray(
+		[
+			$elm$html$Html$Events$onInput($author$project$Page$NewDevicePage$StatusChange)
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$option,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$value('0')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Online')
+				])),
+			A2(
+			$elm$html$Html$option,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$value('1')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Offline')
+				]))
+		]));
+var $author$project$Page$NewDevicePage$viewForm = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('form')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$input,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$placeholder('Device name'),
+						$elm$html$Html$Attributes$value(model.devicename),
+						$elm$html$Html$Events$onInput($author$project$Page$NewDevicePage$DeviceNameChange)
+					]),
+				_List_Nil),
+				A2(
+				$elm$html$Html$input,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$placeholder('Device image URL'),
+						$elm$html$Html$Attributes$value(model.deviceimg),
+						$elm$html$Html$Events$onInput($author$project$Page$NewDevicePage$DeviceImageChange)
+					]),
+				_List_Nil),
+				A2(
+				$elm$html$Html$input,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$placeholder('API URL'),
+						$elm$html$Html$Attributes$value(model.apiurl),
+						$elm$html$Html$Events$onInput($author$project$Page$NewDevicePage$ApiUrlChange)
+					]),
+				_List_Nil),
+				$author$project$Page$NewDevicePage$statusRadioButtons,
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('submitbutton'),
+						$elm$html$Html$Events$onClick($author$project$Page$NewDevicePage$AddDevice)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Add device')
+					]))
+			]));
+};
+var $author$project$Page$NewDevicePage$view = function (model) {
+	return $author$project$Page$NewDevicePage$viewForm(model);
+};
 var $author$project$Page$UserInformationPage$viewDevices = F2(
 	function (heading, devices) {
 		switch (devices.$) {
@@ -11326,18 +11567,25 @@ var $author$project$Main$currentView = function (model) {
 				$elm$html$Html$map,
 				$author$project$Main$UserInformationPageMsg,
 				$author$project$Page$UserInformationPage$view(pageModel));
-		default:
+		case 'DeviceInformationPage':
 			var pageModel = _v0.a;
 			return A2(
 				$elm$html$Html$map,
 				$author$project$Main$DeviceInformationPageMsg,
 				$author$project$Page$DeviceInformationPage$view(pageModel));
+		default:
+			var pageModel = _v0.a;
+			return A2(
+				$elm$html$Html$map,
+				$author$project$Main$NewDevicePageMsg,
+				$author$project$Page$NewDevicePage$view(pageModel));
 	}
 };
 var $author$project$View$Menu$menuButtons = _List_fromArray(
 	[
 		_Utils_Tuple2('My page', '/mypage'),
-		_Utils_Tuple2('Devices', '/devices')
+		_Utils_Tuple2('Devices', '/devices'),
+		_Utils_Tuple2('Add device', '/device/add')
 	]);
 var $author$project$View$Buttons$viewHrefButton = F2(
 	function (name, ref) {
@@ -11416,4 +11664,4 @@ var $author$project$Main$main = $elm$browser$Browser$application(
 		view: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Device.Device":{"args":[],"type":"{ id : Basics.Int, deviceName : String.String, apiUrl : String.String, deviceImg : String.String, status : String.String, statuses : List.List String.String }"},"Api.Feedback.Feedback":{"args":[],"type":"{ id : Basics.Int, author : Api.User.User, feedbackContent : String.String, publishedDate : String.String }"},"Api.User.User":{"args":[],"type":"{ id : Basics.Int, username : String.String, firstname : String.String, lastname : String.String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"UserInformationPageMsg":["Page.UserInformationPage.Msg"],"DeviceListPageMsg":["Page.DeviceListPage.Msg"],"DeviceInformationPageMsg":["Page.DeviceInformationPage.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Page.DeviceInformationPage.Msg":{"args":[],"tags":{"FetchDevice":[],"FetchFeedback":[],"DeviceReceived":["RemoteData.WebData Api.Device.Device"],"FeedbackReceived":["RemoteData.WebData (List.List Api.Feedback.Feedback)"]}},"Page.DeviceListPage.Msg":{"args":[],"tags":{"FetchDevices":[],"DevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SearchDevice":["String.String"]}},"Page.UserInformationPage.Msg":{"args":[],"tags":{"FetchUser":[],"FetchOwnedDevices":[],"FetchSubscribedDevices":[],"UserReceived":["RemoteData.WebData Api.User.User"],"OwnedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SubscribedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Device.Device":{"args":[],"type":"{ id : Basics.Int, deviceName : String.String, apiUrl : String.String, deviceImg : String.String, status : String.String, statuses : List.List String.String }"},"Api.Feedback.Feedback":{"args":[],"type":"{ id : Basics.Int, author : Api.User.User, feedbackContent : String.String, publishedDate : String.String }"},"Api.User.User":{"args":[],"type":"{ id : Basics.Int, username : String.String, firstname : String.String, lastname : String.String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"UserInformationPageMsg":["Page.UserInformationPage.Msg"],"DeviceListPageMsg":["Page.DeviceListPage.Msg"],"DeviceInformationPageMsg":["Page.DeviceInformationPage.Msg"],"NewDevicePageMsg":["Page.NewDevicePage.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Page.DeviceInformationPage.Msg":{"args":[],"tags":{"FetchDevice":[],"FetchFeedback":[],"DeviceReceived":["RemoteData.WebData Api.Device.Device"],"FeedbackReceived":["RemoteData.WebData (List.List Api.Feedback.Feedback)"]}},"Page.DeviceListPage.Msg":{"args":[],"tags":{"FetchDevices":[],"DevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SearchDevice":["String.String"]}},"Page.NewDevicePage.Msg":{"args":[],"tags":{"DeviceNameChange":["String.String"],"DeviceImageChange":["String.String"],"ApiUrlChange":["String.String"],"StatusChange":["String.String"],"AddDevice":[],"DeviceAdded":["RemoteData.WebData Api.Device.Device"]}},"Page.UserInformationPage.Msg":{"args":[],"tags":{"FetchUser":[],"FetchOwnedDevices":[],"FetchSubscribedDevices":[],"UserReceived":["RemoteData.WebData Api.User.User"],"OwnedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SubscribedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}}}}})}});}(this));

@@ -1,9 +1,6 @@
 module Page.ErrorPage exposing (view)
 
-import Browser
-import Html exposing (..)
-import Html.Attributes exposing (class, href)
-import View.Menu exposing (viewMenu)
+import Html exposing (Html, text)
 
 
 view : Html msg
