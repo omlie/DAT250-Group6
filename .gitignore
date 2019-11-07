@@ -118,3 +118,4 @@ node_modules
 public/.DS_Store
 # End of https://www.gitignore.io/api/intellij
 
+App.js
