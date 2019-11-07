@@ -10183,7 +10183,7 @@ var $author$project$Page$DeviceListPage$fetchDevices = $elm$http$Http$get(
 		url: 'http://localhost:8080/iotdevices/rest/devices'
 	});
 var $author$project$Page$DeviceListPage$init = _Utils_Tuple2(
-	{devices: $krisajenkins$remotedata$RemoteData$Loading},
+	{devices: $krisajenkins$remotedata$RemoteData$Loading, searchBarContent: ''},
 	$author$project$Page$DeviceListPage$fetchDevices);
 var $author$project$Page$UserInformationPage$UserReceived = function (a) {
 	return {$: 'UserReceived', a: a};
@@ -10670,19 +10670,27 @@ var $author$project$Page$DeviceInformationPage$update = F2(
 	});
 var $author$project$Page$DeviceListPage$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'FetchDevices') {
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{devices: $krisajenkins$remotedata$RemoteData$Loading}),
-				$author$project$Page$DeviceListPage$fetchDevices);
-		} else {
-			var response = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{devices: response}),
-				$elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'FetchDevices':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{devices: $krisajenkins$remotedata$RemoteData$Loading}),
+					$author$project$Page$DeviceListPage$fetchDevices);
+			case 'DevicesReceived':
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{devices: response}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var searchText = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{searchBarContent: searchText}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Page$UserInformationPage$OwnedDevicesReceived = function (a) {
@@ -11041,6 +11049,43 @@ var $author$project$Page$DeviceInformationPage$viewDevice = F2(
 var $author$project$Page$DeviceInformationPage$view = function (model) {
 	return A2($author$project$Page$DeviceInformationPage$viewDevice, model.device, model.feedback);
 };
+var $author$project$Page$DeviceListPage$SearchDevice = function (a) {
+	return {$: 'SearchDevice', a: a};
+};
+var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$View$DeviceViews$deviceListItem = function (device) {
 	return A2(
 		$elm$html$Html$a,
@@ -11086,7 +11131,20 @@ var $author$project$View$DeviceViews$deviceList = F2(
 	function (heading, devices) {
 		var _v0 = $elm$core$List$length(devices);
 		if (!_v0) {
-			return A2($elm$html$Html$div, _List_Nil, _List_Nil);
+			return A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h3,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(heading)
+							])),
+						$elm$html$Html$text('No devices found')
+					]));
 		} else {
 			return A2(
 				$elm$html$Html$div,
@@ -11110,29 +11168,82 @@ var $author$project$View$DeviceViews$deviceList = F2(
 					]));
 		}
 	});
-var $author$project$Page$DeviceListPage$viewDeviceListPage = function (devices) {
-	switch (devices.$) {
-		case 'NotAsked':
-			return $elm$html$Html$text('');
-		case 'Loading':
-			return A2(
-				$elm$html$Html$h3,
-				_List_Nil,
+var $elm$core$String$toLower = _String_toLower;
+var $author$project$Page$DeviceListPage$deviceNameFitsSearchBar = F2(
+	function (device, filterOn) {
+		var lengthOfFilter = $elm$core$String$length(filterOn);
+		return _Utils_eq(
+			A2(
+				$elm$core$String$left,
+				lengthOfFilter,
+				$elm$core$String$toLower(device.deviceName)),
+			$elm$core$String$toLower(filterOn));
+	});
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $author$project$Page$DeviceListPage$filterDevices = F2(
+	function (devices, filterOn) {
+		return A2(
+			$elm$core$List$filter,
+			function (device) {
+				return A2($author$project$Page$DeviceListPage$deviceNameFitsSearchBar, device, filterOn);
+			},
+			devices);
+	});
+var $author$project$Page$DeviceListPage$viewDeviceListPage = F2(
+	function (devices, searchBarContent) {
+		switch (devices.$) {
+			case 'NotAsked':
+				return $elm$html$Html$text('');
+			case 'Loading':
+				return A2(
+					$elm$html$Html$h3,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Loading...')
+						]));
+			case 'Success':
+				var actualdevices = devices.a;
+				return A2(
+					$author$project$View$DeviceViews$deviceList,
+					'All devices',
+					A2($author$project$Page$DeviceListPage$filterDevices, actualdevices, searchBarContent));
+			default:
+				var httpError = devices.a;
+				return $author$project$View$ErrorViews$viewFetchError(
+					$author$project$View$ErrorViews$buildErrorMessage(httpError));
+		}
+	});
+var $author$project$Page$DeviceListPage$view = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('devicePage')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$input,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Loading...')
-					]));
-		case 'Success':
-			var actualdevices = devices.a;
-			return A2($author$project$View$DeviceViews$deviceList, 'All devices', actualdevices);
-		default:
-			var httpError = devices.a;
-			return $author$project$View$ErrorViews$viewFetchError(
-				$author$project$View$ErrorViews$buildErrorMessage(httpError));
-	}
-};
-var $author$project$Page$DeviceListPage$view = function (model) {
-	return $author$project$Page$DeviceListPage$viewDeviceListPage(model.devices);
+						$elm$html$Html$Attributes$placeholder('Search for a device'),
+						$elm$html$Html$Attributes$value(model.searchBarContent),
+						$elm$html$Html$Events$onInput($author$project$Page$DeviceListPage$SearchDevice)
+					]),
+				_List_Nil),
+				A2($author$project$Page$DeviceListPage$viewDeviceListPage, model.devices, model.searchBarContent)
+			]));
 };
 var $author$project$Page$ErrorPage$view = $elm$html$Html$text('Could not find what you\'re looking for');
 var $author$project$Page$UserInformationPage$viewDevices = F2(
@@ -11305,4 +11416,4 @@ var $author$project$Main$main = $elm$browser$Browser$application(
 		view: $author$project$Main$view
 	});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Device.Device":{"args":[],"type":"{ id : Basics.Int, deviceName : String.String, apiUrl : String.String, deviceImg : String.String, status : String.String, statuses : List.List String.String }"},"Api.Feedback.Feedback":{"args":[],"type":"{ id : Basics.Int, author : Api.User.User, feedbackContent : String.String, publishedDate : String.String }"},"Api.User.User":{"args":[],"type":"{ id : Basics.Int, username : String.String, firstname : String.String, lastname : String.String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"UserInformationPageMsg":["Page.UserInformationPage.Msg"],"DeviceListPageMsg":["Page.DeviceListPage.Msg"],"DeviceInformationPageMsg":["Page.DeviceInformationPage.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Page.DeviceInformationPage.Msg":{"args":[],"tags":{"FetchDevice":[],"FetchFeedback":[],"DeviceReceived":["RemoteData.WebData Api.Device.Device"],"FeedbackReceived":["RemoteData.WebData (List.List Api.Feedback.Feedback)"]}},"Page.DeviceListPage.Msg":{"args":[],"tags":{"FetchDevices":[],"DevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Page.UserInformationPage.Msg":{"args":[],"tags":{"FetchUser":[],"FetchOwnedDevices":[],"FetchSubscribedDevices":[],"UserReceived":["RemoteData.WebData Api.User.User"],"OwnedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SubscribedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Api.Device.Device":{"args":[],"type":"{ id : Basics.Int, deviceName : String.String, apiUrl : String.String, deviceImg : String.String, status : String.String, statuses : List.List String.String }"},"Api.Feedback.Feedback":{"args":[],"type":"{ id : Basics.Int, author : Api.User.User, feedbackContent : String.String, publishedDate : String.String }"},"Api.User.User":{"args":[],"type":"{ id : Basics.Int, username : String.String, firstname : String.String, lastname : String.String }"},"RemoteData.WebData":{"args":["a"],"type":"RemoteData.RemoteData Http.Error a"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"UserInformationPageMsg":["Page.UserInformationPage.Msg"],"DeviceListPageMsg":["Page.DeviceListPage.Msg"],"DeviceInformationPageMsg":["Page.DeviceInformationPage.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Page.DeviceInformationPage.Msg":{"args":[],"tags":{"FetchDevice":[],"FetchFeedback":[],"DeviceReceived":["RemoteData.WebData Api.Device.Device"],"FeedbackReceived":["RemoteData.WebData (List.List Api.Feedback.Feedback)"]}},"Page.DeviceListPage.Msg":{"args":[],"tags":{"FetchDevices":[],"DevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SearchDevice":["String.String"]}},"Page.UserInformationPage.Msg":{"args":[],"tags":{"FetchUser":[],"FetchOwnedDevices":[],"FetchSubscribedDevices":[],"UserReceived":["RemoteData.WebData Api.User.User"],"OwnedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"],"SubscribedDevicesReceived":["RemoteData.WebData (List.List Api.Device.Device)"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}}}}})}});}(this));

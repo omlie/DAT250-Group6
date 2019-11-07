@@ -10,7 +10,8 @@ deviceList : String -> List Device -> Html msg
 deviceList heading devices =
     case List.length devices of
         0 ->
-            div [] []
+            div [] [ h3 [] [ text heading ]
+            , text "No devices found"]
 
         _ ->
             div [ class "deviceList" ]

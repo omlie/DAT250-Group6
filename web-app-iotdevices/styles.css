@@ -34,6 +34,7 @@ a.headerButton {
   width: 124px;
   text-align: center;
 }
+
 a.headerButton:hover {
   background-color: #deeaed;
 }
@@ -98,7 +99,7 @@ div.deviceInformation {
   flex-direction: column;
 }
 
-div.deviceInformation > * {
+div.deviceInformation>* {
   padding: 6px;
 }
 
@@ -109,6 +110,10 @@ div.feedbackListItem {
   flex-direction: column;
 }
 
-div.feedbackListItem > *:last-child {
+div.feedbackListItem>*:last-child {
   margin-top: 24px;
+}
+
+.devicePage {
+  min-width: 512px;
 }
