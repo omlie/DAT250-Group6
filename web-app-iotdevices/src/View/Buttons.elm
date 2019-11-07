@@ -1,7 +1,6 @@
-module View.Buttons exposing (..)
+module View.Buttons exposing (viewHrefButton)
 
-import Browser
-import Html exposing (..)
+import Html exposing (Html, a, div, text)
 import Html.Attributes exposing (class, href)
 
 

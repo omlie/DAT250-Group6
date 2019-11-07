@@ -1,14 +1,13 @@
 module Page.NewDevicePage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
-import Browser.Navigation exposing (load, pushUrl)
-import Html exposing (Html, button, div, fieldset, input, option, select, text)
-import Html.Attributes exposing (class, name, placeholder, type_, value)
-import Html.Events exposing (on, onClick, onInput, targetValue)
+import Browser.Navigation exposing (load)
+import Html exposing (Html, button, div, input, option, select, text)
+import Html.Attributes exposing (class, placeholder, value)
+import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Encode exposing (Value, int, list, object, string)
 import RemoteData exposing (WebData)
-import View.ErrorViews exposing (..)
 
 
 type alias Model =

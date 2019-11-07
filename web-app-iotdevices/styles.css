@@ -99,6 +99,10 @@ div.deviceInformationWrapper {
   align-items: center;
 }
 
+div.deviceInformationWrapper > * {
+  margin: 24px;
+}
+
 img.deviceImage {
   height: 512px;
   width: auto;

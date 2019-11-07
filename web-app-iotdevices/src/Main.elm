@@ -2,7 +2,7 @@ module Main exposing (main)
 
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav
-import Html exposing (..)
+import Html exposing (Html, div)
 import Html.Attributes exposing (class)
 import Page.DeviceInformationPage as DeviceInformationPage
 import Page.DeviceListPage as DeviceListPage

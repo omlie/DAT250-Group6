@@ -1,6 +1,5 @@
-module Api.User exposing (..)
+module Api.User exposing (User, userDecoder, usersDecoder)
 
-import Http
 import Json.Decode as Decode exposing (Decoder, int, list, string)
 import Json.Decode.Pipeline exposing (required)
 

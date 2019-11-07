@@ -1,6 +1,6 @@
-module View.ErrorViews exposing (..)
+module View.ErrorViews exposing (buildErrorMessage, viewFetchError)
 
-import Html exposing (..)
+import Html exposing (Html, div, h3, text)
 import Http
 
 

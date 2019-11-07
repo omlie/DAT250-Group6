@@ -1,15 +1,15 @@
-module View.DeviceViews exposing (..)
+module View.DeviceViews exposing (deviceInformation, deviceList, deviceListItem, feedbackList, feedbackListItem)
 
 import Api.Device exposing (Device)
 import Api.Feedback exposing (Feedback)
-import Html exposing (..)
+import Html exposing (Html, a, div, h2, h3, img, span, text)
 import Html.Attributes exposing (class, href, src)
 
 
 deviceList : String -> List Device -> Html msg
 deviceList heading devices =
-    case List.length devices of
-        0 ->
+    case devices of
+        [] ->
             div []
                 [ h3 [] [ text heading ]
                 , text "No devices found"
@@ -19,7 +19,7 @@ deviceList heading devices =
             div [ class "deviceList" ]
                 [ h3 [] [ text heading ]
                 , div []
-                    (List.map deviceListItem devices)
+                    (List.map deviceListItem (List.sortBy .deviceName devices))
                 ]
 
 

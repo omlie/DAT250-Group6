@@ -1,4 +1,4 @@
-module Api.Feedback exposing (..)
+module Api.Feedback exposing (Feedback, feedbackDecoder, feedbackListDecoder)
 
 import Api.User exposing (User, userDecoder)
 import Json.Decode as Decode exposing (Decoder, int, list, string)

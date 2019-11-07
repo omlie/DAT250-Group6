@@ -2,15 +2,11 @@ module Page.UserInformationPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, devicesDecoder)
 import Api.User exposing (User, userDecoder)
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html exposing (Html, div, h3, text)
 import Http
-import Json.Decode as Decode
 import RemoteData exposing (WebData)
 import View.DeviceViews exposing (deviceList)
-import View.ErrorViews exposing (..)
-import View.Menu exposing (viewMenu)
+import View.ErrorViews exposing (buildErrorMessage, viewFetchError)
 import View.UserInfoViews exposing (viewUserInformation)
 
 
@@ -22,10 +18,7 @@ type alias Model =
 
 
 type Msg
-    = FetchUser
-    | FetchOwnedDevices
-    | FetchSubscribedDevices
-    | UserReceived (WebData User)
+    = UserReceived (WebData User)
     | OwnedDevicesReceived (WebData (List Device))
     | SubscribedDevicesReceived (WebData (List Device))
 
@@ -68,15 +61,6 @@ fetchSubscribedDevices =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        FetchUser ->
-            ( { model | user = RemoteData.Loading }, fetchUser )
-
-        FetchOwnedDevices ->
-            ( { model | ownedDevices = RemoteData.Loading }, fetchOwnedDevices )
-
-        FetchSubscribedDevices ->
-            ( { model | subscribedDevices = RemoteData.Loading }, fetchSubscribedDevices )
-
         UserReceived response ->
             ( { model | user = response }, fetchOwnedDevices )
 

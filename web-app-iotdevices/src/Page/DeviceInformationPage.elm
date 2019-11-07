@@ -2,15 +2,11 @@ module Page.DeviceInformationPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
 import Api.Feedback exposing (Feedback, feedbackListDecoder)
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html exposing (Html, h3, text)
 import Http
-import Json.Decode as Decode
 import RemoteData exposing (WebData)
 import View.DeviceViews exposing (deviceInformation)
-import View.ErrorViews exposing (..)
-import View.Menu exposing (viewMenu)
+import View.ErrorViews exposing (buildErrorMessage, viewFetchError)
 
 
 type alias Model =
@@ -21,9 +17,7 @@ type alias Model =
 
 
 type Msg
-    = FetchDevice
-    | FetchFeedback
-    | DeviceReceived (WebData Device)
+    = DeviceReceived (WebData Device)
     | FeedbackReceived (WebData (List Feedback))
 
 
@@ -55,12 +49,6 @@ fetchFeedback deviceId =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        FetchDevice ->
-            ( { model | device = RemoteData.Loading }, fetchDevice model.deviceId )
-
-        FetchFeedback ->
-            ( { model | feedback = RemoteData.Loading }, fetchFeedback model.deviceId )
-
         DeviceReceived response ->
             ( { model | device = response, feedback = RemoteData.Loading }, fetchFeedback model.deviceId )
 

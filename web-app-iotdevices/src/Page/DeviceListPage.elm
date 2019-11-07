@@ -1,24 +1,23 @@
 module Page.DeviceListPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, devicesDecoder)
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput)
+import Html exposing (Html, div, h3, input, text)
+import Html.Attributes exposing (class, placeholder, value)
+import Html.Events exposing (onInput)
 import Http
-import Json.Decode as Decode
 import RemoteData exposing (WebData)
 import View.DeviceViews exposing (deviceList)
-import View.ErrorViews exposing (..)
-import View.Menu exposing (viewMenu)
+import View.ErrorViews exposing (buildErrorMessage, viewFetchError)
 
 
 type alias Model =
-    { devices : WebData (List Device), searchBarContent : String }
+    { devices : WebData (List Device)
+    , searchBarContent : String
+    }
 
 
 type Msg
-    = FetchDevices
-    | DevicesReceived (WebData (List Device))
+    = DevicesReceived (WebData (List Device))
     | SearchDevice String
 
 
@@ -40,9 +39,6 @@ fetchDevices =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        FetchDevices ->
-            ( { model | devices = RemoteData.Loading }, fetchDevices )
-
         DevicesReceived response ->
             ( { model | devices = response }, Cmd.none )
 

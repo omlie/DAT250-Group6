@@ -1,6 +1,5 @@
-module Api.Device exposing (..)
+module Api.Device exposing (Device, deviceDecoder, devicesDecoder)
 
-import Http
 import Json.Decode as Decode exposing (Decoder, int, list, string)
 import Json.Decode.Pipeline exposing (required)
 

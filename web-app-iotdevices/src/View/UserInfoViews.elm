@@ -1,9 +1,7 @@
-module View.UserInfoViews exposing (..)
+module View.UserInfoViews exposing (viewUserInformation)
 
 import Api.User exposing (User)
-import Browser
-import Html exposing (..)
-import Html.Attributes exposing (class, href)
+import Html exposing (Html, div, text)
 
 
 viewUserInformation : User -> Html msg
