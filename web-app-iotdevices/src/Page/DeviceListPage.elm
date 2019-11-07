@@ -81,8 +81,6 @@ filterDevices devices filterOn =
 
 deviceNameFitsSearchBar : Device -> String -> Bool
 deviceNameFitsSearchBar device filterOn =
-    let
-        lengthOfFilter =
-            String.length filterOn
-    in
-    String.left lengthOfFilter (String.toLower device.deviceName) == String.toLower filterOn
+    String.contains
+        (String.toLower filterOn)
+        (String.toLower device.deviceName)

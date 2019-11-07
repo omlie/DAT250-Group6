@@ -10771,7 +10771,15 @@ var $author$project$Page$NewDevicePage$addDevice = function (model) {
 			url: 'http://localhost:8080/iotdevices/rest/devices/create'
 		});
 };
-var $author$project$Page$NewDevicePage$redirect = $elm$browser$Browser$Navigation$load('http://localhost:8000/mypage');
+var $author$project$Page$NewDevicePage$redirect = function (device) {
+	if (device.$ === 'Success') {
+		var actualdevice = device.a;
+		return $elm$browser$Browser$Navigation$load(
+			'http://localhost:8000/device/' + $elm$core$String$fromInt(actualdevice.id));
+	} else {
+		return $elm$browser$Browser$Navigation$load('http://localhost:8000/mypage');
+	}
+};
 var $author$project$Page$NewDevicePage$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -10808,7 +10816,10 @@ var $author$project$Page$NewDevicePage$update = F2(
 					model,
 					$author$project$Page$NewDevicePage$addDevice(model));
 			default:
-				return _Utils_Tuple2(model, $author$project$Page$NewDevicePage$redirect);
+				var response = msg.a;
+				return _Utils_Tuple2(
+					model,
+					$author$project$Page$NewDevicePage$redirect(response));
 		}
 	});
 var $author$project$Page$UserInformationPage$OwnedDevicesReceived = function (a) {
@@ -11306,13 +11317,10 @@ var $author$project$View$DeviceViews$deviceList = F2(
 var $elm$core$String$toLower = _String_toLower;
 var $author$project$Page$DeviceListPage$deviceNameFitsSearchBar = F2(
 	function (device, filterOn) {
-		var lengthOfFilter = $elm$core$String$length(filterOn);
-		return _Utils_eq(
-			A2(
-				$elm$core$String$left,
-				lengthOfFilter,
-				$elm$core$String$toLower(device.deviceName)),
-			$elm$core$String$toLower(filterOn));
+		return A2(
+			$elm$core$String$contains,
+			$elm$core$String$toLower(filterOn),
+			$elm$core$String$toLower(device.deviceName));
 	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {

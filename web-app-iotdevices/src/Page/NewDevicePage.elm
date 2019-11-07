@@ -8,6 +8,7 @@ import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Encode exposing (Value, int, list, object, string)
 import RemoteData exposing (WebData)
+import View.ErrorViews exposing (..)
 
 
 type alias Model =
@@ -60,13 +61,18 @@ update msg model =
         AddDevice ->
             ( model, addDevice model )
 
-        DeviceAdded _ ->
-            ( model, redirect )
+        DeviceAdded response ->
+            ( model, redirect response )
 
 
-redirect : Cmd Msg
-redirect =
-    load "http://localhost:8000/mypage"
+redirect : WebData Device -> Cmd Msg
+redirect device =
+    case device of
+        RemoteData.Success actualdevice ->
+            load ("http://localhost:8000/device/" ++ String.fromInt actualdevice.id)
+
+        _ ->
+            load "http://localhost:8000/mypage"
 
 
 addDevice : Model -> Cmd Msg
