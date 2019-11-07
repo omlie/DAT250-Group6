@@ -10,8 +10,10 @@ deviceList : String -> List Device -> Html msg
 deviceList heading devices =
     case List.length devices of
         0 ->
-            div [] [ h3 [] [ text heading ]
-            , text "No devices found"]
+            div []
+                [ h3 [] [ text heading ]
+                , text "No devices found"
+                ]
 
         _ ->
             div [ class "deviceList" ]
@@ -61,5 +63,5 @@ feedbackListItem : Feedback -> Html msg
 feedbackListItem feedback =
     div [ class "feedbackListItem" ]
         [ span [] [ text feedback.publishedDate ]
-        , span [] [ text (feedback.author.username ++ ": " ++ feedback.feedbackContent) ]
+        , span [] [ text (feedback.author.username ++ ":  " ++ feedback.feedbackContent) ]
         ]

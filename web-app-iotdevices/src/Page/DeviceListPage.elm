@@ -45,18 +45,17 @@ update msg model =
 
         DevicesReceived response ->
             ( { model | devices = response }, Cmd.none )
-        
+
         SearchDevice searchText ->
-            ({ model | searchBarContent = searchText}, Cmd.none)
+            ( { model | searchBarContent = searchText }, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
-    div [ class "devicePage" ] 
-    [
-        input [ placeholder "Search for a device", value model.searchBarContent, onInput SearchDevice ] []
+    div [ class "devicePage" ]
+        [ input [ placeholder "Search for a device", value model.searchBarContent, onInput SearchDevice ] []
         , viewDeviceListPage model.devices model.searchBarContent
-    ]
+        ]
 
 
 viewDeviceListPage : WebData (List Device) -> String -> Html Msg
@@ -74,12 +73,16 @@ viewDeviceListPage devices searchBarContent =
         RemoteData.Failure httpError ->
             viewFetchError (buildErrorMessage httpError)
 
+
 filterDevices : List Device -> String -> List Device
-filterDevices devices filterOn = List.filter (\device -> deviceNameFitsSearchBar device filterOn) devices
+filterDevices devices filterOn =
+    List.filter (\device -> deviceNameFitsSearchBar device filterOn) devices
+
 
 deviceNameFitsSearchBar : Device -> String -> Bool
-deviceNameFitsSearchBar device filterOn = let 
-                                            lengthOfFilter = 
-                                                String.length filterOn 
-                                            in
-                                            (String.left lengthOfFilter (String.toLower device.deviceName)) == (String.toLower filterOn)
+deviceNameFitsSearchBar device filterOn =
+    let
+        lengthOfFilter =
+            String.length filterOn
+    in
+    String.left lengthOfFilter (String.toLower device.deviceName) == String.toLower filterOn

@@ -31,7 +31,7 @@ a.headerButton {
   color: black;
   white-space: nowrap;
   border-right: 4px solid #deeaed;
-  width: 124px;
+  width: 180px;
   text-align: center;
 }
 
@@ -74,6 +74,17 @@ div.deviceListColumn {
   width: 50%;
 }
 
+input {
+  width: 100%;
+  height: 48px;
+  font-size: 18px;
+  padding: 24px;
+  border-radius: 25px;
+  border: 1px solid #98bec8;
+  outline: none;
+  margin: 12px;
+}
+
 div.deviceListColumn:last-child {
   text-align: end;
 }
@@ -99,7 +110,7 @@ div.deviceInformation {
   flex-direction: column;
 }
 
-div.deviceInformation>* {
+div.deviceInformation > * {
   padding: 6px;
 }
 
@@ -109,12 +120,21 @@ div.feedbackListItem {
   padding: 12px;
   display: flex;
   flex-direction: column;
+  max-width: 300px;
 }
 
-div.feedbackListItem>*:last-child {
+div.feedbackListItem > *:last-child {
   margin-top: 24px;
 }
 
 .devicePage {
   min-width: 512px;
+}
+
+div.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 60vw;
 }

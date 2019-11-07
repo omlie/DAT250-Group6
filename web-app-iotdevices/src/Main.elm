@@ -7,6 +7,7 @@ import Html.Attributes exposing (class)
 import Page.DeviceInformationPage as DeviceInformationPage
 import Page.DeviceListPage as DeviceListPage
 import Page.ErrorPage as ErrorPage
+import Page.NewDevicePage as NewDevicePage
 import Page.UserInformationPage as UserInformationPage
 import Route exposing (Route)
 import Url exposing (Url)
@@ -25,6 +26,7 @@ type Page
     | UserInformationPage UserInformationPage.Model
     | DeviceListPage DeviceListPage.Model
     | DeviceInformationPage DeviceInformationPage.Model
+    | NewDevicePage NewDevicePage.Model
 
 
 main : Program () Model Msg
@@ -45,6 +47,7 @@ type Msg
     | UserInformationPageMsg UserInformationPage.Msg
     | DeviceListPageMsg DeviceListPage.Msg
     | DeviceInformationPageMsg DeviceInformationPage.Msg
+    | NewDevicePageMsg NewDevicePage.Msg
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -80,6 +83,13 @@ initCurrentPage ( model, existingCmds ) =
                             UserInformationPage.init
                     in
                     ( UserInformationPage pageModel, Cmd.map UserInformationPageMsg pageCmds )
+
+                Route.NewDevicePage ->
+                    let
+                        ( pageModel, pageCmds ) =
+                            NewDevicePage.init
+                    in
+                    ( NewDevicePage pageModel, Cmd.map NewDevicePageMsg pageCmds )
 
                 Route.DeviceInformationPage deviceid ->
                     let
@@ -124,6 +134,10 @@ currentView model =
             DeviceInformationPage.view pageModel
                 |> Html.map DeviceInformationPageMsg
 
+        NewDevicePage pageModel ->
+            NewDevicePage.view pageModel
+                |> Html.map NewDevicePageMsg
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -153,6 +167,15 @@ update msg model =
             in
             ( { model | page = DeviceInformationPage updatedPageModel }
             , Cmd.map DeviceInformationPageMsg updatedCmd
+            )
+
+        ( NewDevicePageMsg subMsg, NewDevicePage pageModel ) ->
+            let
+                ( updatedPageModel, updatedCmd ) =
+                    NewDevicePage.update subMsg pageModel
+            in
+            ( { model | page = NewDevicePage updatedPageModel }
+            , Cmd.map NewDevicePageMsg updatedCmd
             )
 
         ( LinkClicked urlRequest, _ ) ->
