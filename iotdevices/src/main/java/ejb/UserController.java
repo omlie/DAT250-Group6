@@ -53,7 +53,7 @@ public class UserController implements Serializable {
 
     public String unsubscribe(int deviceid) {
         try {
-            userDao.unsubscribe(getUsername(), deviceid);
+            userDao.unsubscribe(getUser().getId(), deviceid);
         } catch (Exception e) {
             // redirect
             return "404";
@@ -78,14 +78,14 @@ public class UserController implements Serializable {
     @RolesAllowed("securityadmin")
     public void deleteUser(User user){
         for(Device d : user.getOwnedDevices()){
-            userDao.deleteOwned(user.getUserName(), d.getId());
+            userDao.deleteOwned(user.getId(), d.getId());
         }
         userDao.deleteUser(user);
     }
 
     public String deleteOwned(int deviceId){
         try {
-            userDao.deleteOwned(getUsername(), deviceId);
+            userDao.deleteOwned(getUser().getId(), deviceId);
         } catch (Exception e) {
             //redirect
             return Constants.ERROR;

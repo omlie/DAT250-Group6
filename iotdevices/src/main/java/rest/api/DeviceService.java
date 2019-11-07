@@ -8,6 +8,9 @@ import entities.Label;
 import entities.User;
 import helpers.Status;
 import rest.models.DeviceAddRequest;
+import rest.models.DeviceEditRequest;
+import rest.models.DeviceModificationRequest;
+import rest.models.FeedbackAddRequest;
 
 import javax.ejb.EJB;
 import javax.transaction.Transactional;
@@ -88,24 +91,23 @@ public class DeviceService extends Application {
     @POST
     @Path("give/feedback/{id}")
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response submitFeedback(@HeaderParam("feedback") String feedback,
-                                   @HeaderParam("userId") int userid,
-                                   @PathParam("id") int deviceid) {
+    public Response submitFeedback(FeedbackAddRequest request) {
         try {
             Feedback f = new Feedback();
-            User user = userDao.getUser(userid);
+            User user = userDao.getUser(request.userid);
             f.setAuthor(user);
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
             Date date = new Date();
             String formattedDate = dateFormat.format(date);
             f.setPublishedDate(formattedDate);
-            f.setDevice(deviceDao.getDeviceById(deviceid));
-            f.setFeedbackContent(feedback);
+            f.setDevice(deviceDao.getDeviceById(request.deviceid));
+            f.setFeedbackContent(request.feedback);
             deviceDao.addFeedback(f);
             return Response.ok(f).build();
         } catch (NotFoundException e) {
-            return Response.status(404).entity("No such user" + userid).build();
+            return Response.status(404).entity("No such user" + request.userid).build();
         } catch (Exception e) {
             return Response.status(404).entity("Unknown error").build();
         }
@@ -119,10 +121,7 @@ public class DeviceService extends Application {
     public Response addDevice(DeviceAddRequest request) {
         Device device = new Device();
         device.setOwner(userDao.getUser(request.ownerId));
-        device.setStatus(getStatus(request.status));
-        device.setLabels(getLabels(request.labels));
-        device.setDeviceName(request.devicename);
-        device.setApiUrl(request.apiurl);
+        addFieldsToDevice(device, request.status, request.labels, request.devicename, request.apiurl);
         device.setDeviceImg(request.deviceimg);
         deviceDao.createDevice(device);
         return Response.ok(device).build();
@@ -131,28 +130,28 @@ public class DeviceService extends Application {
     @POST
     @Path("delete/{id}")
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteDevice(@HeaderParam("username") String username,
-                                 @PathParam("id") int id) {
+    public Response deleteDevice(DeviceModificationRequest request) {
         try {
-            userDao.deleteOwned(username, id);
+            userDao.deleteOwned(request.userid, request.deviceid);
             return Response.ok().build();
         } catch (NotFoundException e) {
-            return Response.status(404).entity("Could not delete device " + id).build();
+            return Response.status(404).entity("Could not delete device " + request.deviceid).build();
         }
     }
 
     @POST
     @Path("unsubscribe/{id}")
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response unsubscribe(@PathParam("id") int deviceid,
-                                @HeaderParam("username") String username) {
+    public Response unsubscribe(DeviceModificationRequest request) {
         try {
-            userDao.unsubscribe(username, deviceid);
+            userDao.unsubscribe(request.userid, request.deviceid);
             return Response.ok().build();
         } catch (Exception e) {
-            return Response.status(404).entity("Could not unsubscribe from " + deviceid).build();
+            return Response.status(404).entity("Could not unsubscribe from " + request.deviceid).build();
         }
     }
 
@@ -160,23 +159,24 @@ public class DeviceService extends Application {
     @POST
     @Path("edit/{id}")
     @Transactional
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response edit(@HeaderParam("devicename") String devicename,
-                         @HeaderParam("apiurl") String apiurl,
-                         @HeaderParam("status") int status,
-                         @HeaderParam("labels") List<String> labels,
-                         @PathParam("id") int id) {
+    public Response edit(DeviceEditRequest request) {
         try {
-            Device device = deviceDao.getDeviceById(id);
-            device.setStatus(getStatus(status));
-            device.setLabels(getLabels(labels));
-            device.setDeviceName(devicename);
-            device.setApiUrl(apiurl);
+            Device device = deviceDao.getDeviceById(request.id);
+            addFieldsToDevice(device, request.status, request.labels, request.devicename, request.apiurl);
             deviceDao.saveEditedDevice(device);
             return Response.ok(device).build();
         } catch (NotFoundException e) {
-            return Response.status(404).entity("Device " + id + " not found.").build();
+            return Response.status(404).entity("Device " + request.id + " not found.").build();
         }
+    }
+
+    private void addFieldsToDevice(Device device, Integer status, List<String> labels, String devicename, String apiurl ) {
+        device.setStatus(getStatus(status));
+        device.setLabels(getLabels(labels));
+        device.setDeviceName(devicename);
+        device.setApiUrl(apiurl);
     }
 
     private Status getStatus(int status) {
