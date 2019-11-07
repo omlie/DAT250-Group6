@@ -1,7 +1,7 @@
-module Page.DeviceInformationPage exposing (Model, Msg, init, update, view, submitFeedback)
+module Page.DeviceInformationPage exposing (Model, Msg, init, submitFeedback, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
-import Api.Feedback exposing (Feedback, feedbackListDecoder, feedbackDecoder)
+import Api.Feedback exposing (Feedback, feedbackDecoder, feedbackListDecoder)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
@@ -55,8 +55,8 @@ fetchFeedback deviceId =
 
 submitFeedback : Int -> String -> Cmd Msg
 submitFeedback deviceId newFeedback =
-    Http.request 
-        { method = "POST" 
+    Http.request
+        { method = "POST"
         , body = Http.stringBody "text/plain" newFeedback
         , headers = []
         , expect =
@@ -80,24 +80,27 @@ update msg model =
         FeedbackSubmitted response ->
             ( { model | response = response }, Cmd.none )
 
-        SubmitFeedback -> 
-            ( { model | newFeedback = "" } , submitFeedback model.deviceId model.newFeedback )
+        SubmitFeedback ->
+            ( { model | newFeedback = "" }, submitFeedback model.deviceId model.newFeedback )
 
-        FeedbackChanged changedFeedback -> 
+        FeedbackChanged changedFeedback ->
             ( { model | newFeedback = changedFeedback }, Cmd.none )
 
-            
 
 
 -- VIEWS
 
+
 giveFeedback : Model -> Html Msg
 giveFeedback model =
-    div [class "giveFeedback"]
-        [ h2 [] [text "Provide feedback"]
-        , textarea [ onInput FeedbackChanged, value model.newFeedback ] []
-        , button [ onClick SubmitFeedback ] [ text "Submit" ]
-        ]
+    div [ class "giveFeedback" ]
+    [
+        div [ class "feedbackElements" ]
+            [ h2 [] [ text "Provide feedback" ]
+            , textarea [ onInput FeedbackChanged, value model.newFeedback ] []
+            , button [ onClick SubmitFeedback ] [ text "Submit" ]
+            ]
+    ]
 
 
 view : Model -> Html Msg
