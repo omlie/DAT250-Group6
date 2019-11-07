@@ -35,7 +35,7 @@ deviceListItem device =
 
 
 deviceInformation : Device -> List Feedback -> Html msg
-deviceInformation device feedback =
+deviceInformation device feedback  =
     div [ class "content" ]
         [ div [ class "deviceInformationWrapper" ]
             [ img [ class "deviceImage", src device.deviceImg ] []

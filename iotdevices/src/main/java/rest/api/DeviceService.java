@@ -89,7 +89,7 @@ public class DeviceService extends Application {
     }
 
     @POST
-    @Path("give/feedback/{id}")
+    @Path("give/feedback/{id}/{userid}")
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -109,7 +109,7 @@ public class DeviceService extends Application {
         } catch (NotFoundException e) {
             return Response.status(404).entity("No such user" + request.userid).build();
         } catch (Exception e) {
-            return Response.status(404).entity("Unknown error").build();
+            return Response.status(404).entity(e).build();
         }
     }
 
