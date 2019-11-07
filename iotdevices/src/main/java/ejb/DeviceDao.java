@@ -32,6 +32,14 @@ public class DeviceDao {
         return query.getResultList();
     }
 
+    public void addFeedback(Feedback f){
+        em.persist(f);
+    }
+
+    public void createDevice(Device d){
+        em.persist(d);
+    }
+
     /**
      * Get the device with the given id
      * @param deviceId
@@ -122,6 +130,25 @@ public class DeviceDao {
                 online.add(d);
         };
         return online;
+    }
+
+    /**
+     * Add a label to db if it is not there before
+     * @param labelValue
+     * @return the label connected to the labelvalue
+     */
+    public Label addNewLabel(String labelValue){
+        List<Label> labels =
+                em.createQuery("select l from Label l where l.labelValue=?1", Label.class)
+                        .setParameter(1, labelValue).getResultList();
+        if(labels.isEmpty()){
+            Label l = new Label();
+            l.setLabelValue(labelValue);
+            em.persist(l);
+            return l;
+        } else {
+            return labels.get(0);
+        }
     }
 
     /**

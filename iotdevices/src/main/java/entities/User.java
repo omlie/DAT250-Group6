@@ -33,8 +33,7 @@ public class User implements Serializable {
     private String password;
 
     @JsonbTransient
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy ="owner", orphanRemoval = true)
     private List<Device> ownedDevices = new ArrayList<>();
 
     @JsonbTransient

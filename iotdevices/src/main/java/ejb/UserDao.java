@@ -2,13 +2,19 @@ package ejb;
 
 import entities.*;
 import helpers.AuthenticationUtility;
+import helpers.Constants;
+import helpers.SessionUtil;
 import helpers.Status;
 
 import javax.ejb.Stateless;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,19 +42,28 @@ public class UserDao {
         return users;
     }
 
-    public User createUser(User user) {
+    public boolean createUser(User user) {
         try {
             user.setPassword(AuthenticationUtility.encodeSHA256(user.getPassword()));
-        } catch (Exception e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, e);
-            e.printStackTrace();
+        } catch (Exception ignored) {
+            return false;
         }
         SecurityGroup group = new SecurityGroup();
         group.setUsername(user.getUserName());
         group.setGroupname(SecurityGroup.USERS_GROUP);
         em.persist(user);
         em.persist(group);
-        return user;
+        return true;
+    }
+
+    public boolean login(String username, String password){
+        HttpServletRequest request = SessionUtil.getRequest();
+        try {
+            request.login(username, password);
+            return true;
+        } catch (ServletException e) {
+            return false;
+        }
     }
 
     /**
@@ -98,6 +113,7 @@ public class UserDao {
         d.setApiUrl(device.getApiUrl());
         d.setDeviceImg(device.getDeviceImg());
         d.setDeviceName(device.getDeviceName());
+        d.setStatus(device.getStatus());
         em.merge(d);
     }
 
@@ -270,6 +286,7 @@ public class UserDao {
      */
     public void addDevice(String username, Device device) {
         User user = getUser(username);
+        device.setOwner(user);
         if (user == null)
             throw new NotFoundException();
 
