@@ -105,6 +105,7 @@ div.deviceInformation>* {
 
 div.feedbackListItem {
   background-color: white;
+  margin-top: 24px;
   padding: 12px;
   display: flex;
   flex-direction: column;

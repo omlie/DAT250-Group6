@@ -58,7 +58,7 @@ fetchOwnedDevices =
 fetchSubscribedDevices : Cmd Msg
 fetchSubscribedDevices =
     Http.get
-        { url = "http://localhost:8080/iotdevices/rest/users/1/subscribedDevices"
+        { url = "http://localhost:8080/iotdevices/rest/subscription/1/subscribedDevices"
         , expect =
             devicesDecoder
                 |> Http.expectJson (RemoteData.fromResult >> SubscribedDevicesReceived)

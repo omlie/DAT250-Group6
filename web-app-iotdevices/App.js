@@ -10713,7 +10713,7 @@ var $author$project$Page$UserInformationPage$fetchSubscribedDevices = $elm$http$
 			$elm$http$Http$expectJson,
 			A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Page$UserInformationPage$SubscribedDevicesReceived),
 			$author$project$Api$Device$devicesDecoder),
-		url: 'http://localhost:8080/iotdevices/rest/users/1/subscribedDevices'
+		url: 'http://localhost:8080/iotdevices/rest/subscription/1/subscribedDevices'
 	});
 var $author$project$Page$UserInformationPage$update = F2(
 	function (msg, model) {
