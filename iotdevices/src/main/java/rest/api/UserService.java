@@ -2,6 +2,7 @@ package rest.api;
 
 import ejb.UserDao;
 import entities.User;
+import rest.models.RegisterUserRequest;
 
 import javax.ejb.EJB;
 import javax.transaction.Transactional;
@@ -34,19 +35,17 @@ public class UserService extends Application {
     @POST
     @Transactional
     @Path("register")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerUser(@HeaderParam("username") String username,
-                                 @HeaderParam("firstname") String firstname,
-                                 @HeaderParam("lastname") String lastname,
-                                 @HeaderParam("password") String password) {
-        if (userDao.userExists(username)) {
+    public Response registerUser(RegisterUserRequest request) {
+        if (userDao.userExists(request.username)) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         User user = new User();
-        user.setUserName(username);
-        user.setFirstName(firstname);
-        user.setLastName(lastname);
-        user.setPassword(password);
+        user.setUserName(request.username);
+        user.setFirstName(request.firstname);
+        user.setLastName(request.lastname);
+        user.setPassword(request.password);
         if (userDao.createUser(user))
             return Response.ok(user).build();
         else {

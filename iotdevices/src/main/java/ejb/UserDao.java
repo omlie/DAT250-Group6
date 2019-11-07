@@ -72,7 +72,7 @@ public class UserDao {
      */
     public void deleteUser(User user){
         for(Subscription s : user.getSubscriptions()){
-            unsubscribe(user.getUserName(), s.getDevice().getId());
+            unsubscribe(user.getId(), s.getDevice().getId());
         }
         for(Feedback f : user.getFeedback()) {
             f.setAuthor(null);
@@ -151,12 +151,12 @@ public class UserDao {
     /**
      * Delete one of a users owned devices
      *
-     * @param username
+     * @param userid
      * @param deviceId
      * @return
      */
-    public void deleteOwned(String username, int deviceId) {
-        User user = getUser(username);
+    public void deleteOwned(int userid, int deviceId) {
+        User user = getUser(userid);
         Device d = em.find(Device.class, deviceId);
         if (d == null || user == null)
             throw new NotFoundException();
@@ -345,14 +345,14 @@ public class UserDao {
     /**
      * Unsubscribe a given user from a given device
      *
-     * @param username
+     * @param userid
      * @param deviceId
      */
-    public void unsubscribe(String username, int deviceId) {
+    public void unsubscribe(int userid, int deviceId) {
         List<Subscription> q =
-                em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.userName=?2", Subscription.class)
+                em.createQuery("select s from Subscription s where s.device.id=?1 and s.user.id=?2", Subscription.class)
                         .setParameter(1, deviceId)
-                        .setParameter(2, username)
+                        .setParameter(2, userid)
                         .getResultList();
 
         // If result is empty. If there are more than one subscription to the same device, just remove one
