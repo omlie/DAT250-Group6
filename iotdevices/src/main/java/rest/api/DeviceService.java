@@ -118,7 +118,7 @@ public class DeviceService extends Application {
                               @HeaderParam("apiurl") String apiurl,
                               @HeaderParam("status") int status,
                               @HeaderParam("labels") List<String> labels,
-                              @HeaderParam("ownerId") int ownerId){
+                              @HeaderParam("ownerId") int ownerId) {
         Device device = new Device();
         device.setOwner(userDao.getUser(ownerId));
         device.setStatus(getStatus(status));
@@ -134,11 +134,11 @@ public class DeviceService extends Application {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteDevice(@HeaderParam("username") String username,
-                                 @PathParam("id") int id){
+                                 @PathParam("id") int id) {
         try {
             userDao.deleteOwned(username, id);
             return Response.ok().build();
-        } catch (NotFoundException e){
+        } catch (NotFoundException e) {
             return Response.status(404, "Could not delete device " + id).build();
         }
     }
@@ -148,11 +148,11 @@ public class DeviceService extends Application {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Response unsubscribe(@PathParam("id") int deviceid,
-                                @HeaderParam("username") String username){
+                                @HeaderParam("username") String username) {
         try {
             userDao.unsubscribe(username, deviceid);
             return Response.ok().build();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return Response.status(404, "Could not unsubscribe from " + deviceid).build();
         }
     }
@@ -163,10 +163,10 @@ public class DeviceService extends Application {
     @Transactional
     @Produces(MediaType.APPLICATION_JSON)
     public Response edit(@HeaderParam("devicename") String devicename,
-                              @HeaderParam("apiurl") String apiurl,
-                              @HeaderParam("status") int status,
-                              @HeaderParam("labels") List<String> labels,
-                              @PathParam("id") int id){
+                         @HeaderParam("apiurl") String apiurl,
+                         @HeaderParam("status") int status,
+                         @HeaderParam("labels") List<String> labels,
+                         @PathParam("id") int id) {
         try {
             Device device = deviceDao.getDeviceById(id);
             device.setStatus(getStatus(status));
@@ -175,20 +175,20 @@ public class DeviceService extends Application {
             device.setApiUrl(apiurl);
             deviceDao.saveEditedDevice(device);
             return Response.ok(device).build();
-        } catch(NotFoundException e){
+        } catch (NotFoundException e) {
             return Response.status(404, "Device " + id + " not found.").build();
         }
     }
 
-    private Status getStatus(int status){
-        if(status == 0)
+    private Status getStatus(int status) {
+        if (status == 0)
             return Status.ONLINE;
         return Status.OFFLINE;
     }
 
-    private List<Label> getLabels(List<String> strings){
+    private List<Label> getLabels(List<String> strings) {
         List<Label> labels = new ArrayList<>();
-        for(String s : strings){
+        for (String s : strings) {
             Label l = deviceDao.addNewLabel(s);
             labels.add(l);
         }
