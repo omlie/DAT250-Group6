@@ -3,6 +3,7 @@ package rest.api;
 import ejb.UserDao;
 import entities.User;
 import rest.models.RegisterUserRequest;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.ejb.EJB;
 import javax.transaction.Transactional;
@@ -39,29 +40,36 @@ public class UserService extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerUser(RegisterUserRequest request) {
         if (userDao.userExists(request.username)) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Username already exists").build();
         }
         User user = new User();
         user.setUserName(request.username);
         user.setFirstName(request.firstname);
         user.setLastName(request.lastname);
-        user.setPassword(request.password);
-        if (userDao.createUser(user))
+        String password = BCrypt.hashpw(request.password, BCrypt.gensalt());
+        user.setPassword(password);
+        try {
+            userDao.persist(user);
             return Response.ok(user).build();
-        else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Could not create user").build();
         }
     }
 
     @POST
     @Transactional
+    @Consumes(MediaType.TEXT_PLAIN)
     @Path("login")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@HeaderParam("username") String username, @HeaderParam("password") String password) {
-        if (userDao.login(username, password)) {
-            return Response.ok(userDao.getUser(username)).build();
+    public Response login(@QueryParam("username") String username,
+                          String password) {
+        try {
+            if (userDao.login(userDao.getUser(username), username, password)) {
+                return Response.ok(userDao.getUser(username)).build();
+            }
+        } catch(Exception ignored){
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return Response.status(Response.Status.NOT_FOUND).entity("Wrong username or password").build();
     }
 
 

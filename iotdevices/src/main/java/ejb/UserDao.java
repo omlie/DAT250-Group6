@@ -5,6 +5,7 @@ import helpers.AuthenticationUtility;
 import helpers.Constants;
 import helpers.SessionUtil;
 import helpers.Status;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.ejb.Stateless;
 import javax.faces.application.FacesMessage;
@@ -32,6 +33,8 @@ public class UserDao {
     public void merge(User user) {
         em.merge(user);
     }
+
+    public void persist(User user) {em.persist(user);}
 
     // Retrieves all the tweets:
     @SuppressWarnings("unchecked")
@@ -64,6 +67,10 @@ public class UserDao {
         } catch (ServletException e) {
             return false;
         }
+    }
+
+    public boolean login(User user, String username, String plaintext){
+        return user.getUserName().equals(username) && BCrypt.checkpw(plaintext, user.getPassword());
     }
 
     /**
