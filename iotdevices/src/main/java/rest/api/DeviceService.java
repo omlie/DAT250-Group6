@@ -15,7 +15,10 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Path("/devices")
@@ -69,14 +72,14 @@ public class DeviceService extends Application {
     @GET
     @Path("search/{label}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDevicesByLabel(@PathParam("label") String label){
+    public Response getDevicesByLabel(@PathParam("label") String label) {
         return Response.ok(deviceDao.filterDevicesByLabel(label)).build();
     }
 
     @GET
     @Path("search/id/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDevices(@PathParam("id") String label){
+    public Response getDevices(@PathParam("id") String label) {
         int idInt = Integer.parseInt(label);
         return Response.ok(deviceDao.filterDevicesByLabelId(idInt)).build();
     }
@@ -87,18 +90,20 @@ public class DeviceService extends Application {
     @Produces(MediaType.APPLICATION_JSON)
     public Response submitFeedback(@HeaderParam("feedback") String feedback,
                                    @HeaderParam("userId") int userid,
-                                   @HeaderParam("publishedDate") String date,
-                                   @PathParam("id") int deviceid){
+                                   @PathParam("id") int deviceid) {
         try {
             Feedback f = new Feedback();
             User user = userDao.getUser(userid);
             f.setAuthor(user);
-            f.setPublishedDate(date);
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            Date date = new Date();
+            String formattedDate = dateFormat.format(date);
+            f.setPublishedDate(formattedDate);
             f.setDevice(deviceDao.getDeviceById(deviceid));
             f.setFeedbackContent(feedback);
             deviceDao.addFeedback(f);
             return Response.ok(f).build();
-        } catch (NotFoundException e){
+        } catch (NotFoundException e) {
             return Response.status(404, "No such user" + userid).build();
         } catch (Exception e) {
             return Response.status(404, "Unknown error").build();
