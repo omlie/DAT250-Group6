@@ -10192,7 +10192,7 @@ var $author$project$Page$DeviceListPage$init = _Utils_Tuple2(
 	{devices: $krisajenkins$remotedata$RemoteData$Loading, searchBarContent: ''},
 	$author$project$Page$DeviceListPage$fetchDevices);
 var $author$project$Page$NewDevicePage$init = _Utils_Tuple2(
-	{apiurl: '', deviceimg: '', devicename: '', labels: _List_Nil, ownerId: 1, status: ''},
+	{apiurl: '', deviceimg: '', devicename: '', labels: _List_Nil, ownerId: 1, status: 0},
 	$elm$core$Platform$Cmd$none);
 var $author$project$Page$UserInformationPage$UserReceived = function (a) {
 	return {$: 'UserReceived', a: a};
@@ -10735,11 +10735,7 @@ var $author$project$Page$NewDevicePage$encodeDevice = function (model) {
 			$elm$json$Json$Encode$string(model.deviceimg)),
 			_Utils_Tuple2(
 			'status',
-			$elm$json$Json$Encode$int(
-				A2(
-					$elm$core$Maybe$withDefault,
-					1,
-					$elm$core$String$toInt(model.status)))),
+			$elm$json$Json$Encode$int(model.status)),
 			_Utils_Tuple2(
 			'labels',
 			A2($elm$json$Json$Encode$list, $elm$json$Json$Encode$string, model.labels)),
@@ -10809,7 +10805,12 @@ var $author$project$Page$NewDevicePage$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{status: status}),
+						{
+							status: A2(
+								$elm$core$Maybe$withDefault,
+								0,
+								$elm$core$String$toInt(status))
+						}),
 					$elm$core$Platform$Cmd$none);
 			case 'AddDevice':
 				return _Utils_Tuple2(
@@ -11402,6 +11403,37 @@ var $author$project$Page$NewDevicePage$DeviceNameChange = function (a) {
 var $author$project$Page$NewDevicePage$StatusChange = function (a) {
 	return {$: 'StatusChange', a: a};
 };
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $author$project$Page$NewDevicePage$statusRadioButtons = A2(
+	$elm$html$Html$select,
+	_List_fromArray(
+		[
+			$elm$html$Html$Events$onInput($author$project$Page$NewDevicePage$StatusChange)
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$option,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$value('0')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Online')
+				])),
+			A2(
+			$elm$html$Html$option,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$value('1')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Offline')
+				]))
+		]));
 var $author$project$Page$NewDevicePage$viewForm = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -11438,19 +11470,12 @@ var $author$project$Page$NewDevicePage$viewForm = function (model) {
 						$elm$html$Html$Events$onInput($author$project$Page$NewDevicePage$ApiUrlChange)
 					]),
 				_List_Nil),
-				A2(
-				$elm$html$Html$input,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$placeholder('Status'),
-						$elm$html$Html$Attributes$value(model.status),
-						$elm$html$Html$Events$onInput($author$project$Page$NewDevicePage$StatusChange)
-					]),
-				_List_Nil),
+				$author$project$Page$NewDevicePage$statusRadioButtons,
 				A2(
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
+						$elm$html$Html$Attributes$class('submitbutton'),
 						$elm$html$Html$Events$onClick($author$project$Page$NewDevicePage$AddDevice)
 					]),
 				_List_fromArray(

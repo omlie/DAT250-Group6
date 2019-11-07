@@ -2,9 +2,9 @@ module Page.NewDevicePage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
 import Browser.Navigation exposing (load, pushUrl)
-import Html exposing (Html, button, div, input, text)
-import Html.Attributes exposing (class, placeholder, value)
-import Html.Events exposing (onClick, onInput)
+import Html exposing (Html, button, div, fieldset, input, option, select, text)
+import Html.Attributes exposing (class, name, placeholder, type_, value)
+import Html.Events exposing (on, onClick, onInput, targetValue)
 import Http
 import Json.Encode exposing (Value, int, list, object, string)
 import RemoteData exposing (WebData)
@@ -15,7 +15,7 @@ type alias Model =
     { devicename : String
     , deviceimg : String
     , apiurl : String
-    , status : String
+    , status : Int
     , labels : List String
     , ownerId : Int
     }
@@ -35,7 +35,7 @@ init =
     ( { devicename = ""
       , deviceimg = ""
       , apiurl = ""
-      , status = ""
+      , status = 0
       , labels = []
       , ownerId = 1
       }
@@ -56,7 +56,7 @@ update msg model =
             ( { model | apiurl = url }, Cmd.none )
 
         StatusChange status ->
-            ( { model | status = status }, Cmd.none )
+            ( { model | status = Maybe.withDefault 0 (String.toInt status) }, Cmd.none )
 
         AddDevice ->
             ( model, addDevice model )
@@ -97,7 +97,7 @@ encodeDevice model =
             [ ( "devicename", string model.devicename )
             , ( "apiurl", string model.apiurl )
             , ( "deviceimg", string model.deviceimg )
-            , ( "status", int (Maybe.withDefault 1 (String.toInt model.status)) )
+            , ( "status", int model.status )
             , ( "labels", list string model.labels )
             , ( "ownerId", int model.ownerId )
             ]
@@ -121,6 +121,16 @@ viewForm model =
         [ input [ placeholder "Device name", model.devicename |> value, onInput DeviceNameChange ] []
         , input [ placeholder "Device image URL", model.deviceimg |> value, onInput DeviceImageChange ] []
         , input [ placeholder "API URL", model.apiurl |> value, onInput ApiUrlChange ] []
-        , input [ placeholder "Status", model.status |> value, onInput StatusChange ] []
-        , button [ onClick AddDevice ] [ text "Add device" ]
+        , statusRadioButtons
+
+        -- , input [ placeholder "Status", model.status |> value, onInput StatusChange ] []
+        , button [ class "submitbutton", onClick AddDevice ] [ text "Add device" ]
+        ]
+
+
+statusRadioButtons : Html Msg
+statusRadioButtons =
+    select [ onInput StatusChange ]
+        [ option [ value "0" ] [ text "Online" ]
+        , option [ value "1" ] [ text "Offline" ]
         ]
