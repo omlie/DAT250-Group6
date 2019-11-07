@@ -35,7 +35,7 @@ public class SubscriptionService {
             subDao.approveSubscription(s);
             return Response.ok(s).build();
         } catch (NotFoundException e) {
-            return Response.status(404, "Could not find subscription").build();
+            return Response.status(404).entity("Could not find subscription").build();
         }
     }
 
@@ -49,7 +49,7 @@ public class SubscriptionService {
             subDao.denySubscription(s);
             return Response.ok(s).build();
         } catch (NotFoundException e) {
-            return Response.status(404, "Could not find subscription").build();
+            return Response.status(404).entity( "Could not find subscription").build();
         }
     }
 
@@ -61,9 +61,10 @@ public class SubscriptionService {
             List<Subscription> subs = subDao.getPending(deviceId);
             return Response.ok(subs).build();
         } catch (Exception e) {
-            return Response.status(404, "Unknown error").build();
+            return Response.status(404).entity( "Unknown error").build();
         }
     }
+
 
     @GET
     @Path("{id}/subscribedDevices")

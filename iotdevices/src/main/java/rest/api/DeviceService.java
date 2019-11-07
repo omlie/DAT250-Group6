@@ -104,9 +104,9 @@ public class DeviceService extends Application {
             deviceDao.addFeedback(f);
             return Response.ok(f).build();
         } catch (NotFoundException e) {
-            return Response.status(404, "No such user" + userid).build();
+            return Response.status(404).entity( "No such user" + userid).build();
         } catch (Exception e) {
-            return Response.status(404, "Unknown error").build();
+            return Response.status(404).entity("Unknown error").build();
         }
     }
 
@@ -139,7 +139,7 @@ public class DeviceService extends Application {
             userDao.deleteOwned(username, id);
             return Response.ok().build();
         } catch (NotFoundException e) {
-            return Response.status(404, "Could not delete device " + id).build();
+            return Response.status(404).entity("Could not delete device " + id).build();
         }
     }
 
@@ -153,7 +153,7 @@ public class DeviceService extends Application {
             userDao.unsubscribe(username, deviceid);
             return Response.ok().build();
         } catch (Exception e) {
-            return Response.status(404, "Could not unsubscribe from " + deviceid).build();
+            return Response.status(404).entity("Could not unsubscribe from " + deviceid).build();
         }
     }
 
@@ -176,7 +176,7 @@ public class DeviceService extends Application {
             deviceDao.saveEditedDevice(device);
             return Response.ok(device).build();
         } catch (NotFoundException e) {
-            return Response.status(404, "Device " + id + " not found.").build();
+            return Response.status(404).entity("Device " + id + " not found.").build();
         }
     }
 
