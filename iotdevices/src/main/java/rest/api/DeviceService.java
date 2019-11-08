@@ -109,7 +109,7 @@ public class DeviceService extends Application {
         } catch (NotFoundException e) {
             return Response.status(404).entity("No such user" + request.userid).build();
         } catch (Exception e) {
-            return Response.status(404).entity(e).build();
+            return Response.status(404).entity("Unknown error").build();
         }
     }
 
