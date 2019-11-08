@@ -42,7 +42,7 @@ button {
   color: black;
   white-space: nowrap;
   padding: 5px 15px;
-  background-color:  #98bec8;
+  background-color: #98bec8;
 }
 
 a.headerButton:hover {
@@ -106,7 +106,6 @@ div.deviceInformationWrapper {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
 }
 
 div.deviceInformationWrapper > * {
@@ -144,18 +143,10 @@ div.feedbackListItem > *:last-child {
   margin-top: 24px;
 }
 
-div.giveFeedback {
-  margin-right: 6em;
-  margin-bottom: 64px;
-  margin-top: -8em;
-  display: flex;
-  justify-content: flex-end;
-}
-
-div.feedbackElements {
+div.feedbackForm {
   display: flex;
   flex-direction: column;
-  align-items: center
+  justify-content: center;
 }
 
 .devicePage {

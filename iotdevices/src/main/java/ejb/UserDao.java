@@ -309,24 +309,19 @@ public class UserDao {
         em.merge(user);
     }
 
-    public void addSubscriber(int deviceId, String username) {
-        System.out.println("USER NOT FOUND:" + username + "!");
-        addSubscriber(deviceId, getUser(username));
-    }
 
 
     public void addSubscriber(int deviceId, int userid) {
-        addSubscriber(deviceId, em.find(User.class, userid));
+        addSubscriber(em.find(Device.class, deviceId), em.find(User.class, userid));
     }
 
     /**
      * Add the given user as a subscriber to a device
      *
-     * @param deviceId
+     * @param device
      * @param user
      */
-    public void addSubscriber(int deviceId, User user) {
-        Device device = em.find(Device.class, deviceId);
+    public void addSubscriber(Device device, User user) {
         if (device == null || user == null)
             throw new NotFoundException();
 
@@ -337,7 +332,8 @@ public class UserDao {
         if (user.getSubscriptions().contains(subscription))
             return;
 
-        em.persist(device);
+        em.merge(device);
+        em.merge(user);
     }
 
     public void updateUser(User user) {
@@ -370,6 +366,8 @@ public class UserDao {
         s.getUser().getSubscriptions().remove(s);
         em.createQuery("DELETE FROM Subscription s WHERE s.id=?1")
                 .setParameter(1, s.getId()).executeUpdate();
+        em.merge(em.find(User.class, userid));
+        em.merge(em.find(Device.class, deviceId));
 
     }
 }

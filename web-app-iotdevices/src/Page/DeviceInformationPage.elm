@@ -2,11 +2,11 @@ module Page.DeviceInformationPage exposing (Model, Msg, init, submitFeedback, up
 
 import Api.Device exposing (Device, deviceDecoder)
 import Api.Feedback exposing (Feedback, feedbackDecoder, feedbackListDecoder)
-import Html exposing (Html, button, div, input, text, h2, textarea, h3)
+import Html exposing (Html, button, div, h2, h3, input, text, textarea)
 import Html.Attributes exposing (class, placeholder, value)
 import Html.Events exposing (onClick, onInput)
-import Json.Encode exposing (Value, int, list, object, string)
 import Http
+import Json.Encode exposing (Value, int, list, object, string)
 import RemoteData exposing (WebData)
 import View.DeviceViews exposing (deviceInformation)
 import View.ErrorViews exposing (buildErrorMessage, viewFetchError)
@@ -58,12 +58,12 @@ submitFeedback : Model -> Cmd Msg
 submitFeedback model =
     Http.request
         { method = "POST"
-        , body = Http.jsonBody (encodeFeedback  model)
+        , body = Http.jsonBody (encodeFeedback model)
         , headers = []
         , expect =
             feedbackDecoder
                 |> Http.expectJson (RemoteData.fromResult >> FeedbackSubmitted)
-        , url = "http://localhost:8080/iotdevices/rest/devices/give/feedback/" ++ String.fromInt model.deviceId ++ "/1"
+        , url = "http://localhost:8080/iotdevices/rest/devices/feedback"
         , timeout = Nothing
         , tracker = Nothing
         }
@@ -78,8 +78,8 @@ update msg model =
         FeedbackReceived response ->
             ( { model | feedback = response }, Cmd.none )
 
-        FeedbackSubmitted response ->
-            ( { model | response = response }, Cmd.none )
+        FeedbackSubmitted _ ->
+            ( model, fetchFeedback model.deviceId )
 
         SubmitFeedback ->
             ( { model | newFeedback = "" }, submitFeedback model )
@@ -90,7 +90,9 @@ update msg model =
 
 encodeFeedback : Model -> Value
 encodeFeedback model =
-    let feedbacklist = [ ( "deviceid", int model.deviceId ), ( "userid", int 1), ( "feedback", string model.newFeedback )]
+    let
+        feedbacklist =
+            [ ( "deviceid", int model.deviceId ), ( "userid", int 1 ), ( "feedback", string model.newFeedback ) ]
     in
     feedbacklist
         |> object
@@ -102,26 +104,32 @@ encodeFeedback model =
 
 giveFeedback : Model -> Html Msg
 giveFeedback model =
-    div [ class "giveFeedback" ]
-    [
-        div [ class "feedbackElements" ]
-            [ h2 [] [ text "Provide feedback" ]
-            , textarea [ onInput FeedbackChanged, value model.newFeedback ] []
-            , button [ onClick SubmitFeedback ] [ text "Submit" ]
-            ]
-    ]
+    div [ class "feedbackForm" ]
+        [ h3 [] [ text "Provide feedback" ]
+        , input [ onInput FeedbackChanged, value model.newFeedback ] []
+        , submitButton model
+        ]
+
+
+submitButton : Model -> Html Msg
+submitButton model =
+    case model.newFeedback of
+        "" ->
+            text ""
+
+        _ ->
+            button [ class "submitButton", onClick SubmitFeedback ] [ text "Submit" ]
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ viewDevice model.device model.feedback
-        , giveFeedback model
+        [ viewDevice model.device model.feedback (giveFeedback model)
         ]
 
 
-viewDevice : WebData Device -> WebData (List Feedback) -> Html Msg
-viewDevice device feedback =
+viewDevice : WebData Device -> WebData (List Feedback) -> Html Msg -> Html Msg
+viewDevice device feedback feedbackform =
     case ( device, feedback ) of
         ( RemoteData.NotAsked, _ ) ->
             text ""
@@ -130,7 +138,7 @@ viewDevice device feedback =
             h3 [] [ text "Loading..." ]
 
         ( RemoteData.Success actualDevice, RemoteData.Success actualFeedback ) ->
-            deviceInformation actualDevice actualFeedback
+            deviceInformation actualDevice actualFeedback feedbackform
 
         ( RemoteData.Failure httpError, _ ) ->
             viewFetchError (buildErrorMessage httpError)

@@ -34,6 +34,9 @@ public class DeviceDao {
 
     public void addFeedback(Feedback f){
         em.persist(f);
+        Device device = f.getDevice();
+        device.addFeedback(f);
+        em.merge(device);
     }
 
     public void createDevice(Device d){
