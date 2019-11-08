@@ -2,9 +2,10 @@ module Page.DeviceInformationPage exposing (Model, Msg, init, submitFeedback, up
 
 import Api.Device exposing (Device, deviceDecoder)
 import Api.Feedback exposing (Feedback, feedbackDecoder, feedbackListDecoder)
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html exposing (Html, button, div, input, text, h2, textarea, h3)
+import Html.Attributes exposing (class, placeholder, value)
 import Html.Events exposing (onClick, onInput)
+import Json.Encode exposing (Value, int, list, object, string)
 import Http
 import RemoteData exposing (WebData)
 import View.DeviceViews exposing (deviceInformation)
@@ -53,16 +54,16 @@ fetchFeedback deviceId =
         }
 
 
-submitFeedback : Int -> String -> Cmd Msg
-submitFeedback deviceId newFeedback =
+submitFeedback : Model -> Cmd Msg
+submitFeedback model =
     Http.request
         { method = "POST"
-        , body = Http.stringBody "text/plain" newFeedback
+        , body = Http.jsonBody (encodeFeedback  model)
         , headers = []
         , expect =
             feedbackDecoder
                 |> Http.expectJson (RemoteData.fromResult >> FeedbackSubmitted)
-        , url = "http://localhost:8080/iotdevices/rest/devices/give/feedback/" ++ String.fromInt deviceId ++ "/1"
+        , url = "http://localhost:8080/iotdevices/rest/devices/give/feedback/" ++ String.fromInt model.deviceId ++ "/1"
         , timeout = Nothing
         , tracker = Nothing
         }
@@ -81,10 +82,18 @@ update msg model =
             ( { model | response = response }, Cmd.none )
 
         SubmitFeedback ->
-            ( { model | newFeedback = "" }, submitFeedback model.deviceId model.newFeedback )
+            ( { model | newFeedback = "" }, submitFeedback model )
 
         FeedbackChanged changedFeedback ->
             ( { model | newFeedback = changedFeedback }, Cmd.none )
+
+
+encodeFeedback : Model -> Value
+encodeFeedback model =
+    let feedbacklist = [ ( "deviceid", int model.deviceId ), ( "userid", int 1), ( "feedback", string model.newFeedback )]
+    in
+    feedbacklist
+        |> object
 
 
 
