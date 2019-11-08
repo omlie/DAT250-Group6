@@ -65,15 +65,7 @@ public class UserController implements Serializable {
         userDao.makeAdmin(user);
     }
 
-    public String addSubscription(int deviceid, String username){
-        try {
-            userDao.addSubscriber(deviceid, username);
-        } catch (Exception e) {
-            // redirect
-            return Constants.ERROR;
-        }
-        return Constants.MYPAGE;
-    }
+
 
     @RolesAllowed("securityadmin")
     public void deleteUser(User user){

@@ -89,7 +89,7 @@ public class DeviceService extends Application {
     }
 
     @POST
-    @Path("give/feedback/{id}")
+    @Path("feedback")
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -105,7 +105,7 @@ public class DeviceService extends Application {
             f.setDevice(deviceDao.getDeviceById(request.deviceid));
             f.setFeedbackContent(request.feedback);
             deviceDao.addFeedback(f);
-            return Response.ok(f).build();
+            return Response.ok().build();
         } catch (NotFoundException e) {
             return Response.status(404).entity("No such user" + request.userid).build();
         } catch (Exception e) {

@@ -34,8 +34,8 @@ deviceListItem device =
         ]
 
 
-deviceInformation : Device -> List Feedback -> Html msg
-deviceInformation device feedback =
+deviceInformation : Device -> List Feedback -> Html msg -> Html msg
+deviceInformation device feedback feedbackform =
     div [ class "content" ]
         [ div [ class "deviceInformationWrapper" ]
             [ img [ class "deviceImage", src device.deviceImg ] []
@@ -43,6 +43,7 @@ deviceInformation device feedback =
                 [ h2 [] [ text device.deviceName ]
                 , span [] [ text device.status ]
                 , span [] [ text ("API URL: " ++ device.apiUrl) ]
+                , feedbackform
                 , feedbackList feedback
                 ]
             ]
@@ -56,7 +57,7 @@ feedbackList feedback =
             text ""
 
         items ->
-            div [] [ h2 [] [ text "Feedback" ], div [ class "feedbackList" ] (List.map (\f -> feedbackListItem f) items) ]
+            div [] [ h3 [] [ text "Feedback" ], div [ class "feedbackList" ] (List.map (\f -> feedbackListItem f) items) ]
 
 
 feedbackListItem : Feedback -> Html msg
