@@ -121,8 +121,6 @@ viewForm model =
         , input [ placeholder "Device image URL", model.deviceimg |> value, onInput DeviceImageChange ] []
         , input [ placeholder "API URL", model.apiurl |> value, onInput ApiUrlChange ] []
         , statusRadioButtons
-
-        -- , input [ placeholder "Status", model.status |> value, onInput StatusChange ] []
         , button [ class "submitbutton", onClick AddDevice ] [ text "Add device" ]
         ]
 
