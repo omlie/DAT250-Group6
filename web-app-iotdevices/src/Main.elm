@@ -105,7 +105,7 @@ initCurrentPage ( model, existingCmds ) =
 
 view : Model -> Document Msg
 view model =
-    { title = "Post App"
+    { title = "IOT Devices"
     , body =
         [ div [ class "wrapper" ]
             [ viewMenu
