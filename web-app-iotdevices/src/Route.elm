@@ -1,7 +1,7 @@
 module Route exposing (Route(..), parseUrl)
 
 import Url exposing (Url)
-import Url.Parser exposing ((</>), Parser, int, map, oneOf, parse, s, top)
+import Url.Parser exposing ((</>), Parser, int, map, oneOf, parse, s)
 
 
 type Route
@@ -10,6 +10,7 @@ type Route
     | DeviceListPage
     | NewDevicePage
     | DeviceInformationPage Int
+    | LogoutPage
 
 
 parseUrl : Url -> Route
@@ -30,4 +31,5 @@ matchRoute =
         , map DeviceListPage (s "devices")
         , map NewDevicePage (s "device" </> s "add")
         , map NotFound (s "not-found")
+        , map LogoutPage (s "logout")
         ]

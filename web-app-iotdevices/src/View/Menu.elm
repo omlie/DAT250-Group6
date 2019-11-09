@@ -1,13 +1,13 @@
 module View.Menu exposing (viewMenu)
 
-import Html exposing (Html, div, text, span)
+import Html exposing (Html, div, span, text)
 import Html.Attributes exposing (class)
 import View.Buttons exposing (viewHrefButton)
 
 
 menuButtons : List ( String, String )
 menuButtons =
-    [ ( "My page", "/mypage" ), ( "Devices", "/devices" ), ( "Add device", "/device/add" ) ]
+    [ ( "My page", "/mypage" ), ( "Devices", "/devices" ), ( "Add device", "/device/add" ), ( "Logout", "/logout" ) ]
 
 
 viewMenu : Bool -> Html msg

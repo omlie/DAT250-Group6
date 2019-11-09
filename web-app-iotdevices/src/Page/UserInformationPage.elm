@@ -1,7 +1,7 @@
 module Page.UserInformationPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, devicesDecoder)
-import Api.User exposing (User, userDecoder)
+import Api.User exposing (User)
 import Html exposing (Html, div, h3, text)
 import Http
 import RemoteData exposing (WebData)
