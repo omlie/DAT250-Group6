@@ -370,4 +370,8 @@ public class UserDao {
         em.merge(em.find(Device.class, deviceId));
 
     }
+
+    public void persist(User user) {
+        em.persist(user);
+    }
 }

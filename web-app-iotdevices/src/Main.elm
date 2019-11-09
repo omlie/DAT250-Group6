@@ -7,10 +7,10 @@ import Html exposing (Html, button, div, input, text)
 import Html.Attributes exposing (class, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
+import Json.Encode exposing (Value, int, list, object, string)
 import Page.DeviceInformationPage as DeviceInformationPage
 import Page.DeviceListPage as DeviceListPage
 import Page.ErrorPage as ErrorPage
-import Page.LoginPage as LoginPage
 import Page.NewDevicePage as NewDevicePage
 import Page.UserInformationPage as UserInformationPage
 import RemoteData exposing (WebData)
@@ -24,7 +24,10 @@ type alias Model =
     , page : Page
     , navKey : Nav.Key
     , loggedIn : Bool
+    , register : Bool
     , username : String
+    , firstname : String
+    , lastname : String
     , password : String
     , user : User
     }
@@ -58,9 +61,14 @@ type Msg
     | DeviceInformationPageMsg DeviceInformationPage.Msg
     | NewDevicePageMsg NewDevicePage.Msg
     | UsernameChange String
+    | FirstnameChange String
+    | LastnameChange String
     | PasswordChange String
+    | Register Bool
     | TryLogin
+    | TryRegister
     | LoginSucceded (WebData User)
+    | RegisterSucceded (WebData User)
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -71,7 +79,10 @@ init flags url navKey =
             , page = NotFoundPage
             , navKey = navKey
             , loggedIn = False
+            , register = False
             , username = ""
+            , firstname = ""
+            , lastname = ""
             , password = ""
             , user = { id = -1, username = "", firstname = "", lastname = "" }
             }
@@ -129,7 +140,7 @@ view model =
     { title = "IOT Devices"
     , body =
         [ div [ class "wrapper" ]
-            [ viewMenu
+            [ viewMenu model.loggedIn
             , div [ class "content" ]
                 [ currentView model ]
             ]
@@ -160,11 +171,26 @@ currentView model =
                 NewDevicePage.view pageModel
                     |> Html.map NewDevicePageMsg
 
+    else if model.register then
+        div [ class "form" ]
+            [ input [ placeholder "Username", model.username |> value, onInput UsernameChange ] []
+            , input [ placeholder "First name", model.firstname |> value, onInput FirstnameChange ] []
+            , input [ placeholder "Last name", model.lastname |> value, onInput LastnameChange ] []
+            , input [ placeholder "Password", type_ "password", model.password |> value, onInput PasswordChange ] []
+            , div [ class "buttonrow" ]
+                [ button [ class "submitbutton", onClick TryRegister ] [ text "Register" ]
+                , button [ class "submitbutton", onClick (Register False) ] [ text "Login" ]
+                ]
+            ]
+
     else
         div [ class "form" ]
             [ input [ placeholder "Username", model.username |> value, onInput UsernameChange ] []
             , input [ placeholder "Password", type_ "password", model.password |> value, onInput PasswordChange ] []
-            , button [ class "submitbutton", onClick TryLogin ] [ text "Login" ]
+            , div [ class "buttonrow" ]
+                [ button [ class "submitbutton", onClick TryLogin ] [ text "Login" ]
+                , button [ class "submitbutton", onClick (Register True) ] [ text "Register" ]
+                ]
             ]
 
 
@@ -181,6 +207,35 @@ login model =
         , timeout = Nothing
         , tracker = Nothing
         }
+
+
+register : Model -> Cmd Msg
+register model =
+    Http.request
+        { body = Http.jsonBody (encodeUser model)
+        , method = "POST"
+        , headers = []
+        , expect =
+            userDecoder
+                |> Http.expectJson (RemoteData.fromResult >> RegisterSucceded)
+        , url = "http://localhost:8080/iotdevices/rest/users/register"
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+encodeUser : Model -> Value
+encodeUser model =
+    let
+        bodylist =
+            [ ( "username", string model.username )
+            , ( "firstname", string model.firstname )
+            , ( "lastname", string model.lastname )
+            , ( "password", string model.password )
+            ]
+    in
+    bodylist
+        |> object
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -242,8 +297,14 @@ update msg model =
             ( { model | route = newRoute }, Cmd.none )
                 |> initCurrentPage
 
+        ( Register bool, _ ) ->
+            ( { model | register = bool }, Cmd.none )
+
         ( TryLogin, _ ) ->
             ( model, login model )
+
+        ( TryRegister, _ ) ->
+            ( model, register model )
 
         ( LoginSucceded user, _ ) ->
             case user of
@@ -254,8 +315,23 @@ update msg model =
                 _ ->
                     ( model, Cmd.none )
 
-        ( UsernameChange username, _ ) ->
-            ( { model | username = username }, Cmd.none )
+        ( RegisterSucceded user, _ ) ->
+            case user of
+                RemoteData.Success actualuser ->
+                    ( { model | username = "", password = "", loggedIn = True, route = Route.UserInformationPage, user = actualuser }, Cmd.none )
+                        |> initCurrentPage
+
+                _ ->
+                    ( model, Cmd.none )
+
+        ( UsernameChange name, _ ) ->
+            ( { model | username = name }, Cmd.none )
+
+        ( FirstnameChange name, _ ) ->
+            ( { model | firstname = name }, Cmd.none )
+
+        ( LastnameChange name, _ ) ->
+            ( { model | lastname = name }, Cmd.none )
 
         ( PasswordChange password, _ ) ->
             ( { model | password = password }, Cmd.none )
