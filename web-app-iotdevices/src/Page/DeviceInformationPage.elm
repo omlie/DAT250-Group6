@@ -1,7 +1,8 @@
-module Page.DeviceInformationPage exposing (Model, Msg, init, submitFeedback, update, view)
+module Page.DeviceInformationPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
 import Api.Feedback exposing (Feedback, feedbackDecoder, feedbackListDecoder)
+import Api.User exposing (User)
 import Html exposing (Html, button, div, h3, input, text)
 import Html.Attributes exposing (class, value)
 import Html.Events exposing (onClick, onInput)
@@ -18,20 +19,29 @@ type alias Model =
     , deviceId : Int
     , newFeedback : String
     , response : WebData Feedback
+    , user : User
     }
 
 
 type Msg
     = DeviceReceived (WebData Device)
-    | FeedbackReceived (WebData (List Feedback))
+    | FeedbackChanged String
     | FeedbackSubmitted (WebData Feedback)
     | SubmitFeedback
-    | FeedbackChanged String
+    | FeedbackReceived (WebData (List Feedback))
 
 
-init : Int -> ( Model, Cmd Msg )
-init deviceId =
-    ( { device = RemoteData.Loading, deviceId = deviceId, feedback = RemoteData.NotAsked, newFeedback = "", response = RemoteData.NotAsked }, fetchDevice deviceId )
+init : User -> Int -> ( Model, Cmd Msg )
+init user deviceId =
+    ( { user = user
+      , device = RemoteData.Loading
+      , deviceId = deviceId
+      , feedback = RemoteData.NotAsked
+      , newFeedback = ""
+      , response = RemoteData.NotAsked
+      }
+    , fetchDevice deviceId
+    )
 
 
 fetchDevice : Int -> Cmd Msg
@@ -92,7 +102,7 @@ encodeFeedback : Model -> Value
 encodeFeedback model =
     let
         feedbacklist =
-            [ ( "deviceid", int model.deviceId ), ( "userid", int 1 ), ( "feedback", string model.newFeedback ) ]
+            [ ( "deviceid", int model.deviceId ), ( "userid", int model.user.id ), ( "feedback", string model.newFeedback ) ]
     in
     feedbacklist
         |> object

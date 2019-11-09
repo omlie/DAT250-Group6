@@ -61,8 +61,8 @@ public class UserService extends Application {
     @Consumes(MediaType.TEXT_PLAIN)
     @Path("login")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@QueryParam("username") String username,
-                          String password) {
+    public Response login(@HeaderParam("username") String username,
+                          @HeaderParam("password") String password) {
         try {
             if (userDao.login(userDao.getUser(username), username, password)) {
                 return Response.ok(userDao.getUser(username)).build();

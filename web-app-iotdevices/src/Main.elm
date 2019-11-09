@@ -1,11 +1,12 @@
 module Main exposing (main)
 
-import Api.Device exposing (Device)
-import Api.User exposing (User)
+import Api.User exposing (User, userDecoder)
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav
-import Html exposing (Html, div)
-import Html.Attributes exposing (class)
+import Html exposing (Html, button, div, input, text)
+import Html.Attributes exposing (class, placeholder, type_, value)
+import Html.Events exposing (onClick, onInput)
+import Http
 import Page.DeviceInformationPage as DeviceInformationPage
 import Page.DeviceListPage as DeviceListPage
 import Page.ErrorPage as ErrorPage
@@ -22,15 +23,15 @@ type alias Model =
     { route : Route
     , page : Page
     , navKey : Nav.Key
-    , user : WebData User
-    , devices : WebData (List Device)
     , loggedIn : Bool
+    , username : String
+    , password : String
+    , user : User
     }
 
 
 type Page
     = NotFoundPage
-    | LoginPage LoginPage.Model
     | UserInformationPage UserInformationPage.Model
     | DeviceListPage DeviceListPage.Model
     | DeviceInformationPage DeviceInformationPage.Model
@@ -52,11 +53,14 @@ main =
 type Msg
     = LinkClicked UrlRequest
     | UrlChanged Url
-    | LoginPageMsg LoginPage.Msg
     | UserInformationPageMsg UserInformationPage.Msg
     | DeviceListPageMsg DeviceListPage.Msg
     | DeviceInformationPageMsg DeviceInformationPage.Msg
     | NewDevicePageMsg NewDevicePage.Msg
+    | UsernameChange String
+    | PasswordChange String
+    | TryLogin
+    | LoginSucceded (WebData User)
 
 
 init : () -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -66,79 +70,58 @@ init flags url navKey =
             { route = Route.parseUrl url
             , page = NotFoundPage
             , navKey = navKey
-            , user = RemoteData.NotAsked
-            , devices = RemoteData.NotAsked
             , loggedIn = False
+            , username = ""
+            , password = ""
+            , user = { id = -1, username = "", firstname = "", lastname = "" }
             }
     in
-    initPage ( model, Cmd.none )
+    initCurrentPage ( model, Cmd.none )
 
 
-initPage : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-initPage ( model, existingCmds ) =
+initCurrentPage : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
+initCurrentPage ( model, existingCmds ) =
     if model.loggedIn then
-        initCurrentPage ( model, existingCmds )
-
-    else
         let
             ( currentPage, mappedPageCmds ) =
-                let
-                    ( pageModel, pageCmds ) =
-                        LoginPage.init
-                in
-                ( LoginPage pageModel, Cmd.map LoginPageMsg pageCmds )
+                case model.route of
+                    Route.NotFound ->
+                        ( NotFoundPage, Cmd.none )
+
+                    Route.DeviceListPage ->
+                        let
+                            ( pageModel, pageCmds ) =
+                                DeviceListPage.init model.user
+                        in
+                        ( DeviceListPage pageModel, Cmd.map DeviceListPageMsg pageCmds )
+
+                    Route.UserInformationPage ->
+                        let
+                            ( pageModel, pageCmds ) =
+                                UserInformationPage.init model.user
+                        in
+                        ( UserInformationPage pageModel, Cmd.map UserInformationPageMsg pageCmds )
+
+                    Route.NewDevicePage ->
+                        let
+                            ( pageModel, pageCmds ) =
+                                NewDevicePage.init model.navKey model.user
+                        in
+                        ( NewDevicePage pageModel, Cmd.map NewDevicePageMsg pageCmds )
+
+                    Route.DeviceInformationPage deviceid ->
+                        let
+                            ( pageModel, pageCmds ) =
+                                DeviceInformationPage.init model.user deviceid
+                        in
+                        ( DeviceInformationPage pageModel, Cmd.map DeviceInformationPageMsg pageCmds )
         in
         ( { model | page = currentPage }
         , Cmd.batch [ existingCmds, mappedPageCmds ]
         )
 
-
-initCurrentPage : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-initCurrentPage ( model, existingCmds ) =
-    let
-        ( currentPage, mappedPageCmds ) =
-            case model.route of
-                Route.NotFound ->
-                    ( NotFoundPage, Cmd.none )
-
-                Route.LoginPage ->
-                    let
-                        ( pageModel, pageCmds ) =
-                            LoginPage.init
-                    in
-                    ( LoginPage pageModel, Cmd.map LoginPageMsg pageCmds )
-
-                Route.DeviceListPage ->
-                    let
-                        ( pageModel, pageCmds ) =
-                            DeviceListPage.init
-                    in
-                    ( DeviceListPage pageModel, Cmd.map DeviceListPageMsg pageCmds )
-
-                Route.UserInformationPage ->
-                    let
-                        ( pageModel, pageCmds ) =
-                            UserInformationPage.init
-                    in
-                    ( UserInformationPage pageModel, Cmd.map UserInformationPageMsg pageCmds )
-
-                Route.NewDevicePage ->
-                    let
-                        ( pageModel, pageCmds ) =
-                            NewDevicePage.init
-                    in
-                    ( NewDevicePage pageModel, Cmd.map NewDevicePageMsg pageCmds )
-
-                Route.DeviceInformationPage deviceid ->
-                    let
-                        ( pageModel, pageCmds ) =
-                            DeviceInformationPage.init deviceid
-                    in
-                    ( DeviceInformationPage pageModel, Cmd.map DeviceInformationPageMsg pageCmds )
-    in
-    ( { model | page = currentPage }
-    , Cmd.batch [ existingCmds, mappedPageCmds ]
-    )
+    else
+        ( model, existingCmds )
 
 
 view : Model -> Document Msg
@@ -157,56 +140,52 @@ view model =
 currentView : Model -> Html Msg
 currentView model =
     if model.loggedIn then
-        loggedInView model
+        case model.page of
+            NotFoundPage ->
+                ErrorPage.view
+
+            DeviceListPage pageModel ->
+                DeviceListPage.view pageModel
+                    |> Html.map DeviceListPageMsg
+
+            UserInformationPage pageModel ->
+                UserInformationPage.view pageModel
+                    |> Html.map UserInformationPageMsg
+
+            DeviceInformationPage pageModel ->
+                DeviceInformationPage.view pageModel
+                    |> Html.map DeviceInformationPageMsg
+
+            NewDevicePage pageModel ->
+                NewDevicePage.view pageModel
+                    |> Html.map NewDevicePageMsg
 
     else
-        let
-            ( pageModel, _ ) =
-                LoginPage.init
-        in
-        LoginPage.view pageModel
-            |> Html.map LoginPageMsg
+        div [ class "form" ]
+            [ input [ placeholder "Username", model.username |> value, onInput UsernameChange ] []
+            , input [ placeholder "Password", type_ "password", model.password |> value, onInput PasswordChange ] []
+            , button [ class "submitbutton", onClick TryLogin ] [ text "Login" ]
+            ]
 
 
-loggedInView : Model -> Html Msg
-loggedInView model =
-    case model.page of
-        NotFoundPage ->
-            ErrorPage.view
-
-        LoginPage pageModel ->
-            LoginPage.view pageModel
-                |> Html.map LoginPageMsg
-
-        DeviceListPage pageModel ->
-            DeviceListPage.view pageModel
-                |> Html.map DeviceListPageMsg
-
-        UserInformationPage pageModel ->
-            UserInformationPage.view pageModel
-                |> Html.map UserInformationPageMsg
-
-        DeviceInformationPage pageModel ->
-            DeviceInformationPage.view pageModel
-                |> Html.map DeviceInformationPageMsg
-
-        NewDevicePage pageModel ->
-            NewDevicePage.view pageModel
-                |> Html.map NewDevicePageMsg
+login : Model -> Cmd Msg
+login model =
+    Http.request
+        { body = Http.emptyBody
+        , method = "POST"
+        , headers = [ Http.header "username" model.username, Http.header "password" model.password ]
+        , expect =
+            userDecoder
+                |> Http.expectJson (RemoteData.fromResult >> LoginSucceded)
+        , url = "http://localhost:8080/iotdevices/rest/users/login"
+        , timeout = Nothing
+        , tracker = Nothing
+        }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model.page ) of
-        ( LoginPageMsg subMsg, LoginPage pageModel ) ->
-            let
-                ( updatedPageModel, updatedCmd ) =
-                    LoginPage.update subMsg pageModel
-            in
-            ( { model | page = LoginPage updatedPageModel }
-            , Cmd.map LoginPageMsg updatedCmd
-            )
-
         ( UserInformationPageMsg subMsg, UserInformationPage pageModel ) ->
             let
                 ( updatedPageModel, updatedCmd ) =
@@ -262,6 +241,24 @@ update msg model =
             in
             ( { model | route = newRoute }, Cmd.none )
                 |> initCurrentPage
+
+        ( TryLogin, _ ) ->
+            ( model, login model )
+
+        ( LoginSucceded user, _ ) ->
+            case user of
+                RemoteData.Success actualuser ->
+                    ( { model | username = "", password = "", loggedIn = True, route = Route.UserInformationPage, user = actualuser }, Cmd.none )
+                        |> initCurrentPage
+
+                _ ->
+                    ( model, Cmd.none )
+
+        ( UsernameChange username, _ ) ->
+            ( { model | username = username }, Cmd.none )
+
+        ( PasswordChange password, _ ) ->
+            ( { model | password = password }, Cmd.none )
 
         ( _, _ ) ->
             ( model, Cmd.none )
