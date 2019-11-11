@@ -29,6 +29,7 @@ type Msg
     | FeedbackSubmitted (WebData Feedback)
     | SubmitFeedback
     | FeedbackReceived (WebData (List Feedback))
+    | Subscribe
 
 
 init : User -> Int -> ( Model, Cmd Msg )
@@ -78,6 +79,20 @@ submitFeedback model =
         , tracker = Nothing
         }
 
+subscribe : Model -> Cmd Msg
+subscribe model =     
+    Http.request
+        { method = "POST"
+        , body = Http.emptyBody
+        , headers = []
+        , expect =
+            feedbackDecoder
+                |> Http.expectJson (RemoteData.fromResult >> FeedbackSubmitted)
+        , url = "http://localhost:8080/iotdevices/rest/subscription/" ++ String.fromInt model.deviceId ++ "/1"
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -97,6 +112,9 @@ update msg model =
         FeedbackChanged changedFeedback ->
             ( { model | newFeedback = changedFeedback }, Cmd.none )
 
+        Subscribe ->
+            ( model, subscribe model)
+
 
 encodeFeedback : Model -> Value
 encodeFeedback model =
@@ -106,6 +124,10 @@ encodeFeedback model =
     in
     feedbacklist
         |> object
+
+
+subscribeButton : Html Msg
+subscribeButton = button [ onClick Subscribe, class "submitButton"] [ text "Subscribe" ]
 
 
 
@@ -134,12 +156,12 @@ submitButton model =
 view : Model -> Html Msg
 view model =
     div []
-        [ viewDevice model.device model.feedback (giveFeedback model)
+        [ viewDevice model.device model.feedback (giveFeedback model) subscribeButton
         ]
 
 
-viewDevice : WebData Device -> WebData (List Feedback) -> Html Msg -> Html Msg
-viewDevice device feedback feedbackform =
+viewDevice : WebData Device -> WebData (List Feedback) -> Html Msg -> Html Msg -> Html Msg
+viewDevice device feedback feedbackform subBtn =
     case ( device, feedback ) of
         ( RemoteData.NotAsked, _ ) ->
             text ""
@@ -148,7 +170,7 @@ viewDevice device feedback feedbackform =
             h3 [] [ text "Loading..." ]
 
         ( RemoteData.Success actualDevice, RemoteData.Success actualFeedback ) ->
-            deviceInformation actualDevice actualFeedback feedbackform
+            deviceInformation actualDevice actualFeedback feedbackform subBtn
 
         ( RemoteData.Failure httpError, _ ) ->
             viewFetchError (buildErrorMessage httpError)

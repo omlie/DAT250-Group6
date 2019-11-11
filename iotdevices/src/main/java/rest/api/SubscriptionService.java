@@ -76,9 +76,9 @@ public class SubscriptionService {
 
     @POST
     @Transactional
-    @Path("{id}")
+    @Path("{id}/{userid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addSubscriber(@HeaderParam("userId") int userId, @PathParam("id") String deviceId) {
+    public Response addSubscriber(@PathParam("userid") int userId, @PathParam("id") String deviceId) {
         int idInt = Integer.parseInt(deviceId);
         userDao.addSubscriber(idInt, userId);
         return Response.ok().build();
