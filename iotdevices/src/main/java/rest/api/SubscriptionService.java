@@ -1,20 +1,17 @@
 package rest.api;
 
-import ejb.DeviceDao;
 import ejb.SubscriptionDao;
 import ejb.UserDao;
 import entities.Subscription;
-import entities.User;
+import rest.models.SubscriptionStatus;
 
 import javax.ejb.EJB;
-import javax.ejb.PostActivate;
+import javax.ejb.EJBException;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/subscription")
 public class SubscriptionService {
@@ -65,6 +62,37 @@ public class SubscriptionService {
         }
     }
 
+    @GET
+    @Path("pending/{userid}/{deviceid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSubscription(@PathParam("deviceid") int deviceid, @PathParam("userid") int userid){
+        try {
+            Subscription s = subDao.getSubscription(deviceid, userid);
+            return Response.ok(s).build();
+        } catch (NotFoundException e){
+            return Response.status(404).entity("No subscription").build();
+        }
+    }
+
+    @GET
+    @Path("status/{deviceid}/{userid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSubscriptionStatus(@PathParam("deviceid") int deviceid, @PathParam("userid") int userid){
+        SubscriptionStatus subStatus = new SubscriptionStatus();
+        String status = "none";
+        try {
+            Subscription s = subDao.getSubscription(deviceid, userid);
+            if(s.isApprovedSubscription())
+                status = "approved";
+            else if(s.isDeniedSubscription())
+                status = "denied";
+            else
+                status = "pending";
+        } catch (EJBException ignored){
+        }
+        subStatus.subscriptionStatus = status;
+        return Response.ok(subStatus).build();
+    }
 
     @GET
     @Path("{id}/subscribedDevices")
