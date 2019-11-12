@@ -2,6 +2,7 @@ module Page.DeviceInformationPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
 import Api.Feedback exposing (Feedback, feedbackDecoder, feedbackListDecoder)
+import Api.Subscription exposing (SubscriptionStatus, subscriptionStatusDecoder)
 import Api.User exposing (User)
 import Html exposing (Html, button, div, h3, input, text)
 import Html.Attributes exposing (class, value)
@@ -20,6 +21,7 @@ type alias Model =
     , newFeedback : String
     , response : WebData Feedback
     , user : User
+    , subscriptionStatus : WebData SubscriptionStatus
     }
 
 
@@ -29,6 +31,10 @@ type Msg
     | FeedbackSubmitted (WebData Feedback)
     | SubmitFeedback
     | FeedbackReceived (WebData (List Feedback))
+    | Subscribe
+    | Unsubscribe
+    | SubscriptionStatusReceived (WebData SubscriptionStatus)
+    | SubscriptionAction (Result Http.Error ())
 
 
 init : User -> Int -> ( Model, Cmd Msg )
@@ -39,6 +45,7 @@ init user deviceId =
       , feedback = RemoteData.NotAsked
       , newFeedback = ""
       , response = RemoteData.NotAsked
+      , subscriptionStatus = RemoteData.NotAsked
       }
     , fetchDevice deviceId
     )
@@ -79,6 +86,42 @@ submitFeedback model =
         }
 
 
+subscribe : Model -> Cmd Msg
+subscribe model =
+    Http.request
+        { method = "POST"
+        , body = Http.emptyBody
+        , headers = []
+        , expect = Http.expectWhatever SubscriptionAction
+        , url = "http://localhost:8080/iotdevices/rest/subscription/" ++ String.fromInt model.deviceId ++ "/" ++ String.fromInt model.user.id
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+unsubscribe : Model -> Cmd Msg
+unsubscribe model =
+    Http.request
+        { method = "POST"
+        , body = Http.emptyBody
+        , headers = []
+        , expect = Http.expectWhatever SubscriptionAction
+        , url = "http://localhost:8080/iotdevices/rest/subscription/unsubscribe/" ++ String.fromInt model.deviceId ++ "/" ++ String.fromInt model.user.id
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+getSubscriptionStatus : Model -> Cmd Msg
+getSubscriptionStatus model =
+    Http.get
+        { url = "http://localhost:8080/iotdevices/rest/subscription/status/" ++ String.fromInt model.deviceId ++ "/" ++ String.fromInt model.user.id
+        , expect =
+            subscriptionStatusDecoder
+                |> Http.expectJson (RemoteData.fromResult >> SubscriptionStatusReceived)
+        }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -86,7 +129,10 @@ update msg model =
             ( { model | device = response, feedback = RemoteData.Loading }, fetchFeedback model.deviceId )
 
         FeedbackReceived response ->
-            ( { model | feedback = response }, Cmd.none )
+            ( { model | feedback = response, subscriptionStatus = RemoteData.Loading }, getSubscriptionStatus model )
+
+        SubscriptionStatusReceived response ->
+            ( { model | subscriptionStatus = response }, Cmd.none )
 
         FeedbackSubmitted _ ->
             ( model, fetchFeedback model.deviceId )
@@ -96,6 +142,15 @@ update msg model =
 
         FeedbackChanged changedFeedback ->
             ( { model | newFeedback = changedFeedback }, Cmd.none )
+
+        Subscribe ->
+            ( model, subscribe model )
+
+        Unsubscribe ->
+            ( model, unsubscribe model )
+
+        SubscriptionAction _ ->
+            ( model, getSubscriptionStatus model )
 
 
 encodeFeedback : Model -> Value
@@ -110,6 +165,27 @@ encodeFeedback model =
 
 
 -- VIEWS
+
+
+subscribeButton : Model -> Html Msg
+subscribeButton model =
+    case model.subscriptionStatus of
+        RemoteData.Success statusMessage ->
+            case statusMessage.status of
+                "none" ->
+                    button [ onClick Subscribe, class "submitButton" ] [ text "Subscribe" ]
+
+                "Approved" ->
+                    button [ onClick Unsubscribe, class "submitButton" ] [ text "Unsubscribe" ]
+
+                _ ->
+                    h3 [] [ text statusMessage.status ]
+
+        RemoteData.Failure httpError ->
+            viewFetchError (buildErrorMessage httpError)
+
+        _ ->
+            h3 [] [ text "Loading..." ]
 
 
 giveFeedback : Model -> Html Msg
@@ -134,12 +210,12 @@ submitButton model =
 view : Model -> Html Msg
 view model =
     div []
-        [ viewDevice model.device model.feedback (giveFeedback model)
+        [ viewDevice model.device model.feedback (giveFeedback model) (subscribeButton model)
         ]
 
 
-viewDevice : WebData Device -> WebData (List Feedback) -> Html Msg -> Html Msg
-viewDevice device feedback feedbackform =
+viewDevice : WebData Device -> WebData (List Feedback) -> Html Msg -> Html Msg -> Html Msg
+viewDevice device feedback feedbackform subBtn =
     case ( device, feedback ) of
         ( RemoteData.NotAsked, _ ) ->
             text ""
@@ -148,7 +224,7 @@ viewDevice device feedback feedbackform =
             h3 [] [ text "Loading..." ]
 
         ( RemoteData.Success actualDevice, RemoteData.Success actualFeedback ) ->
-            deviceInformation actualDevice actualFeedback feedbackform
+            deviceInformation actualDevice actualFeedback feedbackform subBtn
 
         ( RemoteData.Failure httpError, _ ) ->
             viewFetchError (buildErrorMessage httpError)

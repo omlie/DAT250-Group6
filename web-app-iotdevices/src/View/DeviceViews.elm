@@ -34,13 +34,14 @@ deviceListItem device =
         ]
 
 
-deviceInformation : Device -> List Feedback -> Html msg -> Html msg
-deviceInformation device feedback feedbackform =
+deviceInformation : Device -> List Feedback -> Html msg -> Html msg -> Html msg
+deviceInformation device feedback feedbackform subscribeButton =
     div [ class "content" ]
         [ div [ class "deviceInformationWrapper" ]
             [ img [ class "deviceImage", src device.deviceImg ] []
             , div [ class "deviceInformation" ]
-                [ h2 [] [ text device.deviceName ]
+                [ subscribeButton
+                , h2 [] [ text device.deviceName ]
                 , span [] [ text device.status ]
                 , span [] [ text ("API URL: " ++ device.apiUrl) ]
                 , feedbackform

@@ -151,6 +151,7 @@ public class UserDao {
         Set<Subscription> subscriptions = user.getSubscriptions();
 
         return subscriptions.stream()
+                .filter(Subscription::isApprovedSubscription)
                 .map(Subscription::getDevice)
                 .collect(Collectors.toList());
     }
