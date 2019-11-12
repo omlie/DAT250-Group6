@@ -92,7 +92,7 @@ subscribe model =
         , expect =
             feedbackDecoder
                 |> Http.expectJson (RemoteData.fromResult >> FeedbackSubmitted)
-        , url = "http://localhost:8080/iotdevices/rest/subscription/" ++ String.fromInt model.deviceId ++ "/1"
+        , url = "http://localhost:8080/iotdevices/rest/subscription/" ++ String.fromInt model.deviceId ++ "/" ++ String.fromInt model.user.id
         , timeout = Nothing
         , tracker = Nothing
         }
@@ -100,7 +100,7 @@ subscribe model =
 getSubscriptionStatus : Model -> Cmd Msg
 getSubscriptionStatus model = 
     Http.get
-        { url = "http://localhost:8080/iotdevices/rest/subscription/status/" ++ String.fromInt model.deviceId ++ "/1"
+        { url = "http://localhost:8080/iotdevices/rest/subscription/status/" ++ String.fromInt model.deviceId ++ "/" ++ String.fromInt model.user.id
         , expect =
             subscriptionStatusDecoder
                 |> Http.expectJson ( RemoteData.fromResult >> SubscriptionStatusReceived )

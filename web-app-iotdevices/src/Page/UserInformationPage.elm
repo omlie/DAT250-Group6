@@ -45,7 +45,8 @@ init user =
         Cmd.batch 
             [ fetchOwnedDevices user
             , fetchSubscribedDevices user
-            , fetchPendingSubscriptions 
+            , fetchPendingSubscriptions user
+            , getPendingRequests user
             ] 
     )
 
@@ -70,11 +71,11 @@ fetchSubscribedDevices user =
         }
 
 
-fetchPendingSubscriptions : Cmd Msg
-fetchPendingSubscriptions =
+fetchPendingSubscriptions : User -> Cmd Msg
+fetchPendingSubscriptions user =
     Http.get
         {
-            url = "http://localhost:8080/iotdevices/rest/subscription/pending/1"
+            url = "http://localhost:8080/iotdevices/rest/subscription/pending/" ++ String.fromInt user.id
             , expect =
                 subscriptionsDecoder
                     |> Http.expectJson ( RemoteData.fromResult >> PendingSubscritpionsReceived )
@@ -106,11 +107,11 @@ approveSubscription sub =
             , tracker = Nothing
             }
 
-getPendingRequests : Cmd Msg
-getPendingRequests =
+getPendingRequests : User -> Cmd Msg
+getPendingRequests user =
     Http.get 
     {
-        url = "http://localhost:8080/iotdevices/rest/subscription/mypending/1"
+        url = "http://localhost:8080/iotdevices/rest/subscription/mypending/" ++ String.fromInt user.id
         , expect =
             devicesDecoder
                 |> Http.expectJson ( RemoteData.fromResult >> MyRequestsReceived )
@@ -127,7 +128,7 @@ update msg model =
             ( { model | subscribedDevices = response }, Cmd.none )
 
         PendingSubscritpionsReceived response ->
-            ( { model | pendingSubscriptions = response } , getPendingRequests )
+            ( { model | pendingSubscriptions = response } , Cmd.none )
 
         MyRequestsReceived response -> 
             ( {model | myPending = response }, Cmd.none )
@@ -139,7 +140,7 @@ update msg model =
             ( model, approveSubscription sub )
 
         PendingAction _ ->
-            ( model, fetchPendingSubscriptions )
+            ( model, fetchPendingSubscriptions model.user )
 
 
 -- VIEWS
