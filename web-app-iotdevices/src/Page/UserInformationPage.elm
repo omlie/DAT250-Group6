@@ -2,7 +2,10 @@ module Page.UserInformationPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, devicesDecoder)
 import Api.User exposing (User)
-import Html exposing (Html, div, h3, text)
+import Api.Subscription exposing (Subscription, subscriptionsDecoder)
+import Html exposing (Html, div, h3, text, button)
+import Html.Events exposing (onClick)
+import Html.Attributes exposing (class)
 import Http
 import RemoteData exposing (WebData)
 import View.DeviceViews exposing (deviceList)
@@ -14,17 +17,23 @@ type alias Model =
     { user : User
     , ownedDevices : WebData (List Device)
     , subscribedDevices : WebData (List Device)
+    , pendingSubscriptions : WebData (List Subscription)
     }
 
 
 type Msg
     = OwnedDevicesReceived (WebData (List Device))
     | SubscribedDevicesReceived (WebData (List Device))
+    | PendingSubscritpionsReceived (WebData (List Subscription))
+    | DenyPending Subscription
+    | ApprovePending Subscription
+    | PendingAction (Result Http.Error ())
 
 
 init : User -> ( Model, Cmd Msg )
 init user =
-    ( { user = user, ownedDevices = RemoteData.Loading, subscribedDevices = RemoteData.Loading }, Cmd.batch [ fetchOwnedDevices user, fetchSubscribedDevices user ] )
+    ( { user = user, ownedDevices = RemoteData.Loading, subscribedDevices = RemoteData.Loading, pendingSubscriptions = RemoteData.NotAsked }, Cmd.batch [ fetchOwnedDevices user, fetchSubscribedDevices user ] )
+
 
 
 fetchOwnedDevices : User -> Cmd Msg
@@ -47,6 +56,42 @@ fetchSubscribedDevices user =
         }
 
 
+fetchPendingSubscriptions : Cmd Msg
+fetchPendingSubscriptions =
+    Http.get
+        {
+            url = "http://localhost:8080/iotdevices/rest/subscription/pending/1"
+            , expect =
+                subscriptionsDecoder
+                    |> Http.expectJson ( RemoteData.fromResult >> PendingSubscritpionsReceived )
+            
+        }
+
+
+denySubscription : Subscription -> Cmd Msg
+denySubscription sub = 
+        Http.request
+        { method = "POST"
+        , body = Http.emptyBody
+        , headers = []
+        , expect = Http.expectWhatever PendingAction
+        , url = "http://localhost:8080/iotdevices/rest/subscription/deny/" ++ String.fromInt sub.device.id ++ "/" ++ String.fromInt sub.user.id
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+approveSubscription : Subscription -> Cmd Msg
+approveSubscription sub = 
+        Http.request
+        { method = "POST"
+        , body = Http.emptyBody
+        , headers = []
+        , expect = Http.expectWhatever PendingAction
+        , url = "http://localhost:8080/iotdevices/rest/subscription/approve/" ++ String.fromInt sub.device.id ++ "/" ++ String.fromInt sub.user.id
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -54,12 +99,22 @@ update msg model =
             ( { model | ownedDevices = response }, Cmd.none )
 
         SubscribedDevicesReceived response ->
-            ( { model | subscribedDevices = response }, Cmd.none )
+            ( { model | subscribedDevices = response }, fetchPendingSubscriptions )
 
+        PendingSubscritpionsReceived response ->
+            ( { model | pendingSubscriptions = response } , Cmd.none )
+
+        DenyPending sub -> 
+            ( model , denySubscription sub )
+        
+        ApprovePending sub ->
+            ( model, approveSubscription sub )
+
+        PendingAction _ ->
+            ( model, fetchPendingSubscriptions )
 
 
 -- VIEWS
-
 
 view : Model -> Html Msg
 view model =
@@ -67,7 +122,49 @@ view model =
         [ viewUser model.user
         , viewDevices "Owned devices" model.ownedDevices
         , viewDevices "Subscribed devices" model.subscribedDevices
+        , viewPending model.pendingSubscriptions
         ]
+
+
+pendingList : String -> List Subscription -> Html Msg
+pendingList heading pendingSubscriptions =
+    case pendingSubscriptions of
+        [] ->
+            div []
+                [ h3 [] [ text heading ]
+                , text "No pending subscriptions"
+                ]
+
+        _ ->
+            div [ class "deviceList" ]
+                [ h3 [] [ text heading ]
+                , div []
+                    (List.map pendingListItem pendingSubscriptions)
+                ]
+
+
+pendingListItem : Subscription -> Html Msg
+pendingListItem pendingSubscription =
+        div [ class "deviceListItem" ]
+            [ div [ class "deviceListColumn" ] [ text pendingSubscription.device.deviceName ]
+            , div [ class "deviceListColumn" ] [ text pendingSubscription.user.username ]
+            , button [ class "deviceListColumn", onClick (ApprovePending pendingSubscription) ] [ text "APPROVE" ]
+            , button [ class "deviceListColumn", onClick  (DenyPending pendingSubscription) ] [ text "DENY"]
+            ]
+
+viewPending : WebData (List Subscription) -> Html Msg
+viewPending pending = 
+    case pending of 
+        RemoteData.NotAsked ->
+            text ""
+        RemoteData.Loading ->
+            h3 [] [ text "Loading..." ]
+
+        RemoteData.Success actualPending ->
+            pendingList "Pending" actualPending
+
+        RemoteData.Failure httpError ->
+           viewFetchError (buildErrorMessage httpError)
 
 
 viewUser : User -> Html Msg

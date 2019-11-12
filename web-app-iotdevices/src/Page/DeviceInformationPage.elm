@@ -103,8 +103,9 @@ getSubscriptionStatus model =
         { url = "http://localhost:8080/iotdevices/rest/subscription/status/" ++ String.fromInt model.deviceId ++ "/1"
         , expect =
             subscriptionStatusDecoder
-                |> Http.expectJson (RemoteData.fromResult >> SubscriptionStatusReceived)
+                |> Http.expectJson ( RemoteData.fromResult >> SubscriptionStatusReceived )
         }
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
