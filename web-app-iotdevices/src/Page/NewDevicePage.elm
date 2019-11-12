@@ -1,7 +1,8 @@
 module Page.NewDevicePage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
-import Browser.Navigation exposing (load)
+import Api.User exposing (User)
+import Browser.Navigation exposing (Key, pushUrl)
 import Html exposing (Html, button, div, input, option, select, text)
 import Html.Attributes exposing (class, placeholder, value)
 import Html.Events exposing (onClick, onInput)
@@ -17,6 +18,7 @@ type alias Model =
     , status : Int
     , labels : List String
     , ownerId : Int
+    , navKey : Key
     }
 
 
@@ -29,14 +31,15 @@ type Msg
     | DeviceAdded (WebData Device)
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Key -> User -> ( Model, Cmd Msg )
+init key user =
     ( { devicename = ""
       , deviceimg = ""
       , apiurl = ""
       , status = 0
       , labels = []
-      , ownerId = 1
+      , ownerId = user.id
+      , navKey = key
       }
     , Cmd.none
     )
@@ -61,17 +64,17 @@ update msg model =
             ( model, addDevice model )
 
         DeviceAdded response ->
-            ( model, redirect response )
+            ( model, redirect model.navKey response )
 
 
-redirect : WebData Device -> Cmd Msg
-redirect device =
+redirect : Key -> WebData Device -> Cmd Msg
+redirect key device =
     case device of
         RemoteData.Success actualdevice ->
-            load ("http://localhost:8000/device/" ++ String.fromInt actualdevice.id)
+            pushUrl key ("http://localhost:8000/device/" ++ String.fromInt actualdevice.id)
 
         _ ->
-            load "http://localhost:8000/mypage"
+            pushUrl key "http://localhost:8000/mypage"
 
 
 addDevice : Model -> Cmd Msg
@@ -121,8 +124,6 @@ viewForm model =
         , input [ placeholder "Device image URL", model.deviceimg |> value, onInput DeviceImageChange ] []
         , input [ placeholder "API URL", model.apiurl |> value, onInput ApiUrlChange ] []
         , statusRadioButtons
-
-        -- , input [ placeholder "Status", model.status |> value, onInput StatusChange ] []
         , button [ class "submitbutton", onClick AddDevice ] [ text "Add device" ]
         ]
 

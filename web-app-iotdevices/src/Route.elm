@@ -10,6 +10,7 @@ type Route
     | DeviceListPage
     | NewDevicePage
     | DeviceInformationPage Int
+    | LogoutPage
 
 
 parseUrl : Url -> Route
@@ -31,4 +32,5 @@ matchRoute =
         , map DeviceListPage (s "devices")
         , map NewDevicePage (s "device" </> s "add")
         , map NotFound (s "not-found")
+        , map LogoutPage (s "logout")
         ]

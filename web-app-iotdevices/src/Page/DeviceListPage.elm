@@ -1,6 +1,7 @@
 module Page.DeviceListPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, devicesDecoder)
+import Api.User exposing (User)
 import Html exposing (Html, div, h3, input, text)
 import Html.Attributes exposing (class, placeholder, value)
 import Html.Events exposing (onInput)
@@ -13,6 +14,7 @@ import View.ErrorViews exposing (buildErrorMessage, viewFetchError)
 type alias Model =
     { devices : WebData (List Device)
     , searchBarContent : String
+    , user : User
     }
 
 
@@ -21,9 +23,9 @@ type Msg
     | SearchDevice String
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( { devices = RemoteData.Loading, searchBarContent = "" }, fetchDevices )
+init : User -> ( Model, Cmd Msg )
+init user =
+    ( { user = user, devices = RemoteData.Loading, searchBarContent = "" }, fetchDevices )
 
 
 fetchDevices : Cmd Msg

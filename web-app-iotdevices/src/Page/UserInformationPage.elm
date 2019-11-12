@@ -1,7 +1,7 @@
 module Page.UserInformationPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, devicesDecoder)
-import Api.User exposing (User, userDecoder)
+import Api.User exposing (User)
 import Html exposing (Html, div, h3, text)
 import Http
 import RemoteData exposing (WebData)
@@ -11,47 +11,36 @@ import View.UserInfoViews exposing (viewUserInformation)
 
 
 type alias Model =
-    { user : WebData User
+    { user : User
     , ownedDevices : WebData (List Device)
     , subscribedDevices : WebData (List Device)
     }
 
 
 type Msg
-    = UserReceived (WebData User)
-    | OwnedDevicesReceived (WebData (List Device))
+    = OwnedDevicesReceived (WebData (List Device))
     | SubscribedDevicesReceived (WebData (List Device))
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( { user = RemoteData.Loading, ownedDevices = RemoteData.Loading, subscribedDevices = RemoteData.Loading }, fetchUser )
+init : User -> ( Model, Cmd Msg )
+init user =
+    ( { user = user, ownedDevices = RemoteData.Loading, subscribedDevices = RemoteData.Loading }, Cmd.batch [ fetchOwnedDevices user, fetchSubscribedDevices user ] )
 
 
-fetchUser : Cmd Msg
-fetchUser =
+fetchOwnedDevices : User -> Cmd Msg
+fetchOwnedDevices user =
     Http.get
-        { url = "http://localhost:8080/iotdevices/rest/users/1"
-        , expect =
-            userDecoder
-                |> Http.expectJson (RemoteData.fromResult >> UserReceived)
-        }
-
-
-fetchOwnedDevices : Cmd Msg
-fetchOwnedDevices =
-    Http.get
-        { url = "http://localhost:8080/iotdevices/rest/users/1/devices"
+        { url = "http://localhost:8080/iotdevices/rest/users/" ++ String.fromInt user.id ++ "/devices"
         , expect =
             devicesDecoder
                 |> Http.expectJson (RemoteData.fromResult >> OwnedDevicesReceived)
         }
 
 
-fetchSubscribedDevices : Cmd Msg
-fetchSubscribedDevices =
+fetchSubscribedDevices : User -> Cmd Msg
+fetchSubscribedDevices user =
     Http.get
-        { url = "http://localhost:8080/iotdevices/rest/subscription/1/subscribedDevices"
+        { url = "http://localhost:8080/iotdevices/rest/subscription/" ++ String.fromInt user.id ++ "/subscribedDevices"
         , expect =
             devicesDecoder
                 |> Http.expectJson (RemoteData.fromResult >> SubscribedDevicesReceived)
@@ -61,11 +50,8 @@ fetchSubscribedDevices =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        UserReceived response ->
-            ( { model | user = response }, fetchOwnedDevices )
-
         OwnedDevicesReceived response ->
-            ( { model | ownedDevices = response }, fetchSubscribedDevices )
+            ( { model | ownedDevices = response }, Cmd.none )
 
         SubscribedDevicesReceived response ->
             ( { model | subscribedDevices = response }, Cmd.none )
@@ -84,20 +70,9 @@ view model =
         ]
 
 
-viewUser : WebData User -> Html Msg
+viewUser : User -> Html Msg
 viewUser user =
-    case user of
-        RemoteData.NotAsked ->
-            text ""
-
-        RemoteData.Loading ->
-            h3 [] [ text "Loading..." ]
-
-        RemoteData.Success actualUser ->
-            viewUserInformation actualUser
-
-        RemoteData.Failure httpError ->
-            viewFetchError (buildErrorMessage httpError)
+    viewUserInformation user
 
 
 viewDevices : String -> WebData (List Device) -> Html Msg

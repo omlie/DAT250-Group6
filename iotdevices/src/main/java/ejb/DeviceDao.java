@@ -40,7 +40,10 @@ public class DeviceDao {
     }
 
     public void createDevice(Device d){
+        User user = d.getOwner();
+        user.addOwnedDevice(d);
         em.persist(d);
+        em.merge(user);
     }
 
     /**
