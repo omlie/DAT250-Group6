@@ -4,7 +4,7 @@ import AccessToken exposing (setToken)
 import Api.User exposing (User, userDecoder)
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation as Nav
-import Html exposing (Html, button, div, input, text)
+import Html exposing (Html, button, div, input, span, text)
 import Html.Attributes exposing (class, placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Http
@@ -201,31 +201,39 @@ currentView model =
 
     else if model.register then
         div [ class "form" ]
-            [ input
-                [ placeholder "Username"
-                , model.username |> value
-                , onInput UsernameChange
+            [ span []
+                [ input
+                    [ placeholder "Username"
+                    , model.username |> value
+                    , onInput UsernameChange
+                    ]
+                    []
                 ]
-                []
-            , input
-                [ placeholder "First name"
-                , model.firstname |> value
-                , onInput FirstnameChange
+            , span []
+                [ input
+                    [ placeholder "First name"
+                    , model.firstname |> value
+                    , onInput FirstnameChange
+                    ]
+                    []
                 ]
-                []
-            , input
-                [ placeholder "Last name"
-                , model.lastname |> value
-                , onInput LastnameChange
+            , span []
+                [ input
+                    [ placeholder "Last name"
+                    , model.lastname |> value
+                    , onInput LastnameChange
+                    ]
+                    []
                 ]
-                []
-            , input
-                [ placeholder "Password"
-                , type_ "password"
-                , model.password |> value
-                , onInput PasswordChange
+            , span []
+                [ input
+                    [ placeholder "Password"
+                    , type_ "password"
+                    , model.password |> value
+                    , onInput PasswordChange
+                    ]
+                    []
                 ]
-                []
             , div [ class "buttonrow" ]
                 [ button [ class "submitbutton", onClick TryRegister ] [ text "Register" ]
                 , button [ class "submitbutton", onClick (Register False) ] [ text "Login" ]
@@ -234,19 +242,23 @@ currentView model =
 
     else
         div [ class "form" ]
-            [ input
-                [ placeholder "Username"
-                , model.username |> value
-                , onInput UsernameChange
+            [ span []
+                [ input
+                    [ placeholder "Username"
+                    , model.username |> value
+                    , onInput UsernameChange
+                    ]
+                    []
                 ]
-                []
-            , input
-                [ placeholder "Password"
-                , type_ "password"
-                , model.password |> value
-                , onInput PasswordChange
+            , span []
+                [ input
+                    [ placeholder "Password"
+                    , type_ "password"
+                    , model.password |> value
+                    , onInput PasswordChange
+                    ]
+                    []
                 ]
-                []
             , div [ class "buttonrow" ]
                 [ button [ class "submitbutton", onClick TryLogin ] [ text "Login" ]
                 , button [ class "submitbutton", onClick (Register True) ] [ text "Register" ]
