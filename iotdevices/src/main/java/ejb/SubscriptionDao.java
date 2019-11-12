@@ -72,6 +72,17 @@ public class SubscriptionDao {
         return q;
     }
 
+    public List<Device> getPendingDevices(int userid){
+        List<Subscription> q =
+                em.createQuery("select s from Subscription s where s.user.id=?1 and s.isApprovedSubscription=false and s.isDeniedSubscription=false", Subscription.class)
+                        .setParameter(1, userid)
+                        .getResultList();
+        List<Device> d = new ArrayList<>();
+        for (Subscription s : q)
+            d.add(s.getDevice());
+        return d;
+    }
+
     public List<Subscription> getPendingToOwned(int userid){
         User user = em.find(User.class, userid);
         List<Device> owned = user.getOwnedDevices();

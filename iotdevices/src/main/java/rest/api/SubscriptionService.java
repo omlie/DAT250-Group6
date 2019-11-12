@@ -3,6 +3,7 @@ package rest.api;
 import ejb.DeviceDao;
 import ejb.SubscriptionDao;
 import ejb.UserDao;
+import entities.Device;
 import entities.Subscription;
 import rest.models.SubscriptionStatus;
 
@@ -59,6 +60,18 @@ public class SubscriptionService {
     public Response pendingSubscribers(@PathParam("userid") int userid) {
         try {
             List<Subscription> subs = subDao.getPendingToOwned(userid);
+            return Response.ok(subs).build();
+        } catch (Exception e) {
+            return Response.status(404).entity( "Unknown error").build();
+        }
+    }
+
+    @GET
+    @Path("mypending/{userid}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response myPendingSubscribers(@PathParam("userid") int userid) {
+        try {
+            List<Device> subs = subDao.getPendingDevices(userid);
             return Response.ok(subs).build();
         } catch (Exception e) {
             return Response.status(404).entity( "Unknown error").build();
