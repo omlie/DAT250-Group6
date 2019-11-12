@@ -1,9 +1,10 @@
-module Api.Subscription exposing (Subscription, subscriptionDecoder, subscriptionsDecoder, subscriptionStatusDecoder, SubscriptionStatus)
+module Api.Subscription exposing (Subscription, SubscriptionStatus, subscriptionDecoder, subscriptionStatusDecoder, subscriptionsDecoder)
 
 import Api.Device exposing (Device, deviceDecoder)
 import Api.User exposing (User, userDecoder)
-import Json.Decode as Decode exposing (Decoder, int, list, bool, string)
+import Json.Decode as Decode exposing (Decoder, bool, int, list, string)
 import Json.Decode.Pipeline exposing (required)
+
 
 type alias Subscription =
     { id : Int
@@ -13,7 +14,9 @@ type alias Subscription =
     , isDenied : Bool
     }
 
-type alias SubscriptionStatus = { status : String}
+
+type alias SubscriptionStatus =
+    { status : String }
 
 
 subscriptionsDecoder : Decoder (List Subscription)
@@ -29,6 +32,7 @@ subscriptionDecoder =
         |> required "device" deviceDecoder
         |> required "approvedSubscription" bool
         |> required "deniedSubscription" bool
+
 
 subscriptionStatusDecoder : Decoder SubscriptionStatus
 subscriptionStatusDecoder =

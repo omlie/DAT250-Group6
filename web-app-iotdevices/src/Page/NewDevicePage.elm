@@ -1,4 +1,4 @@
-module Page.NewDevicePage exposing (Model, Msg, init, update, view, encodeDevice)
+module Page.NewDevicePage exposing (Model, Msg, encodeDevice, init, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
 import Api.User exposing (User)

@@ -40,7 +40,7 @@ deviceInformation device feedback feedbackform subscribeButton =
         [ div [ class "deviceInformationWrapper" ]
             [ img [ class "deviceImage", src device.deviceImg ] []
             , div [ class "deviceInformation" ]
-                [ subscribeButton 
+                [ subscribeButton
                 , h2 [] [ text device.deviceName ]
                 , span [] [ text device.status ]
                 , span [] [ text ("API URL: " ++ device.apiUrl) ]
