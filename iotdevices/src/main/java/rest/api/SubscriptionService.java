@@ -5,6 +5,7 @@ import ejb.SubscriptionDao;
 import ejb.UserDao;
 import entities.Device;
 import entities.Subscription;
+import rest.models.DeviceModificationRequest;
 import rest.models.SubscriptionStatus;
 
 import javax.ejb.EJB;

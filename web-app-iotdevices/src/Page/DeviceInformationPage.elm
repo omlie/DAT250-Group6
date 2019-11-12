@@ -32,7 +32,9 @@ type Msg
     | SubmitFeedback
     | FeedbackReceived (WebData (List Feedback))
     | Subscribe
+    | Unsubscribe
     | SubscriptionStatusReceived (WebData SubscriptionStatus)
+    | SubscriptionAction (Result Http.Error ())
 
 
 init : User -> Int -> ( Model, Cmd Msg )
@@ -89,10 +91,20 @@ subscribe model =
         { method = "POST"
         , body = Http.emptyBody
         , headers = []
-        , expect =
-            feedbackDecoder
-                |> Http.expectJson (RemoteData.fromResult >> FeedbackSubmitted)
+        , expect = Http.expectWhatever SubscriptionAction
         , url = "http://localhost:8080/iotdevices/rest/subscription/" ++ String.fromInt model.deviceId ++ "/" ++ String.fromInt model.user.id
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+unsubscribe : Model -> Cmd Msg
+unsubscribe model =     
+    Http.request
+        { method = "POST"
+        , body = Http.emptyBody
+        , headers = []
+        , expect = Http.expectWhatever SubscriptionAction
+        , url = "http://localhost:8080/iotdevices/rest/subscription/unsubscribe/" ++ String.fromInt model.deviceId ++ "/" ++ String.fromInt model.user.id
         , timeout = Nothing
         , tracker = Nothing
         }
@@ -129,7 +141,14 @@ update msg model =
             ( { model | newFeedback = changedFeedback }, Cmd.none )
 
         Subscribe ->
-            ( model, subscribe model)
+            ( model, subscribe model )
+
+        Unsubscribe ->
+            ( model, unsubscribe model )
+
+        SubscriptionAction _ ->
+            ( model, getSubscriptionStatus model)
+
 
 
 encodeFeedback : Model -> Value
@@ -150,6 +169,7 @@ subscribeButton model =
         RemoteData.Success statusMessage ->
             case statusMessage.status of 
                 "none" -> button [ onClick Subscribe, class "submitButton"] [ text "Subscribe" ]
+                "Approved" -> button [ onClick Unsubscribe, class "submitButton"] [ text "Unsubscribe" ]
                 _ -> h3 [] [text statusMessage.status]
         RemoteData.Failure httpError ->
             viewFetchError (buildErrorMessage httpError)
