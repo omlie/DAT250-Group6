@@ -141,20 +141,6 @@ public class DeviceService extends Application {
         }
     }
 
-    @POST
-    @Path("unsubscribe/{id}")
-    @Transactional
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response unsubscribe(DeviceModificationRequest request) {
-        try {
-            userDao.unsubscribe(request.userid, request.deviceid);
-            return Response.ok().build();
-        } catch (Exception e) {
-            return Response.status(404).entity("Could not unsubscribe from " + request.deviceid).build();
-        }
-    }
-
 
     @POST
     @Path("edit/{id}")

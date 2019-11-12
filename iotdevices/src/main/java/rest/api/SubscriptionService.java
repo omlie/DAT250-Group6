@@ -134,4 +134,18 @@ public class SubscriptionService {
         return Response.ok().build();
     }
 
+
+    @POST
+    @Path("unsubscribe/{deviceid}/{userid}")
+    @Transactional
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response unsubscribe(@PathParam("userid") int userid, @PathParam("deviceid") int deviceid) {
+        try {
+            userDao.unsubscribe(userid, deviceid);
+            return Response.ok().build();
+        } catch (Exception e) {
+            return Response.status(404).entity("Could not unsubscribe from " + deviceid).build();
+        }
+    }
+
 }
