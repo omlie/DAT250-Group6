@@ -2,7 +2,9 @@ package ejb;
 
 import javax.annotation.Resource;
 
+import entities.Device;
 import entities.Subscription;
+import entities.User;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -13,6 +15,7 @@ import javax.jms.Topic;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.ws.rs.NotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Stateless
@@ -56,7 +59,7 @@ public class SubscriptionDao {
                         .setParameter(2, userid)
                         .getResultList();
         if (q.isEmpty()) {
-            throw new NotFoundException();
+            return null;
         }
         return q.get(0);
     }
@@ -67,5 +70,19 @@ public class SubscriptionDao {
                         .setParameter(1, deviceid)
                         .getResultList();
         return q;
+    }
+
+    public List<Subscription> getPendingToOwned(int userid){
+        User user = em.find(User.class, userid);
+        List<Device> owned = user.getOwnedDevices();
+        List<Subscription> subs = new ArrayList<>();
+        for(Device d : owned) {
+            for (Subscription s : d.getSubscriptions()) {
+                if(!s.isDeniedSubscription() && !s.isApprovedSubscription()){
+                    subs.add(s);
+                }
+            }
+        }
+        return subs;
     }
 }

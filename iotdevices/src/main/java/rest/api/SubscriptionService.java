@@ -1,12 +1,12 @@
 package rest.api;
 
+import ejb.DeviceDao;
 import ejb.SubscriptionDao;
 import ejb.UserDao;
 import entities.Subscription;
 import rest.models.SubscriptionStatus;
 
 import javax.ejb.EJB;
-import javax.ejb.EJBException;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,6 +21,9 @@ public class SubscriptionService {
 
     @EJB
     private UserDao userDao;
+
+    @EJB
+    private DeviceDao deviceDao;
 
     @POST
     @Transactional
@@ -51,11 +54,11 @@ public class SubscriptionService {
     }
 
     @GET
-    @Path("pending/{deviceid}")
+    @Path("pending/{userid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response pendingSubscribers(@PathParam("deviceid") int deviceId) {
+    public Response pendingSubscribers(@PathParam("userid") int userid) {
         try {
-            List<Subscription> subs = subDao.getPending(deviceId);
+            List<Subscription> subs = subDao.getPendingToOwned(userid);
             return Response.ok(subs).build();
         } catch (Exception e) {
             return Response.status(404).entity( "Unknown error").build();
@@ -81,15 +84,21 @@ public class SubscriptionService {
         SubscriptionStatus subStatus = new SubscriptionStatus();
         String status = "none";
         try {
+            if (deviceDao.getDeviceById(deviceid).getOwner().getId() == userid)
+                status = "Owner";
+
             Subscription s = subDao.getSubscription(deviceid, userid);
-            if(s.isApprovedSubscription())
-                status = "approved";
-            else if(s.isDeniedSubscription())
-                status = "denied";
-            else
-                status = "pending";
-        } catch (EJBException ignored){
+            if(s != null)
+                if(s.isApprovedSubscription())
+                    status = "Approved";
+                else if(s.isDeniedSubscription())
+                    status = "Denied";
+                else
+                    status = "Pending";
+
+        } catch (Exception ignored){
         }
+
         subStatus.subscriptionStatus = status;
         return Response.ok(subStatus).build();
     }
