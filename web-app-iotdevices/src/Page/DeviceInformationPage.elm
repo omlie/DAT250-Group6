@@ -1,6 +1,7 @@
 module Page.DeviceInformationPage exposing (Model, Msg, init, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
+import Api.DeviceSubscribers exposing (DeviceSubscribers)
 import Api.Feedback exposing (Feedback, feedbackDecoder, feedbackListDecoder)
 import Api.Subscription exposing (SubscriptionStatus, subscriptionStatusDecoder)
 import Api.User exposing (User)
@@ -22,6 +23,7 @@ type alias Model =
     , response : WebData Feedback
     , user : User
     , subscriptionStatus : WebData SubscriptionStatus
+    , approvedSubscribers : WebData DeviceSubscribers
     }
 
 
@@ -46,6 +48,7 @@ init user deviceId =
       , newFeedback = ""
       , response = RemoteData.NotAsked
       , subscriptionStatus = RemoteData.NotAsked
+      , approvedSubscribers = RemoteData.NotAsked
       }
     , fetchDevice deviceId
     )
@@ -122,11 +125,21 @@ getSubscriptionStatus model =
         }
 
 
+getApprovedSubscribers : Model -> Cmd Msg
+getApprovedSubscribers model =
+    Http.get
+        { url = "http://localhost:8080/iotdevices/rest/devices/" ++ String.fromInt model.deviceId ++ "/approvedSubscribers"
+        , expect =
+            subscriptionStatusDecoder
+                |> Http.expectJson (RemoteData.fromResult >> SubscriptionStatusReceived)
+        }
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         DeviceReceived response ->
-            ( { model | device = response, feedback = RemoteData.Loading }, fetchFeedback model.deviceId )
+            ( { model | device = response, feedback = RemoteData.Loading }, Cmd.batch [ fetchFeedback model.deviceId, getApprovedSubscribers model ] )
 
         FeedbackReceived response ->
             ( { model | feedback = response, subscriptionStatus = RemoteData.Loading }, getSubscriptionStatus model )
@@ -190,11 +203,25 @@ subscribeButton model =
 
 giveFeedback : Model -> Html Msg
 giveFeedback model =
-    div [ class "feedbackForm" ]
-        [ h3 [] [ text "Provide feedback" ]
-        , input [ onInput FeedbackChanged, value model.newFeedback ] []
-        , submitButton model
-        ]
+    case model.approvedSubscribers of
+        RemoteData.Success subscribers ->
+            let
+                userHasApprovedSubscription =
+                    List.any (\subscriber -> subscriber == model.user) subscribers
+            in
+            if userHasApprovedSubscription then
+                div
+                    [ class "feedbackForm" ]
+                    [ h3 [] [ text "Provide feedback" ]
+                    , input [ onInput FeedbackChanged, value model.newFeedback ] []
+                    , submitButton model
+                    ]
+
+            else
+                text ""
+
+        _ ->
+            text ""
 
 
 submitButton : Model -> Html Msg

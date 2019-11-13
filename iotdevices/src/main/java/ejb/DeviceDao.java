@@ -76,6 +76,20 @@ public class DeviceDao {
                 .collect(Collectors.toList());
     }
 
+    public List<User> getApprovedSubscribers(int deviceId) {
+        Device device = em.find(Device.class, deviceId);
+        if (device == null)
+            throw new NotFoundException();
+
+        Set<Subscription> subscriptions = device.getSubscriptions();
+
+        return subscriptions
+                .stream()
+                .filter(Subscription::isApprovedSubscription)
+                .map(Subscription::getUser)
+                .collect(Collectors.toList());
+    }
+
     /**
      * Get the information related to a given subscription
      * @param deviceId
