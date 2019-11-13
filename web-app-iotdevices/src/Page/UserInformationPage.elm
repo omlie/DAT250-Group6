@@ -174,11 +174,11 @@ pendingList heading pendingSubscriptions =
 
 pendingListItem : Subscription -> Html Msg
 pendingListItem pendingSubscription =
-    div [ class "deviceListItem" ]
+    div [ class "deviceListItem noHover" ]
         [ div [ class "deviceListColumn" ] [ text pendingSubscription.device.deviceName ]
         , div [ class "deviceListColumn" ] [ text pendingSubscription.user.username ]
-        , button [ class "deviceListColumn", onClick (ApprovePending pendingSubscription) ] [ text "APPROVE" ]
-        , button [ class "deviceListColumn", onClick (DenyPending pendingSubscription) ] [ text "DENY" ]
+        , button [ class "deviceListButton", onClick (ApprovePending pendingSubscription) ] [ text "APPROVE" ]
+        , button [ class "deviceListButton", onClick (DenyPending pendingSubscription) ] [ text "DENY" ]
         ]
 
 
@@ -195,7 +195,7 @@ viewPending pending =
             pendingList "Pending" actualPending
 
         RemoteData.Failure httpError ->
-            viewFetchError (buildErrorMessage httpError)
+            viewFetchError (buildErrorMessage httpError) " pending subscriptions "
 
 
 viewUser : User -> Html Msg
@@ -216,4 +216,4 @@ viewDevices heading devices =
             deviceList heading actualdevices
 
         RemoteData.Failure httpError ->
-            viewFetchError (buildErrorMessage httpError)
+            viewFetchError (buildErrorMessage httpError) " devices "

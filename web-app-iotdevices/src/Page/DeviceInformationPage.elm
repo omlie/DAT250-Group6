@@ -182,7 +182,7 @@ subscribeButton model =
                     h3 [] [ text statusMessage.status ]
 
         RemoteData.Failure httpError ->
-            viewFetchError (buildErrorMessage httpError)
+            viewFetchError (buildErrorMessage httpError) " your relation to the device "
 
         _ ->
             h3 [] [ text "Loading..." ]
@@ -227,10 +227,10 @@ viewDevice device feedback feedbackform subBtn =
             deviceInformation actualDevice actualFeedback feedbackform subBtn
 
         ( RemoteData.Failure httpError, _ ) ->
-            viewFetchError (buildErrorMessage httpError)
+            viewFetchError (buildErrorMessage httpError) " the device "
 
         ( _, RemoteData.Failure httpError ) ->
-            viewFetchError (buildErrorMessage httpError)
+            viewFetchError (buildErrorMessage httpError) " feedback "
 
         ( _, _ ) ->
             h3 [] [ text "Loading..." ]

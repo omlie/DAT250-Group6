@@ -69,7 +69,7 @@ viewDeviceListPage devices searchBarContent =
             deviceList "All devices" (filterDevices actualdevices searchBarContent)
 
         RemoteData.Failure httpError ->
-            viewFetchError (buildErrorMessage httpError)
+            viewFetchError (buildErrorMessage httpError) " devices "
 
 
 filterDevices : List Device -> String -> List Device
