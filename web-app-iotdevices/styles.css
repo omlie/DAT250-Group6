@@ -25,7 +25,7 @@ div.header {
   width: 100vw;
 }
 
-div.header>* {
+div.header > * {
   padding: 24px;
 }
 
@@ -75,16 +75,15 @@ div.deviceListItem {
   background-color: #98bec8;
   border-bottom: 3px solid #deeaed;
   height: 64px;
-  min-width: 512px;
+  min-width: 720px;
 }
 
 div.deviceListItem:hover {
   background-color: #deeaed;
 }
 
-div.deviceListColumn {
-  padding: 24px;
-  width: 50%;
+div.deviceListItem.noHover {
+  background-color: #98bec8;
 }
 
 input,
@@ -101,9 +100,26 @@ select {
   appearance: none;
 }
 
+div.deviceListColumn {
+  padding: 24px;
+  width: 50%;
+}
 
 div.deviceListColumn:last-child {
   text-align: end;
+}
+
+button.deviceListButton {
+  padding: 22px;
+  width: 50%;
+  border: none;
+  border-left: 4px solid #deeaed;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button.deviceListButton:hover {
+  background-color: #deeaed;
 }
 
 div.deviceInformationWrapper {
@@ -112,7 +128,7 @@ div.deviceInformationWrapper {
   justify-content: space-between;
 }
 
-div.deviceInformationWrapper>* {
+div.deviceInformationWrapper > * {
   margin: 24px;
 }
 
@@ -130,7 +146,7 @@ div.deviceInformation {
   flex-direction: column;
 }
 
-div.deviceInformation>* {
+div.deviceInformation > * {
   padding: 6px;
 }
 
@@ -143,7 +159,7 @@ div.feedbackListItem {
   max-width: 300px;
 }
 
-div.feedbackListItem>*:last-child {
+div.feedbackListItem > *:last-child {
   margin-top: 24px;
 }
 

@@ -4,11 +4,11 @@ import Html exposing (Html, div, h3, text)
 import Http
 
 
-viewFetchError : String -> Html msg
-viewFetchError errorMessage =
+viewFetchError : String -> String -> Html msg
+viewFetchError errorMessage attempted =
     let
         errorHeading =
-            "Couldn't fetch User at this time."
+            "Couldn't fetch" ++ attempted ++ " at this time."
     in
     div []
         [ h3 [] [ text errorHeading ]
