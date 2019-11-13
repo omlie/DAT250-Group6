@@ -181,8 +181,8 @@ subscribeButton model =
                 "Owner" ->
                     case model.device of
                         RemoteData.Success device ->
-                            a [ href ("/device/edit/" ++ String.fromInt device.id), class "submitButton" ]
-                                [ div [] [ text "Edit device" ] ]
+                            a [ href ("/device/edit/" ++ String.fromInt device.id), class "submitbutton" ]
+                                [ text "Edit device" ]
 
                         _ ->
                             text "Loading device..."
