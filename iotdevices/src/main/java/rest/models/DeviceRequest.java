@@ -1,15 +1,12 @@
 package rest.models;
 
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 @XmlRootElement
-public class DeviceEditRequest{
-    @XmlElement public int id;
-    @XmlElement
-    public String devicename;
+public class DeviceRequest {
+    @XmlElement public String devicename;
     @XmlElement public String deviceimg;
     @XmlElement public String apiurl;
     @XmlElement public List<String> labels;

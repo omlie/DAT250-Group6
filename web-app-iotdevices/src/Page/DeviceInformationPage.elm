@@ -1,11 +1,11 @@
-module Page.DeviceInformationPage exposing (Model, Msg, init, update, view)
+module Page.DeviceInformationPage exposing (Model, Msg, fetchDevice, init, update, view)
 
 import Api.Device exposing (Device, deviceDecoder)
 import Api.Feedback exposing (Feedback, feedbackDecoder, feedbackListDecoder)
 import Api.Subscription exposing (SubscriptionStatus, subscriptionStatusDecoder)
 import Api.User exposing (User)
-import Html exposing (Html, button, div, h3, input, text)
-import Html.Attributes exposing (class, value)
+import Html exposing (Html, a, button, div, h3, input, text)
+import Html.Attributes exposing (class, href, value)
 import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Encode exposing (Value, int, object, string)
@@ -177,6 +177,15 @@ subscribeButton model =
 
                 "Approved" ->
                     button [ onClick Unsubscribe, class "submitButton" ] [ text "Unsubscribe" ]
+
+                "Owner" ->
+                    case model.device of
+                        RemoteData.Success device ->
+                            a [ href ("/device/edit/" ++ String.fromInt device.id), class "submitButton" ]
+                                [ div [] [ text "Edit device" ] ]
+
+                        _ ->
+                            text "Loading device..."
 
                 _ ->
                     h3 [] [ text statusMessage.status ]

@@ -140,7 +140,7 @@ initCurrentPage ( model, existingCmds ) =
                     Route.NewDevicePage ->
                         let
                             ( pageModel, pageCmds ) =
-                                NewDevicePage.init model.navKey model.user
+                                NewDevicePage.init model.navKey model.user Nothing
                         in
                         ( NewDevicePage pageModel, Cmd.map NewDevicePageMsg pageCmds )
 
@@ -150,6 +150,13 @@ initCurrentPage ( model, existingCmds ) =
                                 DeviceInformationPage.init model.user deviceid
                         in
                         ( DeviceInformationPage pageModel, Cmd.map DeviceInformationPageMsg pageCmds )
+
+                    Route.EditDevicePage deviceId ->
+                        let
+                            ( pageModel, pageCmds ) =
+                                NewDevicePage.init model.navKey model.user (Just deviceId)
+                        in
+                        ( NewDevicePage pageModel, Cmd.map NewDevicePageMsg pageCmds )
         in
         ( { model | page = currentPage }
         , Cmd.batch [ existingCmds, mappedPageCmds ]

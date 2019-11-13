@@ -9,6 +9,7 @@ type Route
     | UserInformationPage
     | DeviceListPage
     | NewDevicePage
+    | EditDevicePage Int
     | DeviceInformationPage Int
     | LogoutPage
 
@@ -31,6 +32,7 @@ matchRoute =
         , map DeviceInformationPage (s "device" </> int)
         , map DeviceListPage (s "devices")
         , map NewDevicePage (s "device" </> s "add")
+        , map EditDevicePage (s "device" </> s "edit" </> int)
         , map NotFound (s "not-found")
         , map LogoutPage (s "logout")
         ]
