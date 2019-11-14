@@ -156,7 +156,7 @@ encodeDevice model =
             , ( "deviceimg", string model.deviceImg )
             , ( "status", int model.status )
             , ( "labels", list string model.labels )
-            , ( "ownerid", int model.ownerId )
+            , ( "ownerId", int model.ownerId )
             ]
     in
     bodylist

@@ -127,7 +127,7 @@ delete model device =
         , body = Http.emptyBody
         , headers = [ Http.header "userId" (String.fromInt model.user.id), Http.header "deviceId" (String.fromInt device.id) ]
         , expect = Http.expectWhatever DeviceDeleted
-        , url = "http://localhost:8080/iotdevices/rest/device/delete/"
+        , url = "http://localhost:8080/iotdevices/rest/devices/delete"
         , timeout = Nothing
         , tracker = Nothing
         }
