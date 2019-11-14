@@ -140,7 +140,8 @@ img.deviceImage {
 div.deviceInformation {
   display: flex;
   height: auto;
-  width: auto;
+  min-width: 275px;
+  flex: 1;
   padding: 24px;
   background-color: #98bec8;
   flex-direction: column;
@@ -184,6 +185,12 @@ div.form {
 div.buttonrow {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+}
+
+div.buttonrowVertical {
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
 }
 

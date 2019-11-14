@@ -5,6 +5,7 @@ import Api.DeviceSubscribers exposing (DeviceSubscribers)
 import Api.Feedback exposing (Feedback, feedbackDecoder, feedbackListDecoder)
 import Api.Subscription exposing (SubscriptionStatus, subscriptionStatusDecoder)
 import Api.User exposing (User)
+import Browser.Navigation exposing (load)
 import Html exposing (Html, a, button, div, h3, input, text)
 import Html.Attributes exposing (class, href, value)
 import Html.Events exposing (onClick, onInput)
@@ -22,6 +23,7 @@ type alias Model =
     , newFeedback : String
     , response : WebData Feedback
     , user : User
+    , deleteError : Bool
     , subscriptionStatus : WebData SubscriptionStatus
     , approvedSubscribers : WebData DeviceSubscribers
     }
@@ -35,6 +37,8 @@ type Msg
     | FeedbackReceived (WebData (List Feedback))
     | Subscribe
     | Unsubscribe
+    | Delete Device
+    | DeviceDeleted (Result Http.Error ())
     | SubscriptionStatusReceived (WebData SubscriptionStatus)
     | SubscriptionAction (Result Http.Error ())
 
@@ -46,6 +50,7 @@ init user deviceId =
       , deviceId = deviceId
       , feedback = RemoteData.NotAsked
       , newFeedback = ""
+      , deleteError = False
       , response = RemoteData.NotAsked
       , subscriptionStatus = RemoteData.NotAsked
       , approvedSubscribers = RemoteData.NotAsked
@@ -115,6 +120,24 @@ unsubscribe model =
         }
 
 
+delete : Model -> Device -> Cmd Msg
+delete model device =
+    Http.request
+        { method = "POST"
+        , body = Http.emptyBody
+        , headers = [ Http.header "userId" (String.fromInt model.user.id), Http.header "deviceId" (String.fromInt device.id) ]
+        , expect = Http.expectWhatever DeviceDeleted
+        , url = "http://localhost:8080/iotdevices/rest/device/delete/"
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+redirect : Cmd Msg
+redirect =
+    load "/mypage"
+
+
 getSubscriptionStatus : Model -> Cmd Msg
 getSubscriptionStatus model =
     Http.get
@@ -162,6 +185,15 @@ update msg model =
         Unsubscribe ->
             ( model, unsubscribe model )
 
+        Delete device ->
+            ( model, delete model device )
+
+        DeviceDeleted (Result.Ok _) ->
+            ( model, redirect )
+
+        DeviceDeleted _ ->
+            ( { model | deleteError = True }, Cmd.none )
+
         SubscriptionAction _ ->
             ( model, getSubscriptionStatus model )
 
@@ -194,8 +226,14 @@ subscribeButton model =
                 "Owner" ->
                     case model.device of
                         RemoteData.Success device ->
-                            a [ href ("/device/edit/" ++ String.fromInt device.id), class "submitbutton" ]
-                                [ text "Edit device" ]
+                            div [ class "buttonrowVertical" ]
+                                [ a [ href ("/device/edit/" ++ String.fromInt device.id), class "submitbutton" ]
+                                    [ text "Edit device" ]
+                                , button
+                                    [ onClick (Delete device), class "submitButton" ]
+                                    [ text "Delete device" ]
+                                , deleteFailed model.deleteError
+                                ]
 
                         _ ->
                             text "Loading device..."
@@ -208,6 +246,15 @@ subscribeButton model =
 
         _ ->
             h3 [] [ text "Loading..." ]
+
+
+deleteFailed : Bool -> Html Msg
+deleteFailed failed =
+    if failed then
+        div [] [ text "Deletion failed" ]
+
+    else
+        text ""
 
 
 giveFeedback : Model -> Html Msg
@@ -245,9 +292,7 @@ submitButton model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ viewDevice model.device model.feedback (giveFeedback model) (subscribeButton model)
-        ]
+    viewDevice model.device model.feedback (giveFeedback model) (subscribeButton model)
 
 
 viewDevice : WebData Device -> WebData (List Feedback) -> Html Msg -> Html Msg -> Html Msg

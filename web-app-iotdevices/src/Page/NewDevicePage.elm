@@ -151,12 +151,12 @@ encodeDevice : Model -> Value
 encodeDevice model =
     let
         bodylist =
-            [ ( "deviceName", string model.deviceName )
-            , ( "apiUrl", string model.apiUrl )
-            , ( "deviceImg", string model.deviceImg )
+            [ ( "devicename", string model.deviceName )
+            , ( "apiurl", string model.apiUrl )
+            , ( "deviceimg", string model.deviceImg )
             , ( "status", int model.status )
             , ( "labels", list string model.labels )
-            , ( "ownerId", int model.ownerId )
+            , ( "ownerid", int model.ownerId )
             ]
     in
     bodylist
