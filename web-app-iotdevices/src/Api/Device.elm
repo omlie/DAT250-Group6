@@ -1,5 +1,6 @@
 module Api.Device exposing (Device, deviceDecoder, devicesDecoder)
 
+import Api.User exposing (User, userDecoder)
 import Json.Decode as Decode exposing (Decoder, int, list, string)
 import Json.Decode.Pipeline exposing (required)
 
@@ -11,6 +12,7 @@ type alias Device =
     , deviceImg : String
     , status : String
     , statuses : List String
+    , owner : User
     }
 
 
@@ -28,3 +30,4 @@ deviceDecoder =
         |> required "deviceImg" string
         |> required "status" string
         |> required "statuses" (list string)
+        |> required "owner" userDecoder

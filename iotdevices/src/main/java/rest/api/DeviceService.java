@@ -7,8 +7,7 @@ import entities.Feedback;
 import entities.Label;
 import entities.User;
 import helpers.Status;
-import rest.models.DeviceAddRequest;
-import rest.models.DeviceEditRequest;
+import rest.models.DeviceRequest;
 import rest.models.DeviceModificationRequest;
 import rest.models.FeedbackAddRequest;
 
@@ -118,7 +117,7 @@ public class DeviceService extends Application {
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDevice(DeviceAddRequest request) {
+    public Response addDevice(DeviceRequest request) {
         Device device = new Device();
         device.setOwner(userDao.getUser(request.ownerId));
         addFieldsToDevice(device, request.status, request.labels, request.devicename, request.apiurl);
@@ -147,14 +146,14 @@ public class DeviceService extends Application {
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response edit(DeviceEditRequest request) {
+    public Response edit(DeviceRequest request, @PathParam("id") int deviceId) {
         try {
-            Device device = deviceDao.getDeviceById(request.id);
+            Device device = deviceDao.getDeviceById(deviceId);
             addFieldsToDevice(device, request.status, request.labels, request.devicename, request.apiurl);
             deviceDao.saveEditedDevice(device);
             return Response.ok(device).build();
         } catch (NotFoundException e) {
-            return Response.status(404).entity("Device " + request.id + " not found.").build();
+            return Response.status(404).entity("Device " + deviceId + " not found.").build();
         }
     }
 
