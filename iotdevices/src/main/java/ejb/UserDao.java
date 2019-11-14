@@ -339,7 +339,7 @@ public class UserDao {
         device.addSubscriber(subscription);
         if (user.getSubscriptions().contains(subscription))
             return;
-
+        em.persist(subscription);
         em.merge(device);
         em.merge(user);
     }

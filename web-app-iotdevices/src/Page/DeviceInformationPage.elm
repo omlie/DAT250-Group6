@@ -218,10 +218,10 @@ subscribeButton model =
         RemoteData.Success statusMessage ->
             case statusMessage.status of
                 "none" ->
-                    button [ onClick Subscribe, class "submitButton" ] [ text "Subscribe" ]
+                    button [ onClick Subscribe, class "submitbutton" ] [ text "Subscribe" ]
 
                 "Approved" ->
-                    button [ onClick Unsubscribe, class "submitButton" ] [ text "Unsubscribe" ]
+                    button [ onClick Unsubscribe, class "submitbutton" ] [ text "Unsubscribe" ]
 
                 "Owner" ->
                     case model.device of
@@ -230,7 +230,7 @@ subscribeButton model =
                                 [ a [ href ("/device/edit/" ++ String.fromInt device.id), class "submitbutton" ]
                                     [ text "Edit device" ]
                                 , button
-                                    [ onClick (Delete device), class "submitButton" ]
+                                    [ onClick (Delete device), class "submitbutton" ]
                                     [ text "Delete device" ]
                                 , deleteFailed model.deleteError
                                 ]
