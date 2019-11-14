@@ -34,7 +34,9 @@ public class UserDao {
         em.merge(user);
     }
 
-    public void persist(User user) {em.persist(user);}
+    public void persist(User user) {
+        em.persist(user);
+    }
 
     // Retrieves all the tweets:
     @SuppressWarnings("unchecked")
@@ -59,7 +61,7 @@ public class UserDao {
         return true;
     }
 
-    public boolean login(String username, String password){
+    public boolean login(String username, String password) {
         HttpServletRequest request = SessionUtil.getRequest();
         try {
             request.login(username, password);
@@ -69,19 +71,20 @@ public class UserDao {
         }
     }
 
-    public boolean login(User user, String username, String plaintext){
+    public boolean login(User user, String username, String plaintext) {
         return user.getUserName().equals(username) && BCrypt.checkpw(plaintext, user.getPassword());
     }
 
     /**
      * Delete a user from the database
+     *
      * @param user
      */
-    public void deleteUser(User user){
-        for(Subscription s : user.getSubscriptions()){
+    public void deleteUser(User user) {
+        for (Subscription s : user.getSubscriptions()) {
             unsubscribe(user.getId(), s.getDevice().getId());
         }
-        for(Feedback f : user.getFeedback()) {
+        for (Feedback f : user.getFeedback()) {
             f.setAuthor(null);
             em.merge(f);
         }
@@ -90,17 +93,17 @@ public class UserDao {
                 .executeUpdate();
     }
 
-    public void makeAdmin(User user){
+    public void makeAdmin(User user) {
         SecurityGroup group = em.find(SecurityGroup.class, user.getUserName());
-        if(group == null)
+        if (group == null)
             throw new NotFoundException();
         group.setGroupname(SecurityGroup.ADMINS_GROUP);
         em.merge(group);
     }
 
-    public boolean isAdmin(String username){
+    public boolean isAdmin(String username) {
         SecurityGroup group = em.find(SecurityGroup.class, username);
-        if(group == null)
+        if (group == null)
             return false;
         return group.getGroupname().equals(SecurityGroup.ADMINS_GROUP);
     }
@@ -169,14 +172,19 @@ public class UserDao {
         if (d == null || user == null)
             throw new NotFoundException();
 
-        user.getOwnedDevices().remove(d);
+
         em.createQuery("DELETE FROM Subscription s WHERE s.device.id =?1")
+                .setParameter(1, deviceId)
+                .executeUpdate();
+        em.createQuery("DELETE FROM Feedback f WHERE f.device.id=?1")
                 .setParameter(1, deviceId)
                 .executeUpdate();
         em.createQuery("DELETE FROM Device d WHERE d.id=?1")
                 .setParameter(1, deviceId)
                 .executeUpdate();
-        merge(user);
+
+        user.getOwnedDevices().remove(d);
+        em.merge(user);
     }
 
     public boolean userExists(String username) {
@@ -257,7 +265,7 @@ public class UserDao {
                 devicelabels.add(addLabel(l.getLabelValue()));
             }
         }
-        if(!devicelabels.isEmpty()) {
+        if (!devicelabels.isEmpty()) {
             for (Label l : devicelabels) {
                 d.addLabel(l);
             }
@@ -311,7 +319,6 @@ public class UserDao {
     }
 
 
-
     public void addSubscriber(int deviceId, int userid) {
         addSubscriber(em.find(Device.class, deviceId), em.find(User.class, userid));
     }
@@ -332,7 +339,7 @@ public class UserDao {
         device.addSubscriber(subscription);
         if (user.getSubscriptions().contains(subscription))
             return;
-
+        em.persist(subscription);
         em.merge(device);
         em.merge(user);
     }

@@ -37,7 +37,7 @@ public class SubscriptionDao {
         subscription.setDeniedSubscription(false);
         em.merge(subscription);
 
-        context.createProducer().setProperty("topicSubscription", "dweet").send(topic, subscription); // .setProperty("topicUser", tweet.getTopic()).send(topic, tweet);
+        //context.createProducer().setProperty("topicSubscription", "dweet").send(topic, subscription); // .setProperty("topicUser", tweet.getTopic()).send(topic, tweet);
     }
 
     public void denySubscription(Subscription subscription) {

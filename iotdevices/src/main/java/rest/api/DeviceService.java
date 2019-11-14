@@ -135,16 +135,15 @@ public class DeviceService extends Application {
     }
 
     @POST
-    @Path("delete/{id}")
+    @Path("delete")
     @Transactional
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteDevice(DeviceModificationRequest request) {
+    public Response deleteDevice(@HeaderParam("userId") int userid, @HeaderParam("deviceId") int deviceid) {
         try {
-            userDao.deleteOwned(request.userid, request.deviceid);
+            userDao.deleteOwned(userid, deviceid);
             return Response.ok().build();
         } catch (NotFoundException e) {
-            return Response.status(404).entity("Could not delete device " + request.deviceid).build();
+            return Response.status(404).entity("Could not delete device " + deviceid).build();
         }
     }
 
