@@ -88,11 +88,11 @@ update msg model =
                 RemoteData.Success actualDevice ->
                     let
                         deviceStatus =
-                            case toInt actualDevice.status of
-                                Just status ->
-                                    status
+                            case actualDevice.status of
+                                "OFFLINE" ->
+                                    1
 
-                                Nothing ->
+                                _ ->
                                     0
                     in
                     ( { model | deviceId = actualDevice.id, deviceName = actualDevice.deviceName, deviceImg = actualDevice.deviceImg, apiUrl = actualDevice.apiUrl, status = deviceStatus, ownerId = actualDevice.owner.id, isEditing = True }, Cmd.none )
@@ -174,7 +174,7 @@ viewForm model =
         [ input [ placeholder "Device name", model.deviceName |> value, onInput DeviceNameChange ] []
         , input [ placeholder "Device image URL", model.deviceImg |> value, onInput DeviceImageChange ] []
         , input [ placeholder "API URL", model.apiUrl |> value, onInput ApiUrlChange ] []
-        , statusRadioButtons
+        , statusRadioButtons model.status
         , let
             buttonText =
                 if model.isEditing then
@@ -194,9 +194,9 @@ viewForm model =
         ]
 
 
-statusRadioButtons : Html Msg
-statusRadioButtons =
-    select [ onInput StatusChange ]
+statusRadioButtons : Int -> Html Msg
+statusRadioButtons status =
+    select [ onInput StatusChange, value (String.fromInt status) ]
         [ option [ value "0" ] [ text "Online" ]
         , option [ value "1" ] [ text "Offline" ]
         ]
