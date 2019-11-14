@@ -54,6 +54,14 @@ public class DeviceService extends Application {
         int idInt = Integer.parseInt(id);
         return Response.ok(deviceDao.getSubscribers(idInt)).build();
     }
+    
+    @GET
+    @Path("{id}/approvedSubscribers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getApprovedSubscribers(@PathParam("id") String id) {
+        int idInt = Integer.parseInt(id);
+        return Response.ok(deviceDao.getApprovedSubscribers(idInt)).build();
+    }
 
     @GET
     @Path("{deviceId}/subscription/{subscriptionId}")

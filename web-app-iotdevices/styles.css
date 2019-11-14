@@ -25,7 +25,7 @@ div.header {
   width: 100vw;
 }
 
-div.header>* {
+div.header > * {
   padding: 24px;
 }
 
@@ -128,7 +128,7 @@ div.deviceInformationWrapper {
   justify-content: space-between;
 }
 
-div.deviceInformationWrapper>* {
+div.deviceInformationWrapper > * {
   margin: 24px;
 }
 
@@ -146,7 +146,7 @@ div.deviceInformation {
   flex-direction: column;
 }
 
-div.deviceInformation>* {
+div.deviceInformation > * {
   padding: 6px;
 }
 
@@ -159,7 +159,7 @@ div.feedbackListItem {
   max-width: 300px;
 }
 
-div.feedbackListItem>*:last-child {
+div.feedbackListItem > *:last-child {
   margin-top: 24px;
 }
 
@@ -195,8 +195,10 @@ a.submitbutton {
   padding: 12px;
   margin: 12px;
   font-size: 18px;
+  text-align: center;
 }
 
-button.submitbutton:hover {
+button.submitbutton:hover,
+a.submitButton:hover {
   background-color: #deeaed;
 }
